@@ -15,10 +15,11 @@ function main() {
     return __awaiter(this, void 0, void 0, function* () {
         const post = yield prisma.post.create({
             data: {
-                caption: "First post",
+                caption: "another post",
             },
         });
-        console.log(post);
+        const allPosts = yield prisma.post.findMany();
+        console.dir(allPosts);
     });
 }
 main().catch((e) => {

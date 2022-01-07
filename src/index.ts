@@ -5,10 +5,12 @@ const prisma = new PrismaClient();
 async function main() {
   const post = await prisma.post.create({
     data: {
-      caption: "First post",
+      caption: "another post",
     },
   });
-  console.log(post);
+
+  const allPosts = await prisma.post.findMany();
+  console.dir(allPosts);
 }
 
 main().catch((e) => {
