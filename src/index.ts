@@ -1,29 +1,34 @@
 import { PrismaClient } from "@prisma/client";
 import express from "express";
+import { ApolloServer } from "apollo-server-express";
+import "reflect-metadata";
+import { buildSchema } from "type-graphql";
+import { TestResolver } from "./resolvers/test";
 
-const prisma = new PrismaClient();
-const app = express();
 const port = 4000;
-app.listen(port, () => {
-  console.log(`Server running on port ${port}...`);
+const prisma = new PrismaClient({
+  log: ["query"],
 });
 
-// async function main() {
-//   // const post = await prisma.post.create({
-//   //   data: {
-//   //     caption: "another post",
-//   //   },
-//   // });
+const startServer = async () => {
+  const app = express();
 
-//   const allPosts = await prisma.post.findMany();
-//   console.dir(allPosts);
-// }
+  const apolloServer = new ApolloServer({
+    schema: await buildSchema({
+      resolvers: [TestResolver],
+      emitSchemaFile: true,
+    }),
+  });
 
-// main().catch((e) => {
-//   throw e;
-// });
+  await apolloServer.start();
 
-app.get("/", async (_, res) => {
-  const allPosts = await prisma.post.findMany();
-  res.send(allPosts);
+  apolloServer.applyMiddleware({ app });
+
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}...`);
+  });
+};
+
+startServer().catch((err) => {
+  throw err;
 });
