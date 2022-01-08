@@ -11,6 +11,6 @@ export class Post {
   @Field()
   updatedAt: Date;
 
-  @Field()
-  caption: string;
+  @Field({ nullable: true })
+  caption?: string;
 }

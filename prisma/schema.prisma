@@ -11,5 +11,5 @@ model Post {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  caption   String   @db.VarChar(2200)
+  caption   String?   @db.VarChar(2200)
 }
