@@ -3,7 +3,8 @@ import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import "reflect-metadata";
 import { buildSchema } from "type-graphql";
-import { TestResolver } from "./resolvers/test";
+import { PostResolver } from "./Post/PostResolver";
+import { context } from "./context";
 
 const port = 4000;
 const prisma = new PrismaClient({
@@ -15,9 +16,12 @@ const startServer = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [TestResolver],
-      emitSchemaFile: true,
+      resolvers: [PostResolver],
+      emitSchemaFile: {
+        sortedSchema: false,
+      },
     }),
+    context: context,
   });
 
   await apolloServer.start();
