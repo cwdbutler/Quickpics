@@ -23,20 +23,57 @@ afterAll(async () => {
   await prisma.$disconnect();
 });
 
-export const postsQuery = gql`
-  query {
-    posts {
-      id
-      caption
-    }
-  }
-`;
-
 describe("Posts", () => {
+  test("finding a post by id", async () => {
+    const { server } = await startTestServer({
+      context: () => ({ prisma }),
+    });
+
+    const postQuery = gql`
+      query {
+        post(id: 1) {
+          id
+          caption
+        }
+      }
+    `;
+
+    const res = await server.executeOperation({
+      query: postQuery,
+    });
+
+    expect(res).toMatchInlineSnapshot(`
+      Object {
+        "data": Object {
+          "post": Object {
+            "caption": "testing",
+            "id": "1",
+          },
+        },
+        "errors": undefined,
+        "extensions": undefined,
+        "http": Object {
+          "headers": Headers {
+            Symbol(map): Object {},
+          },
+        },
+      }
+    `);
+  });
+
   test("listing all posts", async () => {
     const { server } = await startTestServer({
       context: () => ({ prisma }),
     });
+
+    const postsQuery = gql`
+      query {
+        posts {
+          id
+          caption
+        }
+      }
+    `;
 
     const res = await server.executeOperation({
       query: postsQuery,
