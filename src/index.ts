@@ -2,7 +2,7 @@ import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import "reflect-metadata";
 import { buildSchema } from "type-graphql";
-import { PostResolver } from "./Post/PostResolver";
+import { PostResolver } from "./PostResolver";
 import { context } from "./context";
 
 const port = 4000;
