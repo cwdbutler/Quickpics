@@ -1,13 +1,21 @@
-import { startTestServer } from "./testSever";
+import { startTestServer } from "./testServer";
 import gql from "graphql-tag";
 import { context } from "../src/context";
 const { prisma } = context;
 
 beforeAll(async () => {
-  await prisma.post.create({
-    data: {
-      caption: "testing",
-    },
+  await prisma.post.createMany({
+    data: [
+      {
+        caption: "testing",
+      },
+      {
+        caption: "another test",
+      },
+      {
+        caption: "third test post",
+      },
+    ],
   });
 });
 
@@ -24,7 +32,7 @@ export const postsQuery = gql`
   }
 `;
 
-describe("posts", () => {
+describe("Posts", () => {
   test("listing all posts", async () => {
     const { server } = await startTestServer({
       context: () => ({ prisma }),
@@ -41,6 +49,14 @@ describe("posts", () => {
             Object {
               "caption": "testing",
               "id": "1",
+            },
+            Object {
+              "caption": "another test",
+              "id": "2",
+            },
+            Object {
+              "caption": "third test post",
+              "id": "3",
             },
           ],
         },
