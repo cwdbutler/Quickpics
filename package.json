@@ -11,17 +11,6 @@
     "test": "jest",
     "prisma:deploy": "npx prisma migrate deploy"
   },
-  "jest": {
-    "preset": "ts-jest",
-    "globals": {
-      "ts-jest": {
-        "diagnostics": {
-          "warnOnly": true
-        }
-      }
-    },
-    "testEnvironment": "node"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
