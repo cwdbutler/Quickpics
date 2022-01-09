@@ -107,4 +107,55 @@ describe("Posts", () => {
       }
     `);
   });
+
+  test("creating a post", async () => {
+    const { server } = await startTestServer({
+      context: () => ({ prisma }),
+    });
+
+    const createPost = gql`
+      mutation CreatePost {
+        createPost(caption: "created post") {
+          id
+          caption
+        }
+      }
+    `;
+
+    const res = await server.executeOperation({
+      query: createPost,
+      variables: {
+        data: {
+          caption: "created post",
+        },
+      },
+    });
+
+    expect(res).toMatchInlineSnapshot(`
+      Object {
+        "data": Object {
+          "createPost": Object {
+            "caption": "created post",
+            "id": "4",
+          },
+        },
+        "errors": undefined,
+        "extensions": undefined,
+        "http": Object {
+          "headers": Headers {
+            Symbol(map): Object {},
+          },
+        },
+      }
+    `);
+
+    const dbPost = await prisma.post.findUnique({
+      where: {
+        id: parseInt(res.data.createPost.id),
+      },
+    });
+
+    expect(dbPost).toBeTruthy();
+    expect(dbPost.caption).toEqual("created post");
+  });
 });
