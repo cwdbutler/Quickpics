@@ -155,7 +155,7 @@ describe("Posts", () => {
       },
     });
 
-    expect(dbPost).toBeTruthy();
+    expect(dbPost).toBeTruthy(); // Prisma returns null if not found
     expect(dbPost.caption).toEqual("created post");
   });
 });
