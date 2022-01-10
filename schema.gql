@@ -6,6 +6,7 @@
 type Query {
   post(id: Int!): Post
   posts: [Post!]!
+  user(id: Int!): User
 }
 
 type Post {
@@ -19,6 +20,13 @@ type Post {
 The javascript `Date` as string. Type represents date and time as the ISO Date string.
 """
 scalar DateTime
+
+type User {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  username: String!
+}
 
 type Mutation {
   createPost(caption: String!): Post!

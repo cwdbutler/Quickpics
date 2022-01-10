@@ -4,6 +4,7 @@ import "reflect-metadata";
 import { buildSchema } from "type-graphql";
 import { PostResolver } from "./PostResolver";
 import { context } from "./context";
+import { UserResolver } from "./UserResolver";
 
 const port = 4000;
 
@@ -12,7 +13,7 @@ const startServer = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [PostResolver],
+      resolvers: [PostResolver, UserResolver],
       emitSchemaFile: {
         sortedSchema: false,
       },
