@@ -5,7 +5,10 @@ import { Context } from "./context";
 @Resolver()
 export class PostResolver {
   @Query(() => Post, { nullable: true })
-  post(@Arg("id", () => Int) id: number, @Ctx() { prisma }: Context) {
+  post(
+    @Arg("id", () => Int) id: number,
+    @Ctx() { prisma }: Context
+  ): Promise<Post> {
     return prisma.post.findUnique({
       where: {
         id: id,
@@ -14,12 +17,15 @@ export class PostResolver {
   }
 
   @Query(() => [Post])
-  posts(@Ctx() { prisma }: Context) {
+  posts(@Ctx() { prisma }: Context): Promise<Post[]> {
     return prisma.post.findMany();
   }
 
   @Mutation(() => Post)
-  createPost(@Arg("caption") caption: string, @Ctx() { prisma }: Context) {
+  createPost(
+    @Arg("caption") caption: string,
+    @Ctx() { prisma }: Context
+  ): Promise<Post> {
     return prisma.post.create({
       data: {
         caption: caption,
@@ -32,8 +38,8 @@ export class PostResolver {
     @Arg("id", () => Int) id: number,
     @Arg("caption") caption: string,
     @Ctx() { prisma }: Context
-  ) {
-    let post;
+  ): Promise<Post> | null {
+    let post: Post | null;
     try {
       post = await prisma.post.update({
         where: {
@@ -54,8 +60,8 @@ export class PostResolver {
   async deletePost(
     @Arg("id", () => Int) id: number,
     @Ctx() { prisma }: Context
-  ) {
-    let post;
+  ): Promise<Post> | null {
+    let post: Post | null;
     try {
       post = await prisma.post.delete({
         where: {

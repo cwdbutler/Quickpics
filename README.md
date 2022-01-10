@@ -5,7 +5,7 @@ Plan to link it to a React frontend, also in TypeScript
 The technologies I'm using are:
 
 - Prisma (ORM)
-- TypeGraphQL for generating the GraphQL schema using a code first approach (I've omitted the generated schema in the root directory for reference)
+- TypeGraphQL for generating the GraphQL schema using a code first approach (I've emitted the generated schema in the root directory for reference)
 - Apollo Server
 - Express for using middleware that I have experiene with (express-session)
 
