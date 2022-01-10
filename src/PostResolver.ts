@@ -26,4 +26,27 @@ export class PostResolver {
       },
     });
   }
+
+  @Mutation(() => Post, { nullable: true })
+  async updatePost(
+    @Arg("id", () => Int) id: number,
+    @Arg("caption") caption: string,
+    @Ctx() { prisma }: Context
+  ) {
+    let post;
+    try {
+      post = await prisma.post.update({
+        where: {
+          id: id,
+        },
+        data: {
+          caption: caption,
+        },
+      });
+    } catch (err) {
+      // if post isn't found
+      post = null;
+    }
+    return post;
+  }
 }

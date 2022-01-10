@@ -114,7 +114,7 @@ describe("Posts", () => {
     });
 
     const createPost = gql`
-      mutation CreatePost {
+      mutation createPost {
         createPost(caption: "created post") {
           id
           caption
@@ -124,11 +124,6 @@ describe("Posts", () => {
 
     const res = await server.executeOperation({
       query: createPost,
-      variables: {
-        data: {
-          caption: "created post",
-        },
-      },
     });
 
     expect(res).toMatchInlineSnapshot(`
@@ -157,5 +152,85 @@ describe("Posts", () => {
 
     expect(dbPost).toBeTruthy(); // Prisma returns null if not found
     expect(dbPost.caption).toEqual("created post");
+  });
+
+  test("updating a post", async () => {
+    const { server } = await startTestServer({
+      context: () => ({ prisma }),
+    });
+
+    const updatePost = gql`
+      mutation updatePost {
+        updatePost(id: 4, caption: "updated post") {
+          id
+          caption
+        }
+      }
+    `;
+
+    const res = await server.executeOperation({
+      query: updatePost,
+    });
+
+    expect(res).toMatchInlineSnapshot(`
+      Object {
+        "data": Object {
+          "updatePost": Object {
+            "caption": "updated post",
+            "id": "4",
+          },
+        },
+        "errors": undefined,
+        "extensions": undefined,
+        "http": Object {
+          "headers": Headers {
+            Symbol(map): Object {},
+          },
+        },
+      }
+    `);
+
+    const dbPost = await prisma.post.findUnique({
+      where: {
+        id: parseInt(res.data.updatePost.id),
+      },
+    });
+
+    expect(dbPost).toBeTruthy(); // Prisma returns null if not found
+    expect(dbPost.caption).toEqual("updated post");
+  });
+
+  test("updating a post that doesn't exist", async () => {
+    const { server } = await startTestServer({
+      context: () => ({ prisma }),
+    });
+
+    const updatePost = gql`
+      mutation updatePost {
+        updatePost(id: 999, caption: "I don't exist") {
+          id
+          caption
+        }
+      }
+    `;
+
+    const res = await server.executeOperation({
+      query: updatePost,
+    });
+
+    expect(res).toMatchInlineSnapshot(`
+      Object {
+        "data": Object {
+          "updatePost": null,
+        },
+        "errors": undefined,
+        "extensions": undefined,
+        "http": Object {
+          "headers": Headers {
+            Symbol(map): Object {},
+          },
+        },
+      }
+    `);
   });
 });

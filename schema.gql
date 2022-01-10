@@ -22,4 +22,5 @@ scalar DateTime
 
 type Mutation {
   createPost(caption: String!): Post!
+  updatePost(caption: String!, id: Int!): Post
 }
