@@ -113,7 +113,7 @@ describe("Posts", () => {
       context: () => ({ prisma }),
     });
 
-    const createPost = gql`
+    const createPostMutation = gql`
       mutation createPost {
         createPost(caption: "created post") {
           id
@@ -123,7 +123,7 @@ describe("Posts", () => {
     `;
 
     const res = await server.executeOperation({
-      query: createPost,
+      query: createPostMutation,
     });
 
     expect(res).toMatchInlineSnapshot(`
@@ -159,7 +159,7 @@ describe("Posts", () => {
       context: () => ({ prisma }),
     });
 
-    const updatePost = gql`
+    const updatePostMutation = gql`
       mutation updatePost {
         updatePost(id: 4, caption: "updated post") {
           id
@@ -169,7 +169,7 @@ describe("Posts", () => {
     `;
 
     const res = await server.executeOperation({
-      query: updatePost,
+      query: updatePostMutation,
     });
 
     expect(res).toMatchInlineSnapshot(`
@@ -205,7 +205,7 @@ describe("Posts", () => {
       context: () => ({ prisma }),
     });
 
-    const updatePost = gql`
+    const updatePostMutation = gql`
       mutation updatePost {
         updatePost(id: 999, caption: "I don't exist") {
           id
@@ -215,7 +215,7 @@ describe("Posts", () => {
     `;
 
     const res = await server.executeOperation({
-      query: updatePost,
+      query: updatePostMutation,
     });
 
     expect(res).toMatchInlineSnapshot(`
@@ -239,7 +239,7 @@ describe("Posts", () => {
       context: () => ({ prisma }),
     });
 
-    const deletePost = gql`
+    const deletePostMutation = gql`
       mutation deletePost {
         deletePost(id: 4) {
           id
@@ -248,7 +248,7 @@ describe("Posts", () => {
     `;
 
     const res = await server.executeOperation({
-      query: deletePost,
+      query: deletePostMutation,
     });
 
     expect(res).toMatchInlineSnapshot(`
@@ -282,7 +282,7 @@ describe("Posts", () => {
       context: () => ({ prisma }),
     });
 
-    const deletePost = gql`
+    const deletePostMutation = gql`
       mutation deletePost {
         deletePost(id: 999) {
           id
@@ -291,7 +291,7 @@ describe("Posts", () => {
     `;
 
     const res = await server.executeOperation({
-      query: deletePost,
+      query: deletePostMutation,
     });
 
     expect(res).toMatchInlineSnapshot(`

@@ -15,5 +15,5 @@ export class User {
   @Field()
   username: string;
 
-  passwordDigest: string;
+  passwordHash: string;
 }

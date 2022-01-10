@@ -12,7 +12,7 @@ model User {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   username        String    @unique
-  passwordDigest  String
+  passwordHash  String
 }
 
 model Post {
