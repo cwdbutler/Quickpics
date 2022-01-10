@@ -233,4 +233,80 @@ describe("Posts", () => {
       }
     `);
   });
+
+  test("deleting a post", async () => {
+    const { server } = await startTestServer({
+      context: () => ({ prisma }),
+    });
+
+    const deletePost = gql`
+      mutation deletePost {
+        deletePost(id: 4) {
+          id
+        }
+      }
+    `;
+
+    const res = await server.executeOperation({
+      query: deletePost,
+    });
+
+    expect(res).toMatchInlineSnapshot(`
+      Object {
+        "data": Object {
+          "deletePost": Object {
+            "id": "4",
+          },
+        },
+        "errors": undefined,
+        "extensions": undefined,
+        "http": Object {
+          "headers": Headers {
+            Symbol(map): Object {},
+          },
+        },
+      }
+    `);
+
+    const dbPost = await prisma.post.findUnique({
+      where: {
+        id: parseInt(res.data.deletePost.id),
+      },
+    });
+
+    expect(dbPost).toBeNull(); // Prisma returns null if not found
+  });
+
+  test("deleting a post that doesn't exist", async () => {
+    const { server } = await startTestServer({
+      context: () => ({ prisma }),
+    });
+
+    const deletePost = gql`
+      mutation deletePost {
+        deletePost(id: 999) {
+          id
+        }
+      }
+    `;
+
+    const res = await server.executeOperation({
+      query: deletePost,
+    });
+
+    expect(res).toMatchInlineSnapshot(`
+      Object {
+        "data": Object {
+          "deletePost": null,
+        },
+        "errors": undefined,
+        "extensions": undefined,
+        "http": Object {
+          "headers": Headers {
+            Symbol(map): Object {},
+          },
+        },
+      }
+    `);
+  });
 });

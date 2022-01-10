@@ -49,4 +49,23 @@ export class PostResolver {
     }
     return post;
   }
+
+  @Mutation(() => Post, { nullable: true })
+  async deletePost(
+    @Arg("id", () => Int) id: number,
+    @Ctx() { prisma }: Context
+  ) {
+    let post;
+    try {
+      post = await prisma.post.delete({
+        where: {
+          id: id,
+        },
+      });
+    } catch (err) {
+      // if post isn't found
+      post = null;
+    }
+    return post;
+  }
 }
