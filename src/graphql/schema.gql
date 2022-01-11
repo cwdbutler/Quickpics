@@ -48,4 +48,5 @@ type Mutation {
   updatePost(caption: String!, id: Int!): PostResponse!
   deletePost(id: Int!): PostResponse!
   register(password: String!, username: String!): UserResponse!
+  login(password: String!, username: String!): UserResponse!
 }

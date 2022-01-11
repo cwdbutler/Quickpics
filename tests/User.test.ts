@@ -2,6 +2,7 @@ import { startTestServer } from "./utils/testServer";
 import gql from "graphql-tag";
 import { context } from "../src/context";
 const { prisma } = context;
+import { NOT_UNIQUE } from "../src/graphql/constants";
 
 afterAll(async () => {
   await prisma.$disconnect();
@@ -83,7 +84,7 @@ describe("Users", () => {
         errors: [
           {
             field: "username",
-            message: "Username already taken",
+            message: NOT_UNIQUE("username"),
           },
         ],
         user: null,
@@ -114,6 +115,114 @@ describe("Users", () => {
       user: {
         id: "1",
         username: "testuser",
+      },
+    });
+  });
+
+  test("logging in with bad username", async () => {
+    const { server } = await startTestServer({
+      context: () => ({ prisma }),
+    });
+
+    const login = gql`
+      mutation login {
+        login(username: "nonexistentuser", password: "abc123") {
+          user {
+            username
+          }
+          errors {
+            field
+            message
+          }
+        }
+      }
+    `;
+
+    const res = await server.executeOperation({
+      query: login,
+    });
+
+    expect(res.errors).toBeUndefined();
+    expect(res.data).toMatchObject({
+      login: {
+        errors: [
+          {
+            field: "username",
+            message: "Invalid username",
+          },
+        ],
+        user: null,
+      },
+    });
+  });
+
+  test("logging in with bad password", async () => {
+    const { server } = await startTestServer({
+      context: () => ({ prisma }),
+    });
+
+    const login = gql`
+      mutation login {
+        login(username: "testuser", password: "wrong") {
+          user {
+            username
+          }
+          errors {
+            field
+            message
+          }
+        }
+      }
+    `;
+
+    const res = await server.executeOperation({
+      query: login,
+    });
+
+    expect(res.errors).toBeUndefined();
+    expect(res.data).toMatchObject({
+      login: {
+        errors: [
+          {
+            field: "password",
+            message: "Invalid password",
+          },
+        ],
+        user: null,
+      },
+    });
+  });
+
+  test("logging in with correct details", async () => {
+    const { server } = await startTestServer({
+      context: () => ({ prisma }),
+    });
+
+    const login = gql`
+      mutation login {
+        login(username: "testuser", password: "abc123") {
+          user {
+            username
+          }
+          errors {
+            field
+            message
+          }
+        }
+      }
+    `;
+
+    const res = await server.executeOperation({
+      query: login,
+    });
+
+    expect(res.errors).toBeUndefined();
+    expect(res.data).toMatchObject({
+      login: {
+        user: {
+          username: "testuser",
+        },
+        errors: null,
       },
     });
   });

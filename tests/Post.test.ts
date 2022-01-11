@@ -2,6 +2,7 @@ import { startTestServer } from "./utils/testServer";
 import gql from "graphql-tag";
 import { context } from "../src/context";
 const { prisma } = context;
+import { NOT_FOUND } from "../src/graphql/constants";
 
 beforeAll(async () => {
   await prisma.post.createMany({
@@ -199,7 +200,7 @@ describe("Posts", () => {
         errors: [
           {
             field: "id",
-            message: "That post doesn't exist",
+            message: NOT_FOUND("post"),
           },
         ],
         post: null,
@@ -278,7 +279,7 @@ describe("Posts", () => {
         errors: [
           {
             field: "id",
-            message: "That post doesn't exist",
+            message: NOT_FOUND("post"),
           },
         ],
         post: null,
