@@ -8,5 +8,5 @@ module.exports = {
   coveragePathIgnorePatterns: ["/node_modules/", "/tests/"],
   collectCoverage: true,
   testEnvironment: "./prisma/test-environment.ts",
-  setupFilesAfterEnv: ["<rootDir>/setupTests.ts"],
+  setupFilesAfterEnv: ["<rootDir>/tests/utils/setupTests.ts"],
 };

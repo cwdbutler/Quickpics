@@ -2,9 +2,8 @@ import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import "reflect-metadata";
 import { buildSchema } from "type-graphql";
-import { PostResolver } from "./PostResolver";
 import { context } from "./context";
-import { UserResolver } from "./UserResolver";
+import path from "path";
 
 const port = 4000;
 
@@ -13,8 +12,9 @@ const startServer = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [PostResolver, UserResolver],
+      resolvers: [__dirname + "/graphql/resolvers/**/*.{ts,js}"],
       emitSchemaFile: {
+        path: path.join(__dirname, "../src/graphql/schema.gql"),
         sortedSchema: false,
       },
     }),

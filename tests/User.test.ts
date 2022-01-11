@@ -1,4 +1,4 @@
-import { startTestServer } from "./testServer";
+import { startTestServer } from "./utils/testServer";
 import gql from "graphql-tag";
 import { context } from "../src/context";
 const { prisma } = context;

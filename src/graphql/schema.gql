@@ -3,12 +3,6 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
-type Query {
-  post(id: Int!): Post
-  posts: [Post!]!
-  user(id: Int!): User
-}
-
 type Post {
   id: ID!
   createdAt: DateTime!
@@ -28,9 +22,15 @@ type User {
   username: String!
 }
 
+type Query {
+  post(id: Int!): Post
+  posts: [Post!]!
+  user(id: Int!): User
+}
+
 type Mutation {
   createPost(caption: String!): Post!
   updatePost(caption: String!, id: Int!): Post
   deletePost(id: Int!): Post
-  createUser(password: String!, username: String!): User!
+  createUser(password: String!, username: String!): User
 }

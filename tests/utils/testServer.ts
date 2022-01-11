@@ -1,13 +1,14 @@
 import { ApolloServer } from "apollo-server-express";
-import { PostResolver } from "../src/PostResolver";
-import { UserResolver } from "../src/UserResolver";
 import { buildSchema } from "type-graphql";
 import "reflect-metadata";
+import path from "path";
 
 export const startTestServer = async ({ context = {} } = {}) => {
   const server = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [PostResolver, UserResolver],
+      resolvers: [
+        path.join(__dirname, "../../src/graphql/resolvers/**/*.{ts,js}"),
+      ],
     }),
     context,
   });
