@@ -7,6 +7,6 @@ module.exports = {
   moduleFileExtensions: ["ts", "js", "json", "node"],
   coveragePathIgnorePatterns: ["/node_modules/", "/tests/"],
   collectCoverage: true,
-  testEnvironment: "./prisma/test-environment.ts",
+  testEnvironment: "./prisma/testEnvironment.ts",
   setupFilesAfterEnv: ["<rootDir>/tests/utils/setupTests.ts"],
 };
