@@ -42,23 +42,13 @@ describe("Posts", () => {
       query: postQuery,
     });
 
-    expect(res).toMatchInlineSnapshot(`
-      Object {
-        "data": Object {
-          "post": Object {
-            "caption": "testing",
-            "id": "1",
-          },
-        },
-        "errors": undefined,
-        "extensions": undefined,
-        "http": Object {
-          "headers": Headers {
-            Symbol(map): Object {},
-          },
-        },
-      }
-    `);
+    expect(res.errors).toBeUndefined();
+    expect(res.data).toMatchObject({
+      post: {
+        caption: "testing",
+        id: "1",
+      },
+    });
   });
 
   test("listing all posts", async () => {
@@ -79,33 +69,23 @@ describe("Posts", () => {
       query: postsQuery,
     });
 
-    expect(res).toMatchInlineSnapshot(`
-      Object {
-        "data": Object {
-          "posts": Array [
-            Object {
-              "caption": "testing",
-              "id": "1",
-            },
-            Object {
-              "caption": "another test",
-              "id": "2",
-            },
-            Object {
-              "caption": "third test post",
-              "id": "3",
-            },
-          ],
+    expect(res.errors).toBeUndefined();
+    expect(res.data).toMatchObject({
+      posts: [
+        {
+          caption: "testing",
+          id: "1",
         },
-        "errors": undefined,
-        "extensions": undefined,
-        "http": Object {
-          "headers": Headers {
-            Symbol(map): Object {},
-          },
+        {
+          caption: "another test",
+          id: "2",
         },
-      }
-    `);
+        {
+          caption: "third test post",
+          id: "3",
+        },
+      ],
+    });
   });
 
   test("creating a post", async () => {
@@ -126,23 +106,13 @@ describe("Posts", () => {
       query: createPostMutation,
     });
 
-    expect(res).toMatchInlineSnapshot(`
-      Object {
-        "data": Object {
-          "createPost": Object {
-            "caption": "created post",
-            "id": "4",
-          },
-        },
-        "errors": undefined,
-        "extensions": undefined,
-        "http": Object {
-          "headers": Headers {
-            Symbol(map): Object {},
-          },
-        },
-      }
-    `);
+    expect(res.errors).toBeUndefined();
+    expect(res.data).toMatchObject({
+      createPost: {
+        caption: "created post",
+        id: "4",
+      },
+    });
 
     const dbPost = await prisma.post.findUnique({
       where: {
@@ -178,26 +148,16 @@ describe("Posts", () => {
       query: updatePostMutation,
     });
 
-    expect(res).toMatchInlineSnapshot(`
-      Object {
-        "data": Object {
-          "updatePost": Object {
-            "errors": null,
-            "post": Object {
-              "caption": "updated post",
-              "id": "4",
-            },
-          },
+    expect(res.errors).toBeUndefined();
+    expect(res.data).toMatchObject({
+      updatePost: {
+        errors: null,
+        post: {
+          caption: "updated post",
+          id: "4",
         },
-        "errors": undefined,
-        "extensions": undefined,
-        "http": Object {
-          "headers": Headers {
-            Symbol(map): Object {},
-          },
-        },
-      }
-    `);
+      },
+    });
 
     const dbPost = await prisma.post.findUnique({
       where: {
@@ -205,7 +165,7 @@ describe("Posts", () => {
       },
     });
 
-    expect(dbPost).toBeTruthy(); // Prisma returns null if not found
+    expect(dbPost).toBeTruthy();
     expect(dbPost.caption).toEqual("updated post");
   });
 
@@ -216,7 +176,7 @@ describe("Posts", () => {
 
     const updatePostMutation = gql`
       mutation updatePost {
-        updatePost(id: 4, caption: "updated post") {
+        updatePost(id: 999, caption: "I don't exist") {
           post {
             id
             caption
@@ -233,26 +193,18 @@ describe("Posts", () => {
       query: updatePostMutation,
     });
 
-    expect(res).toMatchInlineSnapshot(`
-       Object {
-         "data": Object {
-           "updatePost": Object {
-             "errors": null,
-             "post": Object {
-               "caption": "updated post",
-               "id": "4",
-             },
-           },
-         },
-         "errors": undefined,
-         "extensions": undefined,
-         "http": Object {
-           "headers": Headers {
-             Symbol(map): Object {},
-           },
-         },
-       }
-    `);
+    expect(res.errors).toBeUndefined();
+    expect(res.data).toMatchObject({
+      updatePost: {
+        errors: [
+          {
+            field: "id",
+            message: "That post doesn't exist",
+          },
+        ],
+        post: null,
+      },
+    });
   });
 
   test("deleting a post", async () => {
@@ -278,25 +230,15 @@ describe("Posts", () => {
       query: deletePostMutation,
     });
 
-    expect(res).toMatchInlineSnapshot(`
-       Object {
-         "data": Object {
-           "deletePost": Object {
-             "errors": null,
-             "post": Object {
-               "id": "4",
-             },
-           },
-         },
-         "errors": undefined,
-         "extensions": undefined,
-         "http": Object {
-           "headers": Headers {
-             Symbol(map): Object {},
-           },
-         },
-       }
-    `);
+    expect(res.errors).toBeUndefined();
+    expect(res.data).toMatchObject({
+      deletePost: {
+        errors: null,
+        post: {
+          id: "4",
+        },
+      },
+    });
 
     const dbPost = await prisma.post.findUnique({
       where: {
@@ -304,7 +246,7 @@ describe("Posts", () => {
       },
     });
 
-    expect(dbPost).toBeNull(); // Prisma returns null if not found
+    expect(dbPost).toBeNull();
   });
 
   test("deleting a post that doesn't exist", async () => {
@@ -331,5 +273,16 @@ describe("Posts", () => {
     });
 
     expect(res.data.errors).toBeUndefined();
+    expect(res.data).toMatchObject({
+      deletePost: {
+        errors: [
+          {
+            field: "id",
+            message: "That post doesn't exist",
+          },
+        ],
+        post: null,
+      },
+    });
   });
 });

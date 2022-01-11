@@ -32,26 +32,16 @@ describe("Users", () => {
       query: register,
     });
 
-    expect(res).toMatchInlineSnapshot(`
-       Object {
-         "data": Object {
-           "register": Object {
-             "errors": null,
-             "user": Object {
-               "id": "1",
-               "username": "testuser",
-             },
-           },
-         },
-         "errors": undefined,
-         "extensions": undefined,
-         "http": Object {
-           "headers": Headers {
-             Symbol(map): Object {},
-           },
-         },
-       }
-    `);
+    expect(res.errors).toBeUndefined();
+    expect(res.data).toMatchObject({
+      register: {
+        errors: null,
+        user: {
+          id: "1",
+          username: "testuser",
+        },
+      },
+    });
 
     const dbPost = await prisma.user.findUnique({
       where: {
@@ -87,28 +77,18 @@ describe("Users", () => {
       query: register,
     });
 
-    expect(res).toMatchInlineSnapshot(`
-       Object {
-         "data": Object {
-           "register": Object {
-             "errors": Array [
-               Object {
-                 "field": "username",
-                 "message": "Username already taken",
-               },
-             ],
-             "user": null,
-           },
-         },
-         "errors": undefined,
-         "extensions": undefined,
-         "http": Object {
-           "headers": Headers {
-             Symbol(map): Object {},
-           },
-         },
-       }
-    `);
+    expect(res.errors).toBeUndefined();
+    expect(res.data).toMatchObject({
+      register: {
+        errors: [
+          {
+            field: "username",
+            message: "Username already taken",
+          },
+        ],
+        user: null,
+      },
+    });
   });
 
   test("finding a user by id", async () => {
@@ -129,22 +109,12 @@ describe("Users", () => {
       query: userQuery,
     });
 
-    expect(res).toMatchInlineSnapshot(`
-      Object {
-        "data": Object {
-          "user": Object {
-            "id": "1",
-            "username": "testuser",
-          },
-        },
-        "errors": undefined,
-        "extensions": undefined,
-        "http": Object {
-          "headers": Headers {
-            Symbol(map): Object {},
-          },
-        },
-      }
-    `);
+    expect(res.errors).toBeUndefined();
+    expect(res.data).toMatchObject({
+      user: {
+        id: "1",
+        username: "testuser",
+      },
+    });
   });
 });
