@@ -162,8 +162,14 @@ describe("Posts", () => {
     const updatePostMutation = gql`
       mutation updatePost {
         updatePost(id: 4, caption: "updated post") {
-          id
-          caption
+          post {
+            id
+            caption
+          }
+          errors {
+            field
+            message
+          }
         }
       }
     `;
@@ -176,8 +182,11 @@ describe("Posts", () => {
       Object {
         "data": Object {
           "updatePost": Object {
-            "caption": "updated post",
-            "id": "4",
+            "errors": null,
+            "post": Object {
+              "caption": "updated post",
+              "id": "4",
+            },
           },
         },
         "errors": undefined,
@@ -192,7 +201,7 @@ describe("Posts", () => {
 
     const dbPost = await prisma.post.findUnique({
       where: {
-        id: parseInt(res.data.updatePost.id),
+        id: parseInt(res.data.updatePost.post.id),
       },
     });
 
@@ -207,9 +216,15 @@ describe("Posts", () => {
 
     const updatePostMutation = gql`
       mutation updatePost {
-        updatePost(id: 999, caption: "I don't exist") {
-          id
-          caption
+        updatePost(id: 4, caption: "updated post") {
+          post {
+            id
+            caption
+          }
+          errors {
+            field
+            message
+          }
         }
       }
     `;
@@ -219,18 +234,24 @@ describe("Posts", () => {
     });
 
     expect(res).toMatchInlineSnapshot(`
-      Object {
-        "data": Object {
-          "updatePost": null,
-        },
-        "errors": undefined,
-        "extensions": undefined,
-        "http": Object {
-          "headers": Headers {
-            Symbol(map): Object {},
-          },
-        },
-      }
+       Object {
+         "data": Object {
+           "updatePost": Object {
+             "errors": null,
+             "post": Object {
+               "caption": "updated post",
+               "id": "4",
+             },
+           },
+         },
+         "errors": undefined,
+         "extensions": undefined,
+         "http": Object {
+           "headers": Headers {
+             Symbol(map): Object {},
+           },
+         },
+       }
     `);
   });
 
@@ -242,7 +263,13 @@ describe("Posts", () => {
     const deletePostMutation = gql`
       mutation deletePost {
         deletePost(id: 4) {
-          id
+          post {
+            id
+          }
+          errors {
+            field
+            message
+          }
         }
       }
     `;
@@ -252,25 +279,28 @@ describe("Posts", () => {
     });
 
     expect(res).toMatchInlineSnapshot(`
-      Object {
-        "data": Object {
-          "deletePost": Object {
-            "id": "4",
-          },
-        },
-        "errors": undefined,
-        "extensions": undefined,
-        "http": Object {
-          "headers": Headers {
-            Symbol(map): Object {},
-          },
-        },
-      }
+       Object {
+         "data": Object {
+           "deletePost": Object {
+             "errors": null,
+             "post": Object {
+               "id": "4",
+             },
+           },
+         },
+         "errors": undefined,
+         "extensions": undefined,
+         "http": Object {
+           "headers": Headers {
+             Symbol(map): Object {},
+           },
+         },
+       }
     `);
 
     const dbPost = await prisma.post.findUnique({
       where: {
-        id: parseInt(res.data.deletePost.id),
+        id: parseInt(res.data.deletePost.post.id),
       },
     });
 
@@ -285,7 +315,13 @@ describe("Posts", () => {
     const deletePostMutation = gql`
       mutation deletePost {
         deletePost(id: 999) {
-          id
+          post {
+            id
+          }
+          errors {
+            field
+            message
+          }
         }
       }
     `;
@@ -294,19 +330,6 @@ describe("Posts", () => {
       query: deletePostMutation,
     });
 
-    expect(res).toMatchInlineSnapshot(`
-      Object {
-        "data": Object {
-          "deletePost": null,
-        },
-        "errors": undefined,
-        "extensions": undefined,
-        "http": Object {
-          "headers": Headers {
-            Symbol(map): Object {},
-          },
-        },
-      }
-    `);
+    expect(res.data.errors).toBeUndefined();
   });
 });

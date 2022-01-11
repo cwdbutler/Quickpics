@@ -1,6 +1,7 @@
 import { Arg, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
 import { Post } from "../types/Post";
 import { Context } from "../../context";
+import { PostResponse } from "../types/PostResponse";
 
 @Resolver()
 export class PostResolver {
@@ -33,15 +34,14 @@ export class PostResolver {
     });
   }
 
-  @Mutation(() => Post, { nullable: true })
+  @Mutation(() => PostResponse)
   async updatePost(
     @Arg("id", () => Int) id: number,
     @Arg("caption") caption: string,
     @Ctx() { prisma }: Context
-  ): Promise<Post> | null {
-    let post: Post | null;
+  ): Promise<PostResponse> {
     try {
-      post = await prisma.post.update({
+      const post = await prisma.post.update({
         where: {
           id: id,
         },
@@ -49,29 +49,50 @@ export class PostResolver {
           caption: caption,
         },
       });
-    } catch (err) {
-      // if post isn't found
-      post = null;
+      return {
+        post,
+      };
+    } catch (error) {
+      if (error.code === "P2025") {
+        return {
+          errors: [
+            {
+              field: "id",
+              message: "That post doesn't exist",
+            },
+          ],
+        };
+      }
+      throw error;
     }
-    return post;
   }
 
-  @Mutation(() => Post, { nullable: true })
+  @Mutation(() => PostResponse)
   async deletePost(
     @Arg("id", () => Int) id: number,
     @Ctx() { prisma }: Context
-  ): Promise<Post> | null {
-    let post: Post | null;
+  ): Promise<PostResponse> | null {
     try {
-      post = await prisma.post.delete({
+      const post = await prisma.post.delete({
         where: {
           id: id,
         },
       });
-    } catch (err) {
-      // if post isn't found
-      post = null;
+      return {
+        post,
+      };
+    } catch (error) {
+      if (error.code === "P2025") {
+        return {
+          errors: [
+            {
+              field: "id",
+              message: "That post doesn't exist",
+            },
+          ],
+        };
+      }
+      throw error;
     }
-    return post;
   }
 }
