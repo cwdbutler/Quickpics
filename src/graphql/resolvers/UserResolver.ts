@@ -4,7 +4,7 @@ import { Context } from "../../context";
 import bcrypt from "bcrypt";
 import { UserResponse } from "../types/UserResponse";
 import { formatError } from "./formatError";
-import { BAD_CREDENTIALS, NOT_FOUND } from "../constants";
+import { BAD_CREDENTIALS, NOT_FOUND, NOT_UNIQUE } from "../constants";
 
 @Resolver()
 export class UserResolver {
@@ -27,6 +27,25 @@ export class UserResolver {
     @Ctx() { prisma }: Context
   ): Promise<UserResponse> {
     try {
+      const existingUser = await prisma.user.count({
+        where: {
+          username: {
+            contains: username,
+            mode: "insensitive",
+          },
+        },
+      });
+      if (existingUser > 0) {
+        return {
+          errors: [
+            {
+              field: "username",
+              message: NOT_UNIQUE("username"),
+            },
+          ],
+        };
+      }
+
       const hashed = await bcrypt.hash(password, 10);
       const user = await prisma.user.create({
         data: {
@@ -37,25 +56,6 @@ export class UserResolver {
       return {
         user,
       };
-      // MAKE THIS CASE INSENSITIVE:
-      // const user = await prisma.user.count({
-      //   where: {
-      //     username: {
-      //       contains: username,
-      //       mode: "insensitive",
-      //     },
-      //   },
-      // });
-      // if (user > 0) {
-      //   return {
-      //     errors: [
-      //       {
-      //         field: "username",
-      //         message: "not unique",
-      //       },
-      //     ],
-      //   };
-      // }
     } catch (error) {
       return {
         errors: [

@@ -4,12 +4,48 @@ import { context } from "../src/context";
 const { prisma } = context;
 import { NOT_UNIQUE } from "../src/graphql/constants";
 
+beforeAll(async () => {
+  await prisma.user.create({
+    data: {
+      username: "firstuser",
+      passwordHash: "implicitlytested",
+    },
+  });
+});
+
 afterAll(async () => {
   await prisma.$disconnect();
 });
 
 describe("Users", () => {
-  test("creating a user", async () => {
+  test("finding a user by id", async () => {
+    const { server } = await startTestServer({
+      context: () => ({ prisma }),
+    });
+
+    const userQuery = gql`
+      query {
+        user(id: 1) {
+          id
+          username
+        }
+      }
+    `;
+
+    const res = await server.executeOperation({
+      query: userQuery,
+    });
+
+    expect(res.errors).toBeUndefined();
+    expect(res.data).toMatchObject({
+      user: {
+        id: "1",
+        username: "firstuser",
+      },
+    });
+  });
+
+  test("creating a user (registering)", async () => {
     const { server } = await startTestServer({
       context: () => ({ prisma }),
     });
@@ -38,7 +74,7 @@ describe("Users", () => {
       register: {
         errors: null,
         user: {
-          id: "1",
+          id: "2",
           username: "testuser",
         },
       },
@@ -54,14 +90,14 @@ describe("Users", () => {
     expect(dbPost.username).toEqual("testuser");
   });
 
-  test("creating a user with an existing username", async () => {
+  test("creating a user with an existing username (case insensitive)", async () => {
     const { server } = await startTestServer({
       context: () => ({ prisma }),
     });
 
     const register = gql`
       mutation register {
-        register(username: "testuser", password: "abc123") {
+        register(username: "tEsTuSeR", password: "abc123") {
           user {
             id
             username
@@ -88,33 +124,6 @@ describe("Users", () => {
           },
         ],
         user: null,
-      },
-    });
-  });
-
-  test("finding a user by id", async () => {
-    const { server } = await startTestServer({
-      context: () => ({ prisma }),
-    });
-
-    const userQuery = gql`
-      query {
-        user(id: 1) {
-          id
-          username
-        }
-      }
-    `;
-
-    const res = await server.executeOperation({
-      query: userQuery,
-    });
-
-    expect(res.errors).toBeUndefined();
-    expect(res.data).toMatchObject({
-      user: {
-        id: "1",
-        username: "testuser",
       },
     });
   });
