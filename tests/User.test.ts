@@ -13,38 +13,49 @@ describe("Users", () => {
       context: () => ({ prisma }),
     });
 
-    const createUser = gql`
-      mutation createUser {
-        createUser(username: "testuser", password: "abc123") {
-          id
+    const register = gql`
+      mutation register {
+        register(username: "testuser", password: "abc123") {
+          user {
+            id
+            username
+          }
+          errors {
+            field
+            message
+          }
         }
       }
     `;
 
     const res = await server.executeOperation({
-      query: createUser,
+      query: register,
     });
 
     expect(res).toMatchInlineSnapshot(`
-      Object {
-        "data": Object {
-          "createUser": Object {
-            "id": "1",
-          },
-        },
-        "errors": undefined,
-        "extensions": undefined,
-        "http": Object {
-          "headers": Headers {
-            Symbol(map): Object {},
-          },
-        },
-      }
+       Object {
+         "data": Object {
+           "register": Object {
+             "errors": null,
+             "user": Object {
+               "id": "1",
+               "username": "testuser",
+             },
+           },
+         },
+         "errors": undefined,
+         "extensions": undefined,
+         "http": Object {
+           "headers": Headers {
+             Symbol(map): Object {},
+           },
+         },
+       }
     `);
 
     const dbPost = await prisma.user.findUnique({
       where: {
-        id: parseInt(res.data.createUser.id),
+        id: parseInt(res.data.register.user.id),
       },
     });
 
@@ -57,31 +68,46 @@ describe("Users", () => {
       context: () => ({ prisma }),
     });
 
-    const createUser = gql`
-      mutation createUser {
-        createUser(username: "testuser", password: "abc123") {
-          id
+    const register = gql`
+      mutation register {
+        register(username: "testuser", password: "abc123") {
+          user {
+            id
+            username
+          }
+          errors {
+            field
+            message
+          }
         }
       }
     `;
 
     const res = await server.executeOperation({
-      query: createUser,
+      query: register,
     });
 
     expect(res).toMatchInlineSnapshot(`
-      Object {
-        "data": Object {
-          "createUser": null,
-        },
-        "errors": undefined,
-        "extensions": undefined,
-        "http": Object {
-          "headers": Headers {
-            Symbol(map): Object {},
-          },
-        },
-      }
+       Object {
+         "data": Object {
+           "register": Object {
+             "errors": Array [
+               Object {
+                 "field": "username",
+                 "message": "Username already taken",
+               },
+             ],
+             "user": null,
+           },
+         },
+         "errors": undefined,
+         "extensions": undefined,
+         "http": Object {
+           "headers": Headers {
+             Symbol(map): Object {},
+           },
+         },
+       }
     `);
   });
 

@@ -2,6 +2,7 @@ import { Arg, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
 import { User } from "../types/User";
 import { Context } from "../../context";
 import bcrypt from "bcrypt";
+import { UserResponse } from "../types/UserResponse";
 
 @Resolver()
 export class UserResolver {
@@ -17,24 +18,35 @@ export class UserResolver {
     });
   }
 
-  @Mutation(() => User, { nullable: true })
-  async createUser(
+  @Mutation(() => UserResponse)
+  async register(
     @Arg("username") username: string,
     @Arg("password") password: string,
     @Ctx() { prisma }: Context
-  ): Promise<User> {
-    let hashed = await bcrypt.hash(password, 10);
-    let user: User | null;
+  ): Promise<UserResponse> {
     try {
-      user = await prisma.user.create({
+      const hashed = await bcrypt.hash(password, 10);
+      const user = await prisma.user.create({
         data: {
           username: username,
           passwordHash: hashed,
         },
       });
+      return {
+        user,
+      };
     } catch (error) {
-      user = null;
+      if (error.code === "P2002") {
+        return {
+          errors: [
+            {
+              field: "username",
+              message: "Username already taken",
+            },
+          ],
+        };
+      }
+      throw error;
     }
-    return user;
   }
 }

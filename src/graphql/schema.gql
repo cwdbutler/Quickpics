@@ -22,6 +22,16 @@ type User {
   username: String!
 }
 
+type FieldError {
+  field: String!
+  message: String!
+}
+
+type UserResponse {
+  errors: [FieldError!]
+  user: User
+}
+
 type Query {
   post(id: Int!): Post
   posts: [Post!]!
@@ -32,5 +42,5 @@ type Mutation {
   createPost(caption: String!): Post!
   updatePost(caption: String!, id: Int!): Post
   deletePost(id: Int!): Post
-  createUser(password: String!, username: String!): User
+  register(password: String!, username: String!): UserResponse!
 }
