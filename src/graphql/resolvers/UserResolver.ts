@@ -3,6 +3,7 @@ import { User } from "../types/User";
 import { Context } from "../../context";
 import bcrypt from "bcrypt";
 import { UserResponse } from "../types/UserResponse";
+import { formatError } from "./formatError";
 
 @Resolver()
 export class UserResolver {
@@ -36,17 +37,14 @@ export class UserResolver {
         user,
       };
     } catch (error) {
-      if (error.code === "P2002") {
-        return {
-          errors: [
-            {
-              field: "username",
-              message: "Username already taken",
-            },
-          ],
-        };
-      }
-      throw error;
+      return {
+        errors: [
+          {
+            field: "username",
+            message: formatError(error),
+          },
+        ],
+      };
     }
   }
 }

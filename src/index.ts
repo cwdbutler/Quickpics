@@ -31,6 +31,6 @@ const startServer = async () => {
   });
 };
 
-startServer().catch((err) => {
-  throw err;
+startServer().catch((error) => {
+  throw error;
 });

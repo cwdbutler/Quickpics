@@ -2,6 +2,7 @@ import { Arg, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
 import { Post } from "../types/Post";
 import { Context } from "../../context";
 import { PostResponse } from "../types/PostResponse";
+import { formatError } from "./formatError";
 
 @Resolver()
 export class PostResolver {
@@ -53,17 +54,14 @@ export class PostResolver {
         post,
       };
     } catch (error) {
-      if (error.code === "P2025") {
-        return {
-          errors: [
-            {
-              field: "id",
-              message: "That post doesn't exist",
-            },
-          ],
-        };
-      }
-      throw error;
+      return {
+        errors: [
+          {
+            field: "id",
+            message: formatError(error, "post"),
+          },
+        ],
+      };
     }
   }
 
@@ -82,17 +80,14 @@ export class PostResolver {
         post,
       };
     } catch (error) {
-      if (error.code === "P2025") {
-        return {
-          errors: [
-            {
-              field: "id",
-              message: "That post doesn't exist",
-            },
-          ],
-        };
-      }
-      throw error;
+      return {
+        errors: [
+          {
+            field: "id",
+            message: formatError(error, "post"),
+          },
+        ],
+      };
     }
   }
 }
