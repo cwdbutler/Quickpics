@@ -16,6 +16,20 @@ import {
 @Resolver()
 export class UserResolver {
   @Query(() => User, { nullable: true })
+  async currentUser(@Ctx() { req, prisma }) {
+    if (!req.session.userId) {
+      return null;
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: req.session.userId,
+      },
+    });
+    return user;
+  }
+
+  @Query(() => User, { nullable: true })
   user(
     @Arg("id", () => Int) id: number,
     @Ctx() { prisma }: Context
@@ -112,7 +126,7 @@ export class UserResolver {
   async login(
     @Arg("username") username: string,
     @Arg("password") password: string,
-    @Ctx() { prisma, req, res }
+    @Ctx() { prisma, req }
   ): Promise<UserResponse> {
     const user = await prisma.user.findUnique({
       where: {
