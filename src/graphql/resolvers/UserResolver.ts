@@ -45,7 +45,7 @@ export class UserResolver {
   async register(
     @Arg("username") username: string,
     @Arg("password") password: string,
-    @Ctx() { prisma }: Context
+    @Ctx() { prisma, req }
   ): Promise<UserResponse> {
     if (username.length < MIN_FIELD_LENGTH) {
       return {
@@ -107,6 +107,9 @@ export class UserResolver {
           passwordHash: hashed,
         },
       });
+
+      req.session.userId = user.id;
+
       return {
         user,
       };
