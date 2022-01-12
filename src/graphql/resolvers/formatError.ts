@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { NOT_FOUND, NOT_UNIQUE } from "../constants";
+import { NOT_FOUND, NOT_UNIQUE, TOO_LONG } from "../constants";
 
 export function formatError(error: Error, entity?: string): string {
   if (error instanceof Prisma.PrismaClientKnownRequestError) {

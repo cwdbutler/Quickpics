@@ -6,8 +6,10 @@ import { UserResponse } from "../types/UserResponse";
 import { formatError } from "./formatError";
 import {
   BAD_CREDENTIALS,
+  MAX_USERNAME_LENGTH,
   MIN_FIELD_LENGTH,
   NOT_UNIQUE,
+  TOO_LONG,
   TOO_SHORT,
 } from "../constants";
 
@@ -37,6 +39,17 @@ export class UserResolver {
           {
             field: "username",
             message: TOO_SHORT("username"),
+          },
+        ],
+      };
+    }
+
+    if (username.length > MAX_USERNAME_LENGTH) {
+      return {
+        errors: [
+          {
+            field: "username",
+            message: TOO_LONG("username"),
           },
         ],
       };
