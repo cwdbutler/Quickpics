@@ -3,7 +3,7 @@ import { User } from "../types/User";
 import { Context } from "../../context";
 import bcrypt from "bcrypt";
 import { UserResponse } from "../types/UserResponse";
-import { formatError } from "./formatError";
+import { formatError } from "../utils/formatError";
 import {
   BAD_CREDENTIALS,
   MAX_USERNAME_LENGTH,
@@ -11,7 +11,7 @@ import {
   NOT_UNIQUE,
   TOO_LONG,
   TOO_SHORT,
-} from "../constants";
+} from "../utils/constants";
 
 @Resolver()
 export class UserResolver {
@@ -112,7 +112,7 @@ export class UserResolver {
   async login(
     @Arg("username") username: string,
     @Arg("password") password: string,
-    @Ctx() { prisma }: Context
+    @Ctx() { prisma, req, res }
   ): Promise<UserResponse> {
     const user = await prisma.user.findUnique({
       where: {
@@ -143,6 +143,8 @@ export class UserResolver {
         ],
       };
     }
+
+    req.session.userId = user.id;
 
     return {
       user,

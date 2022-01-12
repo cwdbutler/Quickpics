@@ -1,6 +1,14 @@
+export const IS_PROD = process.env.NODE_ENV === "production";
+
+// cookies
+export const COOKIE_NAME = "quickphotos-session";
+export const COOKIE_SECRET = process.env.COOKIE_SECRET;
+
+// field validations
 export const MIN_FIELD_LENGTH = 3;
 export const MAX_USERNAME_LENGTH = 30; // same as db
 
+// error messages
 export const NOT_FOUND = (entity: string) =>
   `That ${entity} could not be found`;
 export const NOT_UNIQUE = (field: string) =>

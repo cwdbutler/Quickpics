@@ -2,7 +2,7 @@ import { startTestServer } from "./utils/testServer";
 import gql from "graphql-tag";
 import { context } from "../src/context";
 const { prisma } = context;
-import { NOT_UNIQUE, TOO_SHORT } from "../src/graphql/constants";
+import { NOT_UNIQUE, TOO_SHORT } from "../src/graphql/utils/constants";
 
 beforeAll(async () => {
   await prisma.user.create({
