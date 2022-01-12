@@ -1,7 +1,3 @@
-A photo sharing app, currently building the backend in Express/Apollo/GraphQL.
-
-Plan to link it to a React frontend, also in TypeScript
-
 The technologies I'm using are:
 
 - Prisma (ORM)
