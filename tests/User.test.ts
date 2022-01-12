@@ -2,7 +2,7 @@ import { startTestServer } from "./utils/testServer";
 import gql from "graphql-tag";
 import { context } from "../src/context";
 const { prisma } = context;
-import { NOT_UNIQUE } from "../src/graphql/constants";
+import { NOT_UNIQUE, TOO_SHORT } from "../src/graphql/constants";
 
 beforeAll(async () => {
   await prisma.user.create({
@@ -128,7 +128,83 @@ describe("Users", () => {
     });
   });
 
-  test("logging in with bad username", async () => {
+  test("creating a user with a short username", async () => {
+    const { server } = await startTestServer({
+      context: () => ({ prisma }),
+    });
+
+    const register = gql`
+      mutation register {
+        register(username: "a", password: "abc123") {
+          user {
+            id
+            username
+          }
+          errors {
+            field
+            message
+          }
+        }
+      }
+    `;
+
+    const res = await server.executeOperation({
+      query: register,
+    });
+
+    expect(res.errors).toBeUndefined();
+    expect(res.data).toMatchObject({
+      register: {
+        errors: [
+          {
+            field: "username",
+            message: TOO_SHORT("username"),
+          },
+        ],
+        user: null,
+      },
+    });
+  });
+
+  test("creating a user with a short password", async () => {
+    const { server } = await startTestServer({
+      context: () => ({ prisma }),
+    });
+
+    const register = gql`
+      mutation register {
+        register(username: "user123", password: "a") {
+          user {
+            id
+            username
+          }
+          errors {
+            field
+            message
+          }
+        }
+      }
+    `;
+
+    const res = await server.executeOperation({
+      query: register,
+    });
+
+    expect(res.errors).toBeUndefined();
+    expect(res.data).toMatchObject({
+      register: {
+        errors: [
+          {
+            field: "password",
+            message: TOO_SHORT("password"),
+          },
+        ],
+        user: null,
+      },
+    });
+  });
+
+  test("logging in with wrong username", async () => {
     const { server } = await startTestServer({
       context: () => ({ prisma }),
     });
@@ -165,7 +241,7 @@ describe("Users", () => {
     });
   });
 
-  test("logging in with bad password", async () => {
+  test("logging in with wrong password", async () => {
     const { server } = await startTestServer({
       context: () => ({ prisma }),
     });

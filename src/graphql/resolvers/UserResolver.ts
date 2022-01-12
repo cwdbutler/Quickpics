@@ -4,7 +4,12 @@ import { Context } from "../../context";
 import bcrypt from "bcrypt";
 import { UserResponse } from "../types/UserResponse";
 import { formatError } from "./formatError";
-import { BAD_CREDENTIALS, NOT_FOUND, NOT_UNIQUE } from "../constants";
+import {
+  BAD_CREDENTIALS,
+  MIN_FIELD_LENGTH,
+  NOT_UNIQUE,
+  TOO_SHORT,
+} from "../constants";
 
 @Resolver()
 export class UserResolver {
@@ -26,6 +31,28 @@ export class UserResolver {
     @Arg("password") password: string,
     @Ctx() { prisma }: Context
   ): Promise<UserResponse> {
+    if (username.length < MIN_FIELD_LENGTH) {
+      return {
+        errors: [
+          {
+            field: "username",
+            message: TOO_SHORT("username"),
+          },
+        ],
+      };
+    }
+
+    if (password.length < MIN_FIELD_LENGTH) {
+      return {
+        errors: [
+          {
+            field: "password",
+            message: TOO_SHORT("password"),
+          },
+        ],
+      };
+    }
+
     try {
       const existingUser = await prisma.user.count({
         where: {

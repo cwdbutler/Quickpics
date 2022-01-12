@@ -97,8 +97,10 @@ describe("Posts", () => {
     const createPostMutation = gql`
       mutation createPost {
         createPost(caption: "created post") {
-          id
-          caption
+          post {
+            id
+            caption
+          }
         }
       }
     `;
@@ -110,14 +112,16 @@ describe("Posts", () => {
     expect(res.errors).toBeUndefined();
     expect(res.data).toMatchObject({
       createPost: {
-        caption: "created post",
-        id: "4",
+        post: {
+          caption: "created post",
+          id: "4",
+        },
       },
     });
 
     const dbPost = await prisma.post.findUnique({
       where: {
-        id: parseInt(res.data.createPost.id),
+        id: parseInt(res.data.createPost.post.id),
       },
     });
 

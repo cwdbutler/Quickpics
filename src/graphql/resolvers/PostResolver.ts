@@ -23,16 +23,20 @@ export class PostResolver {
     return prisma.post.findMany();
   }
 
-  @Mutation(() => Post)
-  createPost(
+  @Mutation(() => PostResponse)
+  async createPost(
     @Arg("caption") caption: string,
     @Ctx() { prisma }: Context
-  ): Promise<Post> {
-    return prisma.post.create({
+  ): Promise<PostResponse> {
+    const post = await prisma.post.create({
       data: {
         caption: caption,
       },
     });
+
+    return {
+      post,
+    };
   }
 
   @Mutation(() => PostResponse)
