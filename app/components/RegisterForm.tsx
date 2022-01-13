@@ -45,11 +45,12 @@ export default function RegisterForm() {
                 Password
               </label>
             </div>
+            <ErrorMessage name="username" />
 
             <div className="mt-8">
               <button
                 type="submit"
-                className="bg-indigo-700 text-white font-bold py-2 px-4 w-full rounded hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 "
+                className="bg-indigo-700 text-white font-bold py-2 px-4 w-full rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 "
               >
                 Sign up
               </button>
@@ -58,7 +59,7 @@ export default function RegisterForm() {
             <footer className="flex mt-4 justify-center">
               <p className="text-sm font-medium">Already have an account?</p>
               <Link href="/login">
-                <a className="ml-2 text-sm font-semibold text-indigo-600 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <a className="ml-2 rounded-sm bg-white text-sm font-semibold text-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                   {" "}
                   Log in
                 </a>
