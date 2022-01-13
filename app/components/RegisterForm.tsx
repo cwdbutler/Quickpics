@@ -1,7 +1,25 @@
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import Link from "next/link";
+import { useMutation } from "urql";
 
 export default function RegisterForm() {
+  const registerMutation = `
+  mutation register($username: String!, $password: String!) {
+    register(username: $username, password: $password) {
+      user {
+        id
+        username
+      }
+      errors {
+        field
+        message
+      }
+    }
+  }
+`;
+
+  const [, register] = useMutation(registerMutation);
+
   return (
     <div className="w-80 rounded-3xl mx-auto overflow-hidden shadow-lg border-2 border-gray-50">
       <div className="px-10 pt-28 pb-8 bg-white rounded-tr-4xl">
@@ -14,7 +32,7 @@ export default function RegisterForm() {
             password: "",
           }}
           onSubmit={(values) => {
-            alert(JSON.stringify(values, null, 2));
+            register(values);
           }}
         >
           <Form>
