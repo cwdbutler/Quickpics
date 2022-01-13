@@ -1,24 +1,10 @@
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import Link from "next/link";
-import { useMutation } from "urql";
+import { useRegisterMutation } from "../generated/graphql";
+import { mapToFormErrors } from "../utis/mapToFormErrors";
 
 export default function RegisterForm() {
-  const registerMutation = `
-  mutation register($username: String!, $password: String!) {
-    register(username: $username, password: $password) {
-      user {
-        id
-        username
-      }
-      errors {
-        field
-        message
-      }
-    }
-  }
-`;
-
-  const [, register] = useMutation(registerMutation);
+  const [, register] = useRegisterMutation();
 
   return (
     <div className="w-80 rounded-3xl mx-auto overflow-hidden shadow-lg border-2 border-gray-50">
@@ -31,8 +17,11 @@ export default function RegisterForm() {
             username: "",
             password: "",
           }}
-          onSubmit={(values) => {
-            register(values);
+          onSubmit={async (values, { setErrors }) => {
+            const response = await register(values);
+            if (response.data?.register.errors) {
+              setErrors(mapToFormErrors(response.data.register.errors));
+            }
           }}
         >
           <Form>
@@ -47,6 +36,7 @@ export default function RegisterForm() {
                 Username
               </label>
             </div>
+            <ErrorMessage name="username" />
 
             <div className="relative mt-6">
               <Field
@@ -63,7 +53,7 @@ export default function RegisterForm() {
                 Password
               </label>
             </div>
-            <ErrorMessage name="username" />
+            <ErrorMessage name="password" />
 
             <div className="mt-8">
               <button
