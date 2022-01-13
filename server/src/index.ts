@@ -9,11 +9,19 @@ const redis = require("redis");
 const session = require("express-session");
 // won't work with es6 imports
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
+import cors from "cors";
 
 const port = 4000;
 
 const startServer = async () => {
   const app = express();
+
+  app.use(
+    cors({
+      origin: "http://localhost:3000",
+      credentials: true,
+    })
+  );
 
   const RedisStore = require("connect-redis")(session);
   const redisClient = redis.createClient();
@@ -48,7 +56,7 @@ const startServer = async () => {
 
   await apolloServer.start();
 
-  apolloServer.applyMiddleware({ app });
+  apolloServer.applyMiddleware({ app, cors: false });
 
   app.listen(port, () => {
     // eslint-disable-next-line
