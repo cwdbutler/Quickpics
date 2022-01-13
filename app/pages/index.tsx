@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
       <Head>
-        <title>QuickPhotos</title>
+        <title>QuickPics</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -13,7 +13,7 @@ export default function Home() {
         <h1 className="text-6xl font-bold">
           //Quick
           <a className="text-blue-600" href="https://nextjs.org">
-            Photos
+            Pics
           </a>
         </h1>
 
