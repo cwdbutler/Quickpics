@@ -15,7 +15,7 @@ class PrismaTestEnvironment extends NodeEnvironment {
     })}`;
 
     this.databaseUrl =
-      "postgres://postgres:postgres@localhost:5432/quickphotos-test";
+      "postgres://postgres:postgres@localhost:5432/quickpics-test";
     process.env.DATABASE_URL = this.databaseUrl;
     this.global.process.env.DATABASE_URL = this.databaseUrl;
     this.client = new PrismaClient();

@@ -30,4 +30,4 @@ Running tests:
 yarn test
 ```
 
-You must first create a database called quickphotos-test for this to work
+You must first create a database called quickpics-test for this to work
