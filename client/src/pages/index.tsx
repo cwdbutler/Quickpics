@@ -19,7 +19,7 @@ export default function Home() {
 
         <div className="flex flex-wrap items-center justify-around max-w-4xl mt-6 sm:w-full">
           <Link href="/login">
-            <div className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-indigo-600 focus:text-indigo-600">
+            <div className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-indigo-600 focus:text-indigo-600 hover:cursor-pointer">
               <h3 className="text-2xl font-bold">Log in</h3>
             </div>
           </Link>
