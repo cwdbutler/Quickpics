@@ -7,9 +7,9 @@ export default function RegisterForm() {
   const [, register] = useRegisterMutation();
 
   return (
-    <div className="w-80 rounded-3xl mx-auto overflow-hidden shadow-lg border-2 border-gray-50">
-      <div className="px-10 pt-28 pb-8 bg-white rounded-tr-4xl">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-8">
+    <div className="w-80 rounded-md mx-auto overflow-hidden shadow-lg border-2 border-gray-50">
+      <div className="px-6 pt-12 pb-12 bg-white rounded-tr-4xl">
+        <h1 className="text-2xl font-semibold text-gray-900 mb-16 pb-4 border-b-2 border-gray-300">
           Create your account
         </h1>
         <Formik
@@ -25,20 +25,25 @@ export default function RegisterForm() {
           }}
         >
           <Form>
-            <div className="relative mt-6">
+            <div className="relative mt-10">
               <Field
                 className="peer h-10 w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-indigo-600"
                 id="username"
                 name="username"
                 placeholder=" "
               />
-              <label className="absolute left-0 -top-3.5 text-gray-600 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-gray-400 peer-focus:text-sm">
+              <label className="absolute left-0 -top-3.5 text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-sm">
                 Username
               </label>
-            </div>
-            <ErrorMessage name="username" />
 
-            <div className="relative mt-6">
+              <ErrorMessage
+                component="div"
+                className="my-2 absolute text-xs text-red-600 font-semibold"
+                name="username"
+              />
+            </div>
+
+            <div className="relative mt-10">
               <Field
                 className="peer h-10 w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-indigo-600"
                 id="password"
@@ -48,17 +53,21 @@ export default function RegisterForm() {
               />
               <label
                 htmlFor="password"
-                className="absolute left-0 -top-3.5 text-gray-600 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-gray-400 peer-focus:text-sm"
+                className="absolute left-0 -top-3.5 text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-sm"
               >
                 Password
               </label>
             </div>
-            <ErrorMessage name="password" />
+            <ErrorMessage
+              component="div"
+              className="my-2 absolute text-xs text-red-600 font-semibold"
+              name="password"
+            />
 
-            <div className="mt-8">
+            <div className="mt-16">
               <button
                 type="submit"
-                className="bg-indigo-700 text-white font-bold py-2 px-4 w-full rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 "
+                className="bg-indigo-700 text-white font-bold py-2 px-4 w-full rounded focus:outline-none focus:bg-indigo-500"
               >
                 Sign up
               </button>

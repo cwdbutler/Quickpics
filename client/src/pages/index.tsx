@@ -10,12 +10,10 @@ export default function Home() {
       </Head>
 
       <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
-        <h1 className="text-6xl font-bold">
-          //Quick
-          <a className="text-indigo-600" href="https://nextjs.org">
-            Pics
-          </a>
-        </h1>
+        <header className="flex">
+          <h1 className="text-6xl font-bold">//Quick</h1>
+          <h1 className="text-indigo-600 text-6xl font-bold">Pics</h1>
+        </header>
 
         <p className="mt-3 text-2xl">A photo sharing app</p>
 
