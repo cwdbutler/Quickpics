@@ -16,7 +16,7 @@ import {
 @Resolver()
 export class UserResolver {
   @Query(() => User, { nullable: true })
-  async currentUser(@Ctx() { req, prisma }) {
+  async currentUser(@Ctx() { req, prisma }: Context) {
     if (!req.session.userId) {
       return null;
     }
@@ -166,5 +166,10 @@ export class UserResolver {
     return {
       user,
     };
+  }
+
+  @Mutation(() => Boolean)
+  logout(@Ctx() { req }: Context) {
+    req.session;
   }
 }

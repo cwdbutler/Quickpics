@@ -2,7 +2,7 @@ import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import "reflect-metadata";
 import { buildSchema } from "type-graphql";
-import { context } from "./context";
+import { Context, prisma } from "./context";
 import path from "path";
 import { COOKIE_NAME, COOKIE_SECRET, IS_PROD } from "./utils/constants";
 const redis = require("redis");
@@ -51,7 +51,7 @@ const startServer = async () => {
     }),
     plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
     // reverting to GraphQL Playground because couldn't get cookies to work in Apollo Studio
-    context: ({ req, res }) => ({ ...context, req, res }),
+    context: ({ req, res }): Context => ({ prisma, req, res }),
   });
 
   await apolloServer.start();

@@ -8,11 +8,13 @@ class PrismaTestEnvironment extends NodeEnvironment {
   constructor(config) {
     super(config);
 
+    // generate a schema with a random name
     this.schema = `test_${randomString.generate({
       length: 16,
       charset: "alphanumeric",
       capitalization: "lowercase",
     })}`;
+    // ensures each test suite has an empty database
 
     this.databaseUrl =
       "postgres://postgres:postgres@localhost:5432/quickpics-test";
@@ -35,7 +37,7 @@ class PrismaTestEnvironment extends NodeEnvironment {
   }
 
   async teardown() {
-    // Drop the schema after the tests have completed
+    // drop the schema after the tests have completed
     await this.client.$executeRawUnsafe(
       `drop schema if exists "${this.schema}" cascade`
     );

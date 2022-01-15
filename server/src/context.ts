@@ -1,13 +1,14 @@
 import { PrismaClient } from "@prisma/client";
+import { Request, Response } from "express";
 
-const prisma = new PrismaClient({
+export const prisma = new PrismaClient({
   log: ["query"],
 });
 
-export interface Context {
-  prisma: PrismaClient;
-}
+// typing what can be passed into the server as context
 
-export const context: Context = {
-  prisma: prisma,
-};
+export interface Context {
+  prisma?: PrismaClient;
+  req?: Request;
+  res?: Response;
+}

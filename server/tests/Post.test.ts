@@ -1,8 +1,7 @@
 import { startTestServer } from "./utils/testServer";
 import gql from "graphql-tag";
-import { context } from "../src/context";
-const { prisma } = context;
-import { NOT_FOUND } from "../src/graphql/utils/constants";
+import { prisma } from "../src/context";
+import { NOT_FOUND } from "../src/utils/constants";
 
 beforeAll(async () => {
   await prisma.post.createMany({
@@ -26,9 +25,7 @@ afterAll(async () => {
 
 describe("Posts", () => {
   test("finding a post by id", async () => {
-    const { server } = await startTestServer({
-      context: () => ({ prisma }),
-    });
+    const { server } = await startTestServer();
 
     const postQuery = gql`
       query {
@@ -53,9 +50,7 @@ describe("Posts", () => {
   });
 
   test("listing all posts", async () => {
-    const { server } = await startTestServer({
-      context: () => ({ prisma }),
-    });
+    const { server } = await startTestServer();
 
     const postsQuery = gql`
       query {
@@ -90,9 +85,7 @@ describe("Posts", () => {
   });
 
   test("creating a post", async () => {
-    const { server } = await startTestServer({
-      context: () => ({ prisma }),
-    });
+    const { server } = await startTestServer();
 
     const createPostMutation = gql`
       mutation createPost {
@@ -130,9 +123,7 @@ describe("Posts", () => {
   });
 
   test("updating a post", async () => {
-    const { server } = await startTestServer({
-      context: () => ({ prisma }),
-    });
+    const { server } = await startTestServer();
 
     const updatePostMutation = gql`
       mutation updatePost {
@@ -175,9 +166,7 @@ describe("Posts", () => {
   });
 
   test("updating a post that doesn't exist", async () => {
-    const { server } = await startTestServer({
-      context: () => ({ prisma }),
-    });
+    const { server } = await startTestServer();
 
     const updatePostMutation = gql`
       mutation updatePost {
@@ -213,9 +202,7 @@ describe("Posts", () => {
   });
 
   test("deleting a post", async () => {
-    const { server } = await startTestServer({
-      context: () => ({ prisma }),
-    });
+    const { server } = await startTestServer();
 
     const deletePostMutation = gql`
       mutation deletePost {
@@ -255,9 +242,7 @@ describe("Posts", () => {
   });
 
   test("deleting a post that doesn't exist", async () => {
-    const { server } = await startTestServer({
-      context: () => ({ prisma }),
-    });
+    const { server } = await startTestServer();
 
     const deletePostMutation = gql`
       mutation deletePost {

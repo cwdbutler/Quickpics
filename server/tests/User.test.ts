@@ -1,8 +1,7 @@
 import { startTestServer } from "./utils/testServer";
 import gql from "graphql-tag";
-import { context } from "../src/context";
-const { prisma } = context;
-import { NOT_UNIQUE, TOO_SHORT } from "../src/graphql/utils/constants";
+import { prisma } from "../src/context";
+import { NOT_UNIQUE, TOO_SHORT } from "../src/utils/constants";
 
 beforeAll(async () => {
   await prisma.user.create({
@@ -19,9 +18,7 @@ afterAll(async () => {
 
 describe("Users", () => {
   test("finding a user by id", async () => {
-    const { server } = await startTestServer({
-      context: () => ({ prisma }),
-    });
+    const { server } = await startTestServer();
 
     const userQuery = gql`
       query {
@@ -46,9 +43,7 @@ describe("Users", () => {
   });
 
   test("creating a user (registering)", async () => {
-    const { server } = await startTestServer({
-      context: () => ({ prisma }),
-    });
+    const { server } = await startTestServer();
 
     const register = gql`
       mutation register {
@@ -91,9 +86,7 @@ describe("Users", () => {
   });
 
   test("creating a user with an existing username (case insensitive)", async () => {
-    const { server } = await startTestServer({
-      context: () => ({ prisma }),
-    });
+    const { server } = await startTestServer();
 
     const register = gql`
       mutation register {
@@ -129,9 +122,7 @@ describe("Users", () => {
   });
 
   test("creating a user with a short username", async () => {
-    const { server } = await startTestServer({
-      context: () => ({ prisma }),
-    });
+    const { server } = await startTestServer();
 
     const register = gql`
       mutation register {
@@ -167,9 +158,7 @@ describe("Users", () => {
   });
 
   test("creating a user with a short password", async () => {
-    const { server } = await startTestServer({
-      context: () => ({ prisma }),
-    });
+    const { server } = await startTestServer();
 
     const register = gql`
       mutation register {
@@ -205,9 +194,7 @@ describe("Users", () => {
   });
 
   test("logging in with wrong username", async () => {
-    const { server } = await startTestServer({
-      context: () => ({ prisma }),
-    });
+    const { server } = await startTestServer();
 
     const login = gql`
       mutation login {
@@ -242,9 +229,7 @@ describe("Users", () => {
   });
 
   test("logging in with wrong password", async () => {
-    const { server } = await startTestServer({
-      context: () => ({ prisma }),
-    });
+    const { server } = await startTestServer();
 
     const login = gql`
       mutation login {
@@ -279,15 +264,14 @@ describe("Users", () => {
   });
 
   test("logging in with correct details", async () => {
-    const { server } = await startTestServer({
-      context: () => ({ prisma }),
-    });
+    const { server } = await startTestServer();
 
     const login = gql`
       mutation login {
         login(username: "testuser", password: "abc123") {
           user {
             username
+            id
           }
           errors {
             field
@@ -306,6 +290,7 @@ describe("Users", () => {
       login: {
         user: {
           username: "testuser",
+          id: "2",
         },
         errors: null,
       },
