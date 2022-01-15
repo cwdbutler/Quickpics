@@ -7,6 +7,8 @@
     "gen": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
+    "@graphql-codegen/typescript-urql-graphcache": "^2.2.3",
+    "@urql/exchange-graphcache": "^4.3.6",
     "formik": "^2.2.9",
     "graphql": "^16.2.0",
     "next": "latest",
