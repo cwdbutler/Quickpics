@@ -6,6 +6,7 @@ import { UserResponse } from "../types/UserResponse";
 import { formatError } from "../../utils/formatError";
 import {
   BAD_CREDENTIALS,
+  COOKIE_NAME,
   MAX_USERNAME_LENGTH,
   MIN_FIELD_LENGTH,
   NOT_UNIQUE,
@@ -169,7 +170,14 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean)
-  logout(@Ctx() { req }: Context) {
-    req.session;
+  logout(@Ctx() { req, res }: Context) {
+    req.session.destroy((err) => {
+      if (err) {
+        console.log(err);
+        return false;
+      }
+    });
+    res.clearCookie(COOKIE_NAME);
+    return true;
   }
 }

@@ -16,9 +16,13 @@ export const startTestServer = async (userId?: number | string) => {
       req: {
         session: {
           userId,
+          destroy: () => null,
         },
       },
-      res: {},
+      res: {
+        clearCookie: () => null,
+        // for mocking logout
+      },
     },
   });
 

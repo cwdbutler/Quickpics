@@ -275,4 +275,23 @@ describe("Users", () => {
       },
     });
   });
+
+  test("logging out", async () => {
+    const { server } = await startTestServer();
+
+    const res = await server.executeOperation({
+      query: gql`
+        mutation {
+          logout
+        }
+      `,
+    });
+
+    expect(res.errors).toBeUndefined();
+    /* checking for GraphQL errors. this is usually implicitly tested
+    however this resolver only responds with a boolean so i'm checking it */
+    expect(res.data).toMatchObject({
+      logout: true,
+    });
+  });
 });
