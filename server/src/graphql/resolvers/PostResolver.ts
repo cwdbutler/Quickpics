@@ -2,7 +2,7 @@ import { Arg, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
 import { Post } from "../types/Post";
 import { Context } from "../../context";
 import { PostResponse } from "../types/PostResponse";
-import { formatError } from "../utils/formatError";
+import { formatError } from "../../utils/formatError";
 
 @Resolver()
 export class PostResolver {

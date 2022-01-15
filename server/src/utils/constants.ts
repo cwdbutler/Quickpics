@@ -1,7 +1,7 @@
 export const IS_PROD = process.env.NODE_ENV === "production";
 
 // cookies
-export const COOKIE_NAME = "quickphotos-session";
+export const COOKIE_NAME = "quickpics-session";
 export const COOKIE_SECRET = process.env.COOKIE_SECRET;
 
 // field validations

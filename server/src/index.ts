@@ -4,7 +4,7 @@ import "reflect-metadata";
 import { buildSchema } from "type-graphql";
 import { context } from "./context";
 import path from "path";
-import { COOKIE_NAME, COOKIE_SECRET, IS_PROD } from "./graphql/utils/constants";
+import { COOKIE_NAME, COOKIE_SECRET, IS_PROD } from "./utils/constants";
 const redis = require("redis");
 const session = require("express-session");
 // won't work with es6 imports

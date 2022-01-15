@@ -3,7 +3,7 @@ import { User } from "../types/User";
 import { Context } from "../../context";
 import bcrypt from "bcrypt";
 import { UserResponse } from "../types/UserResponse";
-import { formatError } from "../utils/formatError";
+import { formatError } from "../../utils/formatError";
 import {
   BAD_CREDENTIALS,
   MAX_USERNAME_LENGTH,
@@ -11,7 +11,7 @@ import {
   NOT_UNIQUE,
   TOO_LONG,
   TOO_SHORT,
-} from "../utils/constants";
+} from "../../utils/constants";
 
 @Resolver()
 export class UserResolver {
