@@ -1,8 +1,41 @@
 import Link from "next/link";
-import { useCurrentUserQuery } from "../graphql/generated/graphql";
+import {
+  useCurrentUserQuery,
+  useLogoutMutation,
+} from "../graphql/generated/graphql";
 
 export default function NavBar() {
-  const [{ data }] = useCurrentUserQuery();
+  const [{ data, fetching }] = useCurrentUserQuery();
+  const [, logout] = useLogoutMutation();
+
+  const loggedInButtons = (user: string) => (
+    <div className="flex space-x-4">
+      <button className="text-white hover:bg-gray-900  px-3 py-2 rounded-md text-sm font-medium">
+        {user}
+      </button>
+      <button
+        onClick={() => logout()}
+        className="text-white hover:bg-gray-900  px-3 py-2 rounded-md text-sm font-medium"
+      >
+        Logout
+      </button>
+    </div>
+  );
+  const notLoggedInButtons = (
+    <div className="flex space-x-4">
+      <Link href="/login">
+        <button className="text-white hover:bg-gray-900  px-3 py-2 rounded-md text-sm font-medium">
+          Log in
+        </button>
+      </Link>
+      <Link href="/register">
+        <button className="text-white hover:bg-gray-900  px-3 py-2 rounded-md text-sm font-medium">
+          Sign up
+        </button>
+      </Link>
+    </div>
+  );
+
   return (
     <nav className="bg-indigo-800">
       <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
@@ -13,26 +46,11 @@ export default function NavBar() {
             </button>
           </Link>
           <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-end">
-            {data?.currentUser ? (
-              <div className="flex space-x-4">
-                <button className="text-white hover:bg-gray-900  px-3 py-2 rounded-md text-sm font-medium">
-                  {data.currentUser.username}
-                </button>
-              </div>
-            ) : (
-              <div className="flex space-x-4">
-                <Link href="/login">
-                  <button className="text-white hover:bg-gray-900  px-3 py-2 rounded-md text-sm font-medium">
-                    Log in
-                  </button>
-                </Link>
-                <Link href="/register">
-                  <button className="text-white hover:bg-gray-900  px-3 py-2 rounded-md text-sm font-medium">
-                    Sign up
-                  </button>
-                </Link>
-              </div>
-            )}
+            {fetching
+              ? null
+              : data?.currentUser
+              ? loggedInButtons(data.currentUser.username)
+              : notLoggedInButtons}
           </div>
         </div>
       </div>

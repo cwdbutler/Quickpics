@@ -30,6 +30,7 @@ export type Mutation = {
   createPost: PostResponse;
   deletePost: PostResponse;
   login: UserResponse;
+  logout: Scalars['Boolean'];
   register: UserResponse;
   updatePost: PostResponse;
 };
@@ -116,6 +117,11 @@ export type LoginMutationVariables = Exact<{
 
 export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
 
+export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
+
 export type RegisterMutationVariables = Exact<{
   username: Scalars['String'];
   password: Scalars['String'];
@@ -147,6 +153,15 @@ export const LoginDocument = gql`
 
 export function useLoginMutation() {
   return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
+};
+export const LogoutDocument = gql`
+    mutation logout {
+  logout
+}
+    `;
+
+export function useLogoutMutation() {
+  return Urql.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument);
 };
 export const RegisterDocument = gql`
     mutation register($username: String!, $password: String!) {
@@ -226,7 +241,8 @@ export type GraphCacheOptimisticUpdaters = {
   updatePost?: GraphCacheOptimisticMutationResolver<MutationUpdatePostArgs, WithTypename<PostResponse>>,
   deletePost?: GraphCacheOptimisticMutationResolver<MutationDeletePostArgs, WithTypename<PostResponse>>,
   register?: GraphCacheOptimisticMutationResolver<MutationRegisterArgs, WithTypename<UserResponse>>,
-  login?: GraphCacheOptimisticMutationResolver<MutationLoginArgs, WithTypename<UserResponse>>
+  login?: GraphCacheOptimisticMutationResolver<MutationLoginArgs, WithTypename<UserResponse>>,
+  logout?: GraphCacheOptimisticMutationResolver<Record<string, never>, Scalars['Boolean']>
 };
 
 export type GraphCacheUpdaters = {
@@ -235,7 +251,8 @@ export type GraphCacheUpdaters = {
     updatePost?: GraphCacheUpdateResolver<{ updatePost: WithTypename<PostResponse> }, MutationUpdatePostArgs>,
     deletePost?: GraphCacheUpdateResolver<{ deletePost: WithTypename<PostResponse> }, MutationDeletePostArgs>,
     register?: GraphCacheUpdateResolver<{ register: WithTypename<UserResponse> }, MutationRegisterArgs>,
-    login?: GraphCacheUpdateResolver<{ login: WithTypename<UserResponse> }, MutationLoginArgs>
+    login?: GraphCacheUpdateResolver<{ login: WithTypename<UserResponse> }, MutationLoginArgs>,
+    logout?: GraphCacheUpdateResolver<{ logout: Scalars['Boolean'] }, Record<string, never>>
   },
   Subscription?: {},
 };
