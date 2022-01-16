@@ -49,6 +49,15 @@ const client = createClient({
               }
             });
           },
+          logout: (result, args, cache, info) => {
+            // when log out request sent, clear the currentUser
+            cache.updateQuery({ query: CurrentUserDocument }, (data) => {
+              if (result.logout) {
+                return { __typename: "User", currentUser: null };
+              }
+              return data;
+            });
+          },
         },
       },
     }),
