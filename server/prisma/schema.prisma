@@ -12,7 +12,8 @@ model User {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   username        String    @unique @db.VarChar(30)
-  passwordHash  String
+  passwordHash    String
+  posts           Post[]
 }
 
 model Post {
@@ -20,4 +21,6 @@ model Post {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   caption         String?   @db.VarChar(2200)
+  author          User      @relation(fields: [authorId], references: [id])
+  authorId        Int
 }
