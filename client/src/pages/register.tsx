@@ -1,7 +1,10 @@
+import { withUrqlClient } from "next-urql";
 import Head from "next/head";
 import RegisterForm from "../components/RegisterForm";
+import { urqlClient } from "../urqlClient";
+import login from "./login";
 
-export default function register() {
+function register() {
   return (
     <div className="min-h-screen flex justify-center items-center">
       <Head>
@@ -13,3 +16,5 @@ export default function register() {
     </div>
   );
 }
+
+export default withUrqlClient(urqlClient)(register);

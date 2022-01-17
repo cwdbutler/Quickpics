@@ -1,7 +1,9 @@
+import { withUrqlClient } from "next-urql";
 import Head from "next/head";
 import LoginForm from "../components/LoginForm";
+import { urqlClient } from "../urqlClient";
 
-export default function login() {
+function login() {
   return (
     <div className="min-h-screen flex justify-center items-center">
       <Head>
@@ -13,3 +15,5 @@ export default function login() {
     </div>
   );
 }
+
+export default withUrqlClient(urqlClient)(login);

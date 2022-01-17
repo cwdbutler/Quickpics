@@ -79,9 +79,9 @@ export type PostResponse = {
 
 export type Query = {
   __typename?: 'Query';
+  allPosts: Array<Post>;
   currentUser?: Maybe<User>;
   post?: Maybe<Post>;
-  posts: Array<Post>;
   user?: Maybe<User>;
 };
 
@@ -129,6 +129,11 @@ export type RegisterMutationVariables = Exact<{
 
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
+
+export type AllPostsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AllPostsQuery = { __typename?: 'Query', allPosts: Array<{ __typename?: 'Post', id: string, caption?: string | null | undefined, createdAt: any, updatedAt: any }> };
 
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -181,6 +186,20 @@ export const RegisterDocument = gql`
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
 };
+export const AllPostsDocument = gql`
+    query allPosts {
+  allPosts {
+    id
+    caption
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+export function useAllPostsQuery(options: Omit<Urql.UseQueryArgs<AllPostsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<AllPostsQuery>({ query: AllPostsDocument, ...options });
+};
 export const CurrentUserDocument = gql`
     query currentUser {
   currentUser {
@@ -206,7 +225,7 @@ export type GraphCacheKeysConfig = {
 export type GraphCacheResolvers = {
   Query?: {
     post?: GraphCacheResolver<WithTypename<Query>, QueryPostArgs, WithTypename<Post> | string>,
-    posts?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<Post> | string>>,
+    allPosts?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<Post> | string>>,
     currentUser?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<User> | string>,
     user?: GraphCacheResolver<WithTypename<Query>, QueryUserArgs, WithTypename<User> | string>
   },

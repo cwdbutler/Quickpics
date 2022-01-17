@@ -1,3 +1,5 @@
+import { withUrqlClient } from "next-urql";
+import { urqlClient } from "../urqlClient";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/router";
