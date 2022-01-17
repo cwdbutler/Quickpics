@@ -4,7 +4,13 @@ import "reflect-metadata";
 import path from "path";
 import { Context, prisma } from "../../src/context";
 
-export const startTestServer = async (userId?: number | string) => {
+interface MockUser {
+  user?: {
+    id: number;
+  };
+}
+
+export const startTestServer = async ({ user }: MockUser = {}) => {
   const server = new ApolloServer({
     schema: await buildSchema({
       resolvers: [
@@ -15,7 +21,7 @@ export const startTestServer = async (userId?: number | string) => {
       prisma,
       req: {
         session: {
-          userId,
+          userId: user?.id,
           destroy: () => null,
         },
       },

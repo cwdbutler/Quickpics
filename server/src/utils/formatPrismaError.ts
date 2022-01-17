@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { NOT_FOUND, NOT_UNIQUE, TOO_LONG } from "./constants";
 
-export function formatError(error: Error, entity?: string): string {
+export function formatPrismaError(error: Error, entity?: string): string {
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
     let prismaError = error as any;
     if (error.code === "P2002") {

@@ -3,7 +3,7 @@ import { User } from "../types/User";
 import { Context } from "../../context";
 import bcrypt from "bcrypt";
 import { UserResponse } from "../types/UserResponse";
-import { formatError } from "../../utils/formatError";
+import { formatPrismaError } from "../../utils/formatPrismaError";
 import {
   BAD_CREDENTIALS,
   COOKIE_NAME,
@@ -119,7 +119,7 @@ export class UserResolver {
         errors: [
           {
             field: "username",
-            message: formatError(error),
+            message: formatPrismaError(error),
           },
         ],
       };
