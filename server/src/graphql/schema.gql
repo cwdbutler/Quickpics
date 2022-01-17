@@ -15,10 +15,6 @@ The javascript `Date` as string. Type represents date and time as the ISO Date s
 """
 scalar DateTime
 
-type Activity {
-  post: [Post!]
-}
-
 type FieldError {
   field: String!
   message: String!
@@ -42,7 +38,6 @@ type UserResponse {
 }
 
 type Query {
-  feed: [Activity!]!
   post(id: Int!): Post
   allPosts: [Post!]!
   currentUser: User

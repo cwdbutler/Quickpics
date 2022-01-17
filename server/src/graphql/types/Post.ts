@@ -4,7 +4,7 @@ import "reflect-metadata";
 @ObjectType()
 export class Post {
   @Field((type) => ID)
-  id: number;
+  id: string;
 
   @Field()
   createdAt: Date;

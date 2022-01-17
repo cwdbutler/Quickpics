@@ -2,18 +2,18 @@ import { Arg, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
 import { Post } from "../types/Post";
 import { Context } from "../../context";
 import { PostResponse } from "../types/PostResponse";
-import { formatPrismaError } from "../../utils/formatPrismaError";
 import {
   NOT_AUTHENTICATED,
   NOT_FOUND,
   NOT_LOGGED_IN,
 } from "../../utils/constants";
+import { nanoid } from "../../utils/generateNanoId";
 
 @Resolver()
 export class PostResolver {
   @Query(() => Post, { nullable: true })
   post(
-    @Arg("id", () => Int) id: number,
+    @Arg("id", () => String) id: string,
     @Ctx() { prisma }: Context
   ): Promise<Post> {
     return prisma.post.findUnique({
@@ -46,6 +46,7 @@ export class PostResolver {
 
     const post = await prisma.post.create({
       data: {
+        id: nanoid(),
         caption: caption,
         author: {
           connect: {
@@ -62,7 +63,7 @@ export class PostResolver {
 
   @Mutation(() => PostResponse)
   async updatePost(
-    @Arg("id", () => Int) id: number,
+    @Arg("id", () => String) id: string,
     @Arg("caption") caption: string,
     @Ctx() { prisma, req }: Context
   ): Promise<PostResponse> {
@@ -124,7 +125,7 @@ export class PostResolver {
 
   @Mutation(() => PostResponse)
   async deletePost(
-    @Arg("id", () => Int) id: number,
+    @Arg("id", () => String) id: string,
     @Ctx() { prisma, req }: Context
   ): Promise<PostResponse> | null {
     if (!req.session.userId) {

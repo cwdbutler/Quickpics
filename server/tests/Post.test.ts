@@ -2,6 +2,22 @@ import { startTestServer } from "./utils/testServer";
 import gql from "graphql-tag";
 import { prisma } from "../src/context";
 import { NOT_FOUND } from "../src/utils/constants";
+import { nanoid } from "../src/utils/generateNanoId";
+import faker from "faker";
+
+// generating fake random data
+const mockPost1 = {
+  id: nanoid(),
+  caption: faker.lorem.sentence(5),
+};
+const mockPost2 = {
+  id: nanoid(),
+  caption: faker.lorem.sentence(5),
+};
+const mockPost3 = {
+  id: nanoid(),
+  caption: faker.lorem.sentence(5),
+};
 
 beforeAll(async () => {
   await prisma.user.create({
@@ -9,17 +25,7 @@ beforeAll(async () => {
       username: "testuser",
       passwordHash: "notrelevantforthistest",
       posts: {
-        create: [
-          {
-            caption: "testing",
-          },
-          {
-            caption: "another test",
-          },
-          {
-            caption: "third test post",
-          },
-        ],
+        create: [mockPost1, mockPost2, mockPost3],
       },
     },
   });
@@ -36,18 +42,23 @@ describe("Posts", () => {
 
       const res = await server.executeOperation({
         query: gql`
-          query {
-            post(id: 1) {
+          query ($id: String!) {
+            post(id: $id) {
               id
+              caption
             }
           }
         `,
+        variables: {
+          id: mockPost1.id,
+        },
       });
 
       expect(res.errors).toBeUndefined();
       expect(res.data).toMatchObject({
         post: {
-          id: "1",
+          id: mockPost1.id,
+          caption: mockPost1.caption,
         },
       });
     });
@@ -59,6 +70,7 @@ describe("Posts", () => {
         query: gql`
           query {
             allPosts {
+              id
               caption
             }
           }
@@ -66,28 +78,21 @@ describe("Posts", () => {
       });
 
       expect(res.errors).toBeUndefined();
-      expect(res.data).toMatchObject({
-        allPosts: [
-          {
-            caption: "testing",
-          },
-          {
-            caption: "another test",
-          },
-          {
-            caption: "third test post",
-          },
-        ],
-      });
+      // testing behaviour not state; the order is not important
+      expect(res.data.allPosts).toContainEqual(mockPost1);
+      expect(res.data.allPosts).toContainEqual(mockPost2);
+      expect(res.data.allPosts).toContainEqual(mockPost3);
     });
 
     test("creating a post", async () => {
       const { server } = await startTestServer();
 
+      const mockCaption = faker.lorem.sentence(5);
+
       const res = await server.executeOperation({
         query: gql`
-          mutation createPost {
-            createPost(caption: "created post") {
+          mutation createPost($caption: String!) {
+            createPost(caption: $caption) {
               post {
                 id
                 caption
@@ -99,11 +104,14 @@ describe("Posts", () => {
             }
           }
         `,
+        variables: {
+          caption: mockCaption,
+        },
       });
 
       const dbPost = await prisma.post.findFirst({
         where: {
-          caption: "created post",
+          caption: mockCaption,
         },
       });
 
@@ -126,10 +134,12 @@ describe("Posts", () => {
     test("updating a post", async () => {
       const { server } = await startTestServer();
 
+      const mockCaption = faker.lorem.sentence(5);
+
       const res = await server.executeOperation({
         query: gql`
-          mutation updatePost {
-            updatePost(id: 4, caption: "updated post") {
+          mutation updatePost($id: String!, $caption: String!) {
+            updatePost(id: $id, caption: $caption) {
               post {
                 id
                 caption
@@ -141,15 +151,20 @@ describe("Posts", () => {
             }
           }
         `,
-      });
-
-      const dbPost = await prisma.post.findFirst({
-        where: {
-          caption: "updated post",
+        variables: {
+          id: mockPost1.id,
+          caption: mockCaption,
         },
       });
 
-      expect(dbPost).toBeFalsy();
+      const dbPost = await prisma.post.findUnique({
+        where: {
+          id: mockPost1.id,
+        },
+      });
+
+      // check data is unaltered
+      expect(dbPost.caption).toEqual(mockPost1.caption);
 
       expect(res.errors).toBeUndefined();
       expect(res.data).toMatchObject({
@@ -170,8 +185,8 @@ describe("Posts", () => {
 
       const res = await server.executeOperation({
         query: gql`
-          mutation deletePost {
-            deletePost(id: 4) {
+          mutation deletePost($id: String!) {
+            deletePost(id: $id) {
               post {
                 id
                 caption
@@ -183,15 +198,18 @@ describe("Posts", () => {
             }
           }
         `,
+        variables: {
+          id: mockPost1.id,
+        },
       });
 
       const dbPost = await prisma.post.findUnique({
         where: {
-          id: 4,
+          id: mockPost1.id,
         },
       });
 
-      expect(dbPost).toBeFalsy();
+      expect(dbPost).toBeTruthy(); // not deleted
 
       expect(res.errors).toBeUndefined();
       expect(res.data).toMatchObject({
@@ -216,10 +234,12 @@ describe("Posts", () => {
         },
       });
 
+      const mockCaption = faker.lorem.sentence(5);
+
       const res = await server.executeOperation({
         query: gql`
-          mutation createPost {
-            createPost(caption: "created post") {
+          mutation createPost($caption: String!) {
+            createPost(caption: $caption) {
               post {
                 id
                 caption
@@ -227,21 +247,24 @@ describe("Posts", () => {
             }
           }
         `,
+        variables: {
+          caption: mockCaption,
+        },
       });
 
       const dbPost = await prisma.post.findFirst({
         where: {
-          caption: "created post",
+          caption: mockCaption,
         },
       });
-
-      expect(dbPost).toBeTruthy(); // Prisma returns null if not found
+      // checking no post was created with this caption
+      expect(dbPost).toBeTruthy();
 
       expect(res.errors).toBeUndefined();
       expect(res.data).toMatchObject({
         createPost: {
           post: {
-            caption: "created post",
+            caption: mockCaption,
             id: `${dbPost.id}`,
           },
         },
@@ -255,10 +278,12 @@ describe("Posts", () => {
         },
       });
 
+      const mockCaption = faker.lorem.sentence(5);
+
       const res = await server.executeOperation({
         query: gql`
-          mutation updatePost {
-            updatePost(id: 4, caption: "updated post") {
+          mutation updatePost($id: String!, $caption: String!) {
+            updatePost(id: $id, caption: $caption) {
               post {
                 id
                 caption
@@ -270,11 +295,15 @@ describe("Posts", () => {
             }
           }
         `,
+        variables: {
+          id: mockPost2.id,
+          caption: mockCaption,
+        },
       });
 
-      const dbPost = await prisma.post.findFirst({
+      const dbPost = await prisma.post.findUnique({
         where: {
-          caption: "updated post",
+          id: mockPost2.id,
         },
       });
 
@@ -285,7 +314,7 @@ describe("Posts", () => {
         updatePost: {
           errors: null,
           post: {
-            caption: "updated post",
+            caption: mockCaption,
             id: `${dbPost.id}`,
           },
         },
@@ -302,7 +331,7 @@ describe("Posts", () => {
       const res = await server.executeOperation({
         query: gql`
           mutation updatePost {
-            updatePost(id: 999, caption: "I don't exist") {
+            updatePost(id: "thewrongid", caption: "I don't exist") {
               post {
                 id
                 caption
@@ -339,8 +368,8 @@ describe("Posts", () => {
 
       const res = await server.executeOperation({
         query: gql`
-          mutation deletePost {
-            deletePost(id: 4) {
+          mutation deletePost($id: String!) {
+            deletePost(id: $id) {
               post {
                 id
               }
@@ -351,11 +380,14 @@ describe("Posts", () => {
             }
           }
         `,
+        variables: {
+          id: mockPost2.id,
+        },
       });
 
       const dbPost = await prisma.post.findUnique({
         where: {
-          id: 4,
+          id: mockPost2.id,
         },
       });
 
@@ -366,7 +398,7 @@ describe("Posts", () => {
         deletePost: {
           errors: null,
           post: {
-            id: "4",
+            id: mockPost2.id,
           },
         },
       });
@@ -382,7 +414,7 @@ describe("Posts", () => {
       const res = await server.executeOperation({
         query: gql`
           mutation deletePost {
-            deletePost(id: 999) {
+            deletePost(id: "thewrongid") {
               post {
                 id
               }
@@ -411,8 +443,6 @@ describe("Posts", () => {
   });
 
   describe("Logged in (bad credentials)", () => {
-    // Post id 3 still exists
-
     test("updating a post", async () => {
       const { server } = await startTestServer({
         user: {
@@ -422,8 +452,8 @@ describe("Posts", () => {
 
       const res = await server.executeOperation({
         query: gql`
-          mutation updatePost {
-            updatePost(id: 3, caption: "bad update") {
+          mutation updatePost($id: String!, $caption: String!) {
+            updatePost(id: $id, caption: $caption) {
               post {
                 id
                 caption
@@ -435,16 +465,19 @@ describe("Posts", () => {
             }
           }
         `,
-      });
-
-      const dbPost = await prisma.post.findFirst({
-        where: {
-          id: 3,
-          caption: "bad update",
+        variables: {
+          id: mockPost3.id,
+          caption: "I shouldn't be updated",
         },
       });
 
-      expect(dbPost).toBeFalsy();
+      const dbPost = await prisma.post.findUnique({
+        where: {
+          id: mockPost3.id,
+        },
+      });
+
+      expect(dbPost.caption).toEqual(mockPost3.caption);
 
       expect(res.errors).toBeUndefined();
       expect(res.data).toMatchObject({
@@ -469,8 +502,8 @@ describe("Posts", () => {
 
       const res = await server.executeOperation({
         query: gql`
-          mutation deletePost {
-            deletePost(id: 3) {
+          mutation deletePost($id: String!) {
+            deletePost(id: $id) {
               post {
                 id
               }
@@ -481,11 +514,14 @@ describe("Posts", () => {
             }
           }
         `,
+        variables: {
+          id: mockPost3.id,
+        },
       });
 
       const dbPost = await prisma.post.findUnique({
         where: {
-          id: 3,
+          id: mockPost3.id,
         },
       });
 
