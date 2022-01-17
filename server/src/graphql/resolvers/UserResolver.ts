@@ -7,7 +7,8 @@ import { formatPrismaError } from "../../utils/formatPrismaError";
 import {
   BAD_CREDENTIALS,
   COOKIE_NAME,
-  MAX_USERNAME_LENGTH,
+  LOGGED_IN,
+  MAX_FIELD_LENGTH,
   MIN_FIELD_LENGTH,
   NOT_UNIQUE,
   TOO_LONG,
@@ -59,7 +60,7 @@ export class UserResolver {
       };
     }
 
-    if (username.length > MAX_USERNAME_LENGTH) {
+    if (username.length > MAX_FIELD_LENGTH) {
       return {
         errors: [
           {
@@ -81,49 +82,39 @@ export class UserResolver {
       };
     }
 
-    try {
-      const existingUser = await prisma.user.count({
-        where: {
-          username: {
-            contains: username,
-            mode: "insensitive",
-          },
+    const existingUser = await prisma.user.count({
+      where: {
+        username: {
+          contains: username,
+          mode: "insensitive",
         },
-      });
-      if (existingUser > 0) {
-        return {
-          errors: [
-            {
-              field: "username",
-              message: NOT_UNIQUE("username"),
-            },
-          ],
-        };
-      }
-
-      const hashed = await bcrypt.hash(password, 10);
-      const user = await prisma.user.create({
-        data: {
-          username: username,
-          passwordHash: hashed,
-        },
-      });
-
-      req.session.userId = user.id;
-
-      return {
-        user,
-      };
-    } catch (error) {
+        // Prisma workaround
+      },
+    });
+    if (existingUser > 0) {
       return {
         errors: [
           {
             field: "username",
-            message: formatPrismaError(error),
+            message: NOT_UNIQUE("username"),
           },
         ],
       };
     }
+
+    const hashed = await bcrypt.hash(password, 10);
+    const user = await prisma.user.create({
+      data: {
+        username: username,
+        passwordHash: hashed,
+      },
+    });
+
+    req.session.userId = user.id;
+
+    return {
+      user,
+    };
   }
 
   @Mutation(() => UserResponse)
@@ -132,6 +123,17 @@ export class UserResolver {
     @Arg("password") password: string,
     @Ctx() { prisma, req }
   ): Promise<UserResponse> {
+    if (req.session.userId) {
+      return {
+        errors: [
+          {
+            field: "user",
+            message: LOGGED_IN,
+          },
+        ],
+      };
+    }
+
     const user = await prisma.user.findUnique({
       where: {
         username: username,
@@ -176,6 +178,7 @@ export class UserResolver {
         console.log(err);
         return false;
       }
+      // no idea how to test this
     });
     res.clearCookie(COOKIE_NAME);
     return true;
