@@ -1,4 +1,4 @@
-import { Arg, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { Post } from "../types/Post";
 import { Context } from "../../context";
 import { PostResponse } from "../types/PostResponse";
@@ -44,17 +44,22 @@ export class PostResolver {
       };
     }
 
-    const post = await prisma.post.create({
-      data: {
-        id: nanoid(),
-        caption: caption,
-        author: {
-          connect: {
-            id: req.session.userId,
+    const postId = nanoid();
+
+    const [post] = await prisma.$transaction([
+      prisma.post.create({
+        data: {
+          id: postId,
+          caption: caption,
+          author: {
+            connect: {
+              id: req.session.userId,
+            },
           },
         },
-      },
-    });
+      }),
+      prisma.activity.create({ data: { id: postId, model: "post" } }),
+    ]);
 
     return {
       post,

@@ -3,17 +3,25 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
-type Post {
+type User {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-  caption: String
+  username: String!
 }
 
 """
 The javascript `Date` as string. Type represents date and time as the ISO Date string.
 """
 scalar DateTime
+
+type Post {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  caption: String
+  author: User!
+}
 
 type FieldError {
   field: String!
@@ -25,29 +33,25 @@ type PostResponse {
   post: Post
 }
 
-type User {
-  id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  username: String!
-}
-
 type UserResponse {
   errors: [FieldError!]
   user: User
 }
 
 type Query {
-  post(id: Int!): Post
+  feed: [Activity!]!
+  post(id: String!): Post
   allPosts: [Post!]!
   currentUser: User
   user(id: Int!): User
 }
 
+union Activity = Post
+
 type Mutation {
   createPost(caption: String!): PostResponse!
-  updatePost(caption: String!, id: Int!): PostResponse!
-  deletePost(id: Int!): PostResponse!
+  updatePost(caption: String!, id: String!): PostResponse!
+  deletePost(id: String!): PostResponse!
   register(password: String!, username: String!): UserResponse!
   login(password: String!, username: String!): UserResponse!
   logout: Boolean!
