@@ -51,7 +51,7 @@ describe("Posts", () => {
     const res = await server.executeOperation({
       query: gql`
         query {
-          posts {
+          allPosts {
             caption
           }
         }
@@ -60,7 +60,7 @@ describe("Posts", () => {
 
     expect(res.errors).toBeUndefined();
     expect(res.data).toMatchObject({
-      posts: [
+      allPosts: [
         {
           caption: "testing",
         },

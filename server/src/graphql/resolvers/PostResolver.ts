@@ -19,7 +19,7 @@ export class PostResolver {
   }
 
   @Query(() => [Post])
-  posts(@Ctx() { prisma }: Context): Promise<Post[]> {
+  allPosts(@Ctx() { prisma }: Context): Promise<Post[]> {
     return prisma.post.findMany();
   }
 

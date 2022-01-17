@@ -39,7 +39,7 @@ type UserResponse {
 
 type Query {
   post(id: Int!): Post
-  posts: [Post!]!
+  allPosts: [Post!]!
   currentUser: User
   user(id: Int!): User
 }
