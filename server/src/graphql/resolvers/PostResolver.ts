@@ -20,12 +20,19 @@ export class PostResolver {
       where: {
         id: id,
       },
+      include: {
+        author: true,
+      },
     });
   }
 
   @Query(() => [Post])
   allPosts(@Ctx() { prisma }: Context): Promise<Post[]> {
-    return prisma.post.findMany();
+    return prisma.post.findMany({
+      include: {
+        author: true,
+      },
+    });
   }
 
   @Mutation(() => PostResponse)
@@ -56,6 +63,9 @@ export class PostResolver {
               id: req.session.userId,
             },
           },
+        },
+        include: {
+          author: true,
         },
       }),
       prisma.activity.create({ data: { id: postId, model: "post" } }),
@@ -122,6 +132,9 @@ export class PostResolver {
       data: {
         caption: caption,
       },
+      include: {
+        author: true,
+      },
     });
     return {
       post,
@@ -178,6 +191,9 @@ export class PostResolver {
     const post = await prisma.post.delete({
       where: {
         id: id,
+      },
+      include: {
+        author: true,
       },
     });
     return {

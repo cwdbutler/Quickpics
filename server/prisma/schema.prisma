@@ -29,3 +29,21 @@ model Post {
   author          User        @relation(fields: [authorId], references: [id])
   authorId        Int
 }
+
+// model Comment {
+//   id              String      @id
+//   createdAt       DateTime    @default(now())
+//   updatedAt       DateTime    @updatedAt
+//   text            String?     @db.VarChar(2200)
+//   author          User        @relation(fields: [authorId], references: [id])
+//   authorId        Int
+//   post            Post        @relation(fields: [postId], references: [id])
+//   postId          String
+// }
+
+// model Like {
+//   id              String      @id
+//   model           String
+//   author          User        @relation(fields: [authorId], references: [id])
+//   authorId        Int
+// }

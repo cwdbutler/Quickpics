@@ -1,13 +1,6 @@
-import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
+import { Ctx, Query, Resolver } from "type-graphql";
 import { ActivityUnion } from "../types/Activity";
 import { Context } from "../../context";
-import { PostResponse } from "../types/PostResponse";
-import {
-  NOT_AUTHENTICATED,
-  NOT_FOUND,
-  NOT_LOGGED_IN,
-} from "../../utils/constants";
-import { nanoid } from "../../utils/generateNanoId";
 
 @Resolver()
 export class ActivityResolver {
