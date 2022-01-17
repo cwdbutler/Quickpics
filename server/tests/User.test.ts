@@ -8,6 +8,12 @@ import {
   TOO_LONG,
   LOGGED_IN,
 } from "../src/utils/constants";
+import faker from "faker";
+
+const mockUser = {
+  username: "testuser", // not randomised because need to test case insensitive
+  password: faker.random.alphaNumeric(5),
+};
 
 afterAll(async () => {
   await prisma.$disconnect();
@@ -40,8 +46,8 @@ describe("Users", () => {
 
         const res = await server.executeOperation({
           query: gql`
-            mutation register {
-              register(username: "testuser", password: "abc123") {
+            mutation register($username: String!, $password: String!) {
+              register(username: $username, password: $password) {
                 user {
                   id
                   username
@@ -53,11 +59,15 @@ describe("Users", () => {
               }
             }
           `,
+          variables: {
+            username: mockUser.username,
+            password: mockUser.password,
+          },
         });
 
         const dbUser = await prisma.user.findUnique({
           where: {
-            username: "testuser",
+            username: mockUser.username,
           },
         });
 
@@ -69,7 +79,7 @@ describe("Users", () => {
             errors: null,
             user: {
               id: `${dbUser.id}`,
-              username: "testuser",
+              username: mockUser.username,
             },
           },
         });
@@ -81,8 +91,8 @@ describe("Users", () => {
 
           const res = await server.executeOperation({
             query: gql`
-              mutation register {
-                register(username: "tEsTuSeR", password: "abc123") {
+              mutation register($username: String!, $password: String!) {
+                register(username: $username, password: $password) {
                   user {
                     id
                     username
@@ -94,6 +104,10 @@ describe("Users", () => {
                 }
               }
             `,
+            variables: {
+              username: "tEsTuSeR",
+              password: mockUser.password,
+            },
           });
 
           expect(res.errors).toBeUndefined();
@@ -110,13 +124,13 @@ describe("Users", () => {
           });
         });
 
-        test("password too short", async () => {
+        test("username too short", async () => {
           const { server } = await startTestServer();
 
           const res = await server.executeOperation({
             query: gql`
-              mutation register {
-                register(username: "a", password: "abc123") {
+              mutation register($username: String!, $password: String!) {
+                register(username: $username, password: $password) {
                   user {
                     id
                     username
@@ -128,6 +142,10 @@ describe("Users", () => {
                 }
               }
             `,
+            variables: {
+              username: faker.random.alphaNumeric(2),
+              password: mockUser.password,
+            },
           });
 
           expect(res.errors).toBeUndefined();
@@ -149,11 +167,8 @@ describe("Users", () => {
 
           const res = await server.executeOperation({
             query: gql`
-              mutation register {
-                register(
-                  username: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-                  password: "abc123"
-                ) {
+              mutation register($username: String!, $password: String!) {
+                register(username: $username, password: $password) {
                   user {
                     id
                     username
@@ -165,9 +180,11 @@ describe("Users", () => {
                 }
               }
             `,
+            variables: {
+              username: faker.random.alphaNumeric(31),
+              password: "irrelevant",
+            },
           });
-          /* Unfortunately, I can't pass variables into the arguments because it expects quotes around them.
-          The username is 31 characters long */
 
           expect(res.errors).toBeUndefined();
           expect(res.data).toMatchObject({
@@ -188,8 +205,8 @@ describe("Users", () => {
 
           const res = await server.executeOperation({
             query: gql`
-              mutation register {
-                register(username: "user123", password: "a") {
+              mutation register($username: String!, $password: String!) {
+                register(username: $username, password: $password) {
                   user {
                     id
                     username
@@ -201,6 +218,10 @@ describe("Users", () => {
                 }
               }
             `,
+            variables: {
+              username: faker.random.alphaNumeric(5),
+              password: faker.internet.password(2),
+            },
           });
 
           expect(res.errors).toBeUndefined();
@@ -225,8 +246,8 @@ describe("Users", () => {
 
         const res = await server.executeOperation({
           query: gql`
-            mutation login {
-              login(username: "testuser", password: "abc123") {
+            mutation login($username: String!, $password: String!) {
+              login(username: $username, password: $password) {
                 user {
                   username
                 }
@@ -237,13 +258,17 @@ describe("Users", () => {
               }
             }
           `,
+          variables: {
+            username: mockUser.username,
+            password: mockUser.password,
+          },
         });
 
         expect(res.errors).toBeUndefined();
         expect(res.data).toMatchObject({
           login: {
             user: {
-              username: "testuser",
+              username: mockUser.username,
             },
             errors: null,
           },
@@ -256,8 +281,8 @@ describe("Users", () => {
 
           const res = await server.executeOperation({
             query: gql`
-              mutation login {
-                login(username: "nonexistentuser", password: "abc123") {
+              mutation login($username: String!, $password: String!) {
+                login(username: $username, password: $password) {
                   user {
                     username
                   }
@@ -268,6 +293,10 @@ describe("Users", () => {
                 }
               }
             `,
+            variables: {
+              username: "nonexistentusername",
+              password: mockUser.password,
+            },
           });
 
           expect(res.errors).toBeUndefined();
@@ -289,8 +318,8 @@ describe("Users", () => {
 
           const res = await server.executeOperation({
             query: gql`
-              mutation login {
-                login(username: "testuser", password: "wrong") {
+              mutation login($username: String!, $password: String!) {
+                login(username: $username, password: $password) {
                   user {
                     username
                   }
@@ -301,6 +330,10 @@ describe("Users", () => {
                 }
               }
             `,
+            variables: {
+              username: mockUser.username,
+              password: "wrongpassword",
+            },
           });
 
           expect(res.errors).toBeUndefined();
@@ -381,8 +414,8 @@ describe("Users", () => {
       // correct details
       const res = await server.executeOperation({
         query: gql`
-          mutation login {
-            login(username: "testuser", password: "abc123") {
+          mutation login($username: String!, $password: String!) {
+            login(username: $username, password: $password) {
               user {
                 username
               }
@@ -393,6 +426,10 @@ describe("Users", () => {
             }
           }
         `,
+        variables: {
+          username: mockUser.username,
+          password: mockUser.password,
+        },
       });
 
       expect(res.errors).toBeUndefined();
