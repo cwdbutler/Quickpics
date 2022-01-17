@@ -2,20 +2,20 @@ import { startTestServer } from "./utils/testServer";
 import gql from "graphql-tag";
 import { prisma } from "../src/context";
 import { NOT_FOUND } from "../src/utils/constants";
-import { nanoid } from "../src/utils/generateNanoId";
+import { createId } from "../src/utils/createId";
 import faker from "faker";
 
 // generating fake random data
 const mockPost1 = {
-  id: nanoid(),
+  id: createId(),
   caption: faker.lorem.sentence(5),
 };
 const mockPost2 = {
-  id: nanoid(),
+  id: createId(),
   caption: faker.lorem.sentence(5),
 };
 const mockPost3 = {
-  id: nanoid(),
+  id: createId(),
   caption: faker.lorem.sentence(5),
 };
 

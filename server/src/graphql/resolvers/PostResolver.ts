@@ -7,7 +7,7 @@ import {
   NOT_FOUND,
   NOT_LOGGED_IN,
 } from "../../utils/constants";
-import { nanoid } from "../../utils/generateNanoId";
+import { createId } from "../../utils/createId";
 
 @Resolver()
 export class PostResolver {
@@ -51,7 +51,7 @@ export class PostResolver {
       };
     }
 
-    const postId = nanoid();
+    const postId = createId();
 
     const [post] = await prisma.$transaction([
       prisma.post.create({

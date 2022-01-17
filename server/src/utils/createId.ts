@@ -6,4 +6,4 @@ const alphabet =
   "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 // removing '=' and '_' from default_
 
-export const nanoid = customAlphabet(alphabet, 10);
+export const createId = customAlphabet(alphabet, 10);
