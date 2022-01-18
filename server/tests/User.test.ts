@@ -426,18 +426,9 @@ describe("Users", () => {
         },
       });
 
-      expect(res.errors).toBeUndefined();
-      expect(res.data).toMatchObject({
-        login: {
-          errors: [
-            {
-              field: "user",
-              message: "You are already logged in",
-            },
-          ],
-          user: null,
-        },
-      });
+      expect(res.errors.length).toBe(1);
+      expect(res.errors[0].message).toEqual("Already authenticated");
+      expect(res.data).toBeNull();
     });
   });
 

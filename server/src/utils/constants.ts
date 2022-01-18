@@ -18,6 +18,4 @@ export const TOO_SHORT = (field: string) =>
   `Your ${field} must be at least ${MIN_FIELD_LENGTH} characters long`;
 export const TOO_LONG = (field: string) =>
   `Your ${field} cannot be greater than ${MAX_FIELD_LENGTH} characters long`;
-export const NOT_LOGGED_IN = "You must be logged in to do that";
-export const LOGGED_IN = "You are already logged in";
-export const NOT_AUTHENTICATED = "You don't have permission to do that";
+export const NO_PERMISSION = "You don't have permission to do that";

@@ -116,18 +116,9 @@ describe("Posts", () => {
 
       expect(dbPost).toBeFalsy();
 
-      expect(res.errors).toBeUndefined();
-      expect(res.data).toMatchObject({
-        createPost: {
-          post: null,
-          errors: [
-            {
-              field: "user",
-              message: "You must be logged in to do that",
-            },
-          ],
-        },
-      });
+      expect(res.errors.length).toBe(1);
+      expect(res.errors[0].message).toEqual("Not authenticated");
+      expect(res.data).toBeNull();
     });
 
     test("updating a post", async () => {
@@ -165,18 +156,9 @@ describe("Posts", () => {
       // check data is unaltered
       expect(dbPost.caption).toEqual(mockPost1.caption);
 
-      expect(res.errors).toBeUndefined();
-      expect(res.data).toMatchObject({
-        updatePost: {
-          post: null,
-          errors: [
-            {
-              field: "user",
-              message: "You don't have permission to do that",
-            },
-          ],
-        },
-      });
+      expect(res.errors.length).toBe(1);
+      expect(res.errors[0].message).toEqual("Not authenticated");
+      expect(res.data).toBeNull();
     });
 
     test("deleting a post", async () => {
@@ -210,18 +192,9 @@ describe("Posts", () => {
 
       expect(dbPost).toBeTruthy(); // not deleted
 
-      expect(res.errors).toBeUndefined();
-      expect(res.data).toMatchObject({
-        deletePost: {
-          post: null,
-          errors: [
-            {
-              field: "user",
-              message: "You don't have permission to do that",
-            },
-          ],
-        },
-      });
+      expect(res.errors.length).toBe(1);
+      expect(res.errors[0].message).toEqual("Not authenticated");
+      expect(res.data).toBeNull();
     });
   });
 

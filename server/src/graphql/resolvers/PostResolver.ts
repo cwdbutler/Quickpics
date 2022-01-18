@@ -1,13 +1,17 @@
-import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Ctx,
+  Mutation,
+  Query,
+  Resolver,
+  UseMiddleware,
+} from "type-graphql";
 import { Post } from "../types/Post";
 import { Context } from "../../context";
 import { PostResponse } from "../types/PostResponse";
-import {
-  NOT_AUTHENTICATED,
-  NOT_FOUND,
-  NOT_LOGGED_IN,
-} from "../../utils/constants";
+import { NOT_FOUND, NO_PERMISSION } from "../../utils/constants";
 import { createId } from "../../utils/createId";
+import { checkAuthenticated } from "../../middleware/checkAuthenticated";
 
 @Resolver()
 export class PostResolver {
@@ -36,21 +40,11 @@ export class PostResolver {
   }
 
   @Mutation(() => PostResponse)
+  @UseMiddleware(checkAuthenticated)
   async createPost(
     @Arg("caption") caption: string,
     @Ctx() { prisma, req }: Context
   ): Promise<PostResponse> {
-    if (!req.session.userId) {
-      return {
-        errors: [
-          {
-            field: "user",
-            message: NOT_LOGGED_IN,
-          },
-        ],
-      };
-    }
-
     const postId = createId();
 
     const [post] = await prisma.$transaction([
@@ -77,22 +71,12 @@ export class PostResolver {
   }
 
   @Mutation(() => PostResponse)
+  @UseMiddleware(checkAuthenticated)
   async updatePost(
     @Arg("id", () => String) id: string,
     @Arg("caption") caption: string,
     @Ctx() { prisma, req }: Context
   ): Promise<PostResponse> {
-    if (!req.session.userId) {
-      return {
-        errors: [
-          {
-            field: "user",
-            message: NOT_AUTHENTICATED,
-          },
-        ],
-      };
-    }
-
     const foundPost = await prisma.post.findUnique({
       where: {
         id: id,
@@ -118,7 +102,7 @@ export class PostResolver {
         errors: [
           {
             field: "user",
-            message: NOT_AUTHENTICATED,
+            message: NO_PERMISSION,
           },
         ],
       };
@@ -142,21 +126,11 @@ export class PostResolver {
   }
 
   @Mutation(() => PostResponse)
+  @UseMiddleware(checkAuthenticated)
   async deletePost(
     @Arg("id", () => String) id: string,
     @Ctx() { prisma, req }: Context
   ): Promise<PostResponse> | null {
-    if (!req.session.userId) {
-      return {
-        errors: [
-          {
-            field: "user",
-            message: NOT_AUTHENTICATED,
-          },
-        ],
-      };
-    }
-
     const foundPost = await prisma.post.findUnique({
       where: {
         id: id,
@@ -182,7 +156,7 @@ export class PostResolver {
         errors: [
           {
             field: "user",
-            message: NOT_AUTHENTICATED,
+            message: NO_PERMISSION,
           },
         ],
       };

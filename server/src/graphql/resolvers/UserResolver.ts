@@ -1,19 +1,26 @@
-import { Arg, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Ctx,
+  Int,
+  Mutation,
+  Query,
+  Resolver,
+  UseMiddleware,
+} from "type-graphql";
 import { User } from "../types/User";
 import { Context } from "../../context";
 import bcrypt from "bcrypt";
 import { UserResponse } from "../types/UserResponse";
-import { formatPrismaError } from "../../utils/formatPrismaError";
 import {
   BAD_CREDENTIALS,
   COOKIE_NAME,
-  LOGGED_IN,
   MAX_FIELD_LENGTH,
   MIN_FIELD_LENGTH,
   NOT_UNIQUE,
   TOO_LONG,
   TOO_SHORT,
 } from "../../utils/constants";
+import { checkNotAuthenticated } from "../../middleware/checkNotAuhenticated";
 
 @Resolver()
 export class UserResolver {
@@ -118,22 +125,12 @@ export class UserResolver {
   }
 
   @Mutation(() => UserResponse)
+  @UseMiddleware(checkNotAuthenticated)
   async login(
     @Arg("username") username: string,
     @Arg("password") password: string,
     @Ctx() { prisma, req }
   ): Promise<UserResponse> {
-    if (req.session.userId) {
-      return {
-        errors: [
-          {
-            field: "user",
-            message: LOGGED_IN,
-          },
-        ],
-      };
-    }
-
     const user = await prisma.user.findUnique({
       where: {
         username: username,
