@@ -62,7 +62,9 @@ export class PostResolver {
           author: true,
         },
       }),
-      prisma.activity.create({ data: { id: postId, model: "post" } }),
+      prisma.activity.create({
+        data: { id: postId, model: "post", userId: req.session.userId },
+      }),
     ]);
 
     return {

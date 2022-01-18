@@ -19,6 +19,7 @@ model User {
 model Activity {
   id              String      @id
   model           String
+  userId          Int
 }
 
 model Post {
