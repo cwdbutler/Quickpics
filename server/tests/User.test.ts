@@ -1,13 +1,6 @@
 import { startTestServer } from "./utils/testServer";
 import gql from "graphql-tag";
 import { prisma } from "../src/context";
-import {
-  BAD_CREDENTIALS,
-  NOT_UNIQUE,
-  TOO_SHORT,
-  TOO_LONG,
-  LOGGED_IN,
-} from "../src/utils/constants";
 import faker from "faker";
 
 const mockUser = {
@@ -116,7 +109,7 @@ describe("Users", () => {
               errors: [
                 {
                   field: "username",
-                  message: NOT_UNIQUE("username"),
+                  message: "Someone is already using this username",
                 },
               ],
               user: null,
@@ -154,7 +147,7 @@ describe("Users", () => {
               errors: [
                 {
                   field: "username",
-                  message: TOO_SHORT("username"),
+                  message: "Your username must be at least 3 characters long",
                 },
               ],
               user: null,
@@ -192,7 +185,8 @@ describe("Users", () => {
               errors: [
                 {
                   field: "username",
-                  message: TOO_LONG("username"),
+                  message:
+                    "Your username cannot be greater than 30 characters long",
                 },
               ],
               user: null,
@@ -230,7 +224,7 @@ describe("Users", () => {
               errors: [
                 {
                   field: "password",
-                  message: TOO_SHORT("password"),
+                  message: "Your password must be at least 3 characters long",
                 },
               ],
               user: null,
@@ -305,7 +299,7 @@ describe("Users", () => {
               errors: [
                 {
                   field: "username",
-                  message: BAD_CREDENTIALS("username"),
+                  message: "Invalid username",
                 },
               ],
               user: null,
@@ -342,7 +336,7 @@ describe("Users", () => {
               errors: [
                 {
                   field: "password",
-                  message: BAD_CREDENTIALS("password"),
+                  message: "Invalid password",
                 },
               ],
               user: null,
@@ -438,7 +432,7 @@ describe("Users", () => {
           errors: [
             {
               field: "user",
-              message: LOGGED_IN,
+              message: "You are already logged in",
             },
           ],
           user: null,

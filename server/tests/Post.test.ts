@@ -1,7 +1,6 @@
 import { startTestServer } from "./utils/testServer";
 import gql from "graphql-tag";
 import { prisma } from "../src/context";
-import { NOT_FOUND } from "../src/utils/constants";
 import { createId } from "../src/utils/createId";
 import faker from "faker";
 
@@ -351,7 +350,7 @@ describe("Posts", () => {
           errors: [
             {
               field: "id",
-              message: NOT_FOUND("post"),
+              message: "That post could not be found",
             },
           ],
           post: null,
@@ -433,7 +432,7 @@ describe("Posts", () => {
           errors: [
             {
               field: "id",
-              message: NOT_FOUND("post"),
+              message: "That post could not be found",
             },
           ],
           post: null,
