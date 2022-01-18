@@ -25,7 +25,7 @@ once it has compiled to /dist:
 yarn dev
 ```
 
-ESLint currently not working as the typegraphql plugin doesn't support ESLint 8.0
+Removed eslint as there were compatibility issues with typegraphql
 
 Testing is done by creating a new schema (identified by a randomly generated string) and connecting to the test database, before starting a test server.
 All data is wiped after each testing run.
