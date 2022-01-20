@@ -12,14 +12,19 @@ function NavBar() {
 
   const loggedInButtons = (user: string) => (
     <div className="flex space-x-4">
-      <button className="text-white hover:bg-gray-900  px-3 py-2 rounded-md text-sm font-medium">
-        {user}
-      </button>
+      <Link href="/create">
+        <button className="text-white hover:bg-gray-900  px-3 py-2 rounded-md text-sm font-medium">
+          Create
+        </button>
+      </Link>
       <button
         onClick={() => logout()}
         className="text-white hover:bg-gray-900  px-3 py-2 rounded-md text-sm font-medium"
       >
         Logout
+      </button>
+      <button className="text-white hover:bg-gray-900  px-3 py-2 rounded-md text-sm font-medium">
+        {user}
       </button>
     </div>
   );
@@ -39,7 +44,7 @@ function NavBar() {
   );
 
   return (
-    <nav className="bg-indigo-800">
+    <nav className="bg-indigo-800 sticky top-0 z-10">
       <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
         <div className="relative flex items-center justify-between h-14">
           <Link href="/">

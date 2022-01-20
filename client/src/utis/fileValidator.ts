@@ -1,0 +1,26 @@
+import { MAX_FILE_SIZE, MIN_FILE_SIZE } from "./constants";
+
+export const fileValidator = (file: File) => {
+  if (file.type.substring(0, 5) !== "image") {
+    return {
+      code: "Please upload an image file",
+      message: `could not be uploaded`,
+    };
+  }
+
+  if (file.size > MAX_FILE_SIZE) {
+    return {
+      code: "Files must be 5MB or less",
+      message: `is too large`,
+    };
+  }
+
+  if (file.size < MIN_FILE_SIZE) {
+    return {
+      code: "Files must be 5KB or more",
+      message: `is too small`,
+    };
+  }
+
+  return null;
+};
