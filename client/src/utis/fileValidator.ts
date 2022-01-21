@@ -1,6 +1,8 @@
+import { FileError } from "react-dropzone";
 import { MAX_FILE_SIZE, MIN_FILE_SIZE } from "./constants";
 
-export const fileValidator = (file: File) => {
+// returns objects compatible with react-dropzone error type
+export const fileValidator = (file: File): FileError | null => {
   if (file.type.substring(0, 5) !== "image") {
     return {
       code: "Please upload an image file",

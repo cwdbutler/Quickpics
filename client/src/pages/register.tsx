@@ -1,6 +1,6 @@
 import { withUrqlClient } from "next-urql";
 import Head from "next/head";
-import RegisterForm from "../components/RegisterForm";
+import RegisterForm from "../components/forms/RegisterForm";
 import { urqlClient } from "../urqlClient";
 import login from "./login";
 

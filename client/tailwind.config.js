@@ -10,6 +10,9 @@ module.exports = {
         width: "width",
         height: "height",
       },
+      strokeWidth: {
+        0.5: "0.5px",
+      },
     },
   },
   plugins: [],

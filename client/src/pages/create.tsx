@@ -2,7 +2,7 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import Head from "next/head";
 import Link from "next/link";
 import router from "next/router";
-import CreatePostForm from "../components/CreatePostForm";
+import CreatePostForm from "../components/forms/CreatePostForm";
 import { mapToFormErrors } from "../utis/mapToFormErrors";
 import login from "./login";
 
