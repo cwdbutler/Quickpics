@@ -1,17 +1,38 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { useEffect, useState } from "react";
-import { FileRejection, useDropzone } from "react-dropzone";
+import { useCallback, useEffect, useState } from "react";
+import { useDropzone } from "react-dropzone";
 import { fileValidator } from "../../utis/fileValidator";
 import { ExclamationIcon, ImageIcon, UploadIcon, XIcon } from "../Icons";
 import FileErrors from "./FileErrors";
+import Cropper from "react-easy-crop";
+import { Point, Area } from "react-easy-crop/types";
 
 function CreatePostForm() {
-  interface imageFile extends File {
+  interface ImageFile extends File {
     preview?: string;
   }
-  const [files, setFiles] = useState<imageFile[]>([]);
+
+  interface ImageDimensions {
+    width: number;
+    height: number;
+  }
+
+  const [files, setFiles] = useState<ImageFile[]>([]);
   const [dropzoneStyle, setdropzoneStyle] = useState<string>();
   const [title, setTitle] = useState<string>();
+  const [imageDimensions, setImageDimensions] =
+    useState<ImageDimensions | null>();
+  const [cropFit, setCropFit] = useState<
+    "contain" | "horizontal-cover" | "vertical-cover" | undefined
+  >();
+  const [loading, setLoading] = useState(false);
+
+  const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const onCropComplete = useCallback(
+    (croppedArea: Area, croppedAreaPixels: Area) => {},
+    []
+  );
 
   const { getRootProps, getInputProps, fileRejections, open, isDragActive } =
     useDropzone({
@@ -47,10 +68,50 @@ function CreatePostForm() {
   useEffect(() => {
     if (fileRejections.length > 0) {
       setTitle("Couldn't upload files");
+    } else if (files.length > 0) {
+      setTitle("Crop your image");
     } else {
       setTitle("Create a post");
     }
   }, [files, fileRejections]);
+
+  useEffect(() => {
+    if (files.length > 0) {
+      const img = new Image();
+      img.src = files[0].preview as string;
+
+      img.onload = () => {
+        setImageDimensions({
+          width: img.width,
+          height: img.height,
+        });
+      };
+      console.log("setting image dimensions:", imageDimensions);
+    } else {
+      setImageDimensions(null);
+    }
+  }, [files]);
+
+  useEffect(() => {
+    setLoading(true);
+    console.log("setting crop fit", imageDimensions);
+    if (imageDimensions?.height && imageDimensions.width) {
+      if (imageDimensions.height > imageDimensions.width) {
+        setCropFit("horizontal-cover");
+        console.log("setting to horizontal", cropFit);
+        setLoading(false);
+      } else if (imageDimensions.height < imageDimensions.width) {
+        setCropFit("vertical-cover");
+        console.log("setting to vertical", cropFit);
+        setLoading(false);
+      }
+    }
+  }, [imageDimensions]);
+
+  const clearFiles = () => {
+    URL.revokeObjectURL(files[0].preview as string);
+    setFiles([]);
+  };
 
   return (
     <div className="aspect-square transition-all duration-500 ease-in-out w-[350px] sm:w-3/5 xl:w-[900px] rounded-xl mx-auto shadow-lg p-0 border-2 border-gray-50">
@@ -87,22 +148,32 @@ function CreatePostForm() {
               Upload another file
             </button>
           </div>
-        ) : (
-          // a valid image is selected (stage 2)
-          <div className="w-full h-full flex justify-center items-center relative p-0 z-0">
-            <img
-              src={files[0].preview}
-              className="w-full h-full object-cover rounded-b-md"
+        ) : !loading ? (
+          // image selected, cropping the image (stage 2)
+          <div className="w-full h-full relative p-0 z-0">
+            <Cropper
+              image={files[0].preview}
+              crop={crop}
+              zoom={zoom}
+              aspect={1}
+              onCropChange={setCrop}
+              onCropComplete={onCropComplete}
+              onZoomChange={setZoom}
+              objectFit={cropFit}
+              classes={{ containerClassName: "rounded-b-md" }}
             />
-            <div className="absolute inset-4 flex justify-end items-end z-10">
+            <div className="absolute pointer-events-none inset-4 flex justify-end items-end z-10">
               <button
                 className="bg-black rounded-full p-2"
-                onClick={() => setFiles([])}
+                onClick={clearFiles}
               >
-                <XIcon className="stroke-white h-5 stroke-2" />
+                <XIcon className="stroke-white  h-5 stroke-2 pointer-events-auto" />
               </button>
             </div>
           </div>
+        ) : (
+          // waiting for the image dimensions to set the image size within the crop container
+          <div />
         )}
       </div>
     </div>

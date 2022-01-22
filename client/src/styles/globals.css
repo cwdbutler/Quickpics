@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* overriding tailwind */
+.reactEasyCrop_Cover_Vertical {
+  max-width: none !important;
+}
