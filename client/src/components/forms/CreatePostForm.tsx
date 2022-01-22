@@ -109,6 +109,7 @@ function CreatePostForm() {
   }, [imageDimensions]);
 
   const clearFiles = () => {
+    // prevent memory leak
     URL.revokeObjectURL(files[0].preview as string);
     setFiles([]);
   };
@@ -160,7 +161,10 @@ function CreatePostForm() {
               onCropComplete={onCropComplete}
               onZoomChange={setZoom}
               objectFit={cropFit}
-              classes={{ containerClassName: "rounded-b-md" }}
+              classes={{
+                containerClassName: "rounded-b-md",
+                cropAreaClassName: "cursor-grab active:cursor-grabbing",
+              }}
             />
             <div className="absolute pointer-events-none inset-4 flex justify-end items-end z-10">
               <button
