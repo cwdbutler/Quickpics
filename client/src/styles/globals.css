@@ -6,3 +6,20 @@
 .reactEasyCrop_Cover_Vertical {
   max-width: none !important;
 }
+
+/* crop grid only shows being clicked */
+.reactEasyCrop_CropAreaGrid::before {
+  visibility: hidden;
+}
+
+.reactEasyCrop_CropAreaGrid::after {
+  visibility: hidden;
+}
+
+.reactEasyCrop_CropAreaGrid:active::before {
+  visibility: visible;
+}
+
+.reactEasyCrop_CropAreaGrid:active::after {
+  visibility: visible;
+}

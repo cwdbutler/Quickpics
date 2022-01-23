@@ -2,10 +2,17 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { fileValidator } from "../../utis/fileValidator";
-import { ExclamationIcon, ImageIcon, UploadIcon, XIcon } from "../Icons";
+import {
+  ExclamationIcon,
+  ImageIcon,
+  LeftArrowIcon,
+  UploadIcon,
+  XIcon,
+} from "../Icons";
 import FileErrors from "./FileErrors";
 import Cropper from "react-easy-crop";
 import { Point, Area } from "react-easy-crop/types";
+import getCroppedImg from "../../utis/cropImage";
 
 function CreatePostForm() {
   interface ImageFile extends File {
@@ -19,7 +26,6 @@ function CreatePostForm() {
 
   const [files, setFiles] = useState<ImageFile[]>([]);
   const [dropzoneStyle, setdropzoneStyle] = useState<string>();
-  const [title, setTitle] = useState<string>();
   const [imageDimensions, setImageDimensions] =
     useState<ImageDimensions | null>();
   const [cropFit, setCropFit] = useState<
@@ -29,10 +35,8 @@ function CreatePostForm() {
 
   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const onCropComplete = useCallback(
-    (croppedArea: Area, croppedAreaPixels: Area) => {},
-    []
-  );
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
+  const [croppedImage, setCroppedImage] = useState<string | null>(null);
 
   const { getRootProps, getInputProps, fileRejections, open, isDragActive } =
     useDropzone({
@@ -64,17 +68,6 @@ function CreatePostForm() {
         );
   }, [isDragActive]);
 
-  // change the title to reflect progression through the form
-  useEffect(() => {
-    if (fileRejections.length > 0) {
-      setTitle("Couldn't upload files");
-    } else if (files.length > 0) {
-      setTitle("Crop your image");
-    } else {
-      setTitle("Create a post");
-    }
-  }, [files, fileRejections]);
-
   useEffect(() => {
     if (files.length > 0) {
       const img = new Image();
@@ -86,7 +79,6 @@ function CreatePostForm() {
           height: img.height,
         });
       };
-      console.log("setting image dimensions:", imageDimensions);
     } else {
       setImageDimensions(null);
     }
@@ -94,15 +86,14 @@ function CreatePostForm() {
 
   useEffect(() => {
     setLoading(true);
-    console.log("setting crop fit", imageDimensions);
+    /* sets the react-easy-crop objectFit option
+    the image will fill the container in one axis and then overflow in the other */
     if (imageDimensions?.height && imageDimensions.width) {
-      if (imageDimensions.height > imageDimensions.width) {
+      if (imageDimensions.height >= imageDimensions.width) {
         setCropFit("horizontal-cover");
-        console.log("setting to horizontal", cropFit);
         setLoading(false);
       } else if (imageDimensions.height < imageDimensions.width) {
         setCropFit("vertical-cover");
-        console.log("setting to vertical", cropFit);
         setLoading(false);
       }
     }
@@ -114,73 +105,126 @@ function CreatePostForm() {
     setFiles([]);
   };
 
-  return (
-    <div className="aspect-square transition-all duration-500 ease-in-out w-[350px] sm:w-3/5 xl:w-[900px] rounded-xl mx-auto shadow-lg p-0 border-2 border-gray-50">
-      <h1 className="text-lg text-center p-2 font-semibold text-gray-900 border-b-2 border-gray-300">
-        {title}
-      </h1>
+  const styles = {
+    form: "aspect-square transition-all duration-500 ease-in-out w-[350px] sm:w-3/5 xl:w-[900px] rounded-xl mx-auto shadow-lg p-0 border-2 border-gray-50",
+    header:
+      "flex justify-center items-center text-md py-2 px-4 font-semibold text-gray-900 border-b-2 border-gray-300",
+    headerWithButtons:
+      "flex justify-between items-center text-md py-2 px-4 font-semibold text-gray-900 border-b-2 border-gray-300",
+  };
 
-      <div className="h-full flex flex-col items-center justify-center">
-        {files.length === 0 && fileRejections.length === 0 ? (
-          // no image is selected (stage 1)
-          <div {...getRootProps()} className={dropzoneStyle}>
-            <ImageIcon className="h-28 stroke-0.5" />
-            <p className="mb-4 text-2xl">Drag a photo here</p>
-            <input {...getInputProps()} />
-            <button
-              onClick={open}
-              className="text-white bg-indigo-700 flex px-3 py-2 rounded-md text-sm font-medium"
-            >
-              <UploadIcon className="h-5 mr-2 stroke-2" />
-              Click to upload
-            </button>
-          </div>
-        ) : fileRejections.length > 0 ? (
-          // file errors
-          <div {...getRootProps()} className={dropzoneStyle}>
-            <ExclamationIcon className="h-28 stroke-0.5" />
-            <FileErrors fileRejections={fileRejections} />
-            <input {...getInputProps()} />
-            <button
-              onClick={open}
-              className="text-white bg-indigo-700 flex px-3 py-2 rounded-md text-sm font-medium"
-            >
-              <UploadIcon className="h-5 mr-2 stroke-2" />
-              Upload another file
-            </button>
-          </div>
-        ) : !loading ? (
-          // image selected, cropping the image (stage 2)
-          <div className="w-full h-full relative p-0 z-0">
-            <Cropper
-              image={files[0].preview}
-              crop={crop}
-              zoom={zoom}
-              aspect={1}
-              onCropChange={setCrop}
-              onCropComplete={onCropComplete}
-              onZoomChange={setZoom}
-              objectFit={cropFit}
-              classes={{
-                containerClassName: "rounded-b-md",
-                cropAreaClassName: "cursor-grab active:cursor-grabbing",
-              }}
-            />
-            <div className="absolute pointer-events-none inset-4 flex justify-end items-end z-10">
+  const onCropComplete = useCallback(
+    (croppedArea: Area, croppedAreaPixels: Area) => {
+      setCroppedAreaPixels(croppedAreaPixels);
+    },
+    []
+  );
+
+  const showCroppedImage = useCallback(async () => {
+    try {
+      const croppedImage = await getCroppedImg(
+        files[0].preview!,
+        croppedAreaPixels!
+      );
+      console.log({ croppedImage });
+      setCroppedImage(croppedImage as string);
+    } catch (err) {
+      console.error(err);
+    }
+  }, [croppedAreaPixels]);
+
+  return (
+    <>
+      {files.length === 0 && fileRejections.length === 0 ? (
+        // no image is selected (stage 1)
+        <div className={styles.form}>
+          <section className={styles.header}>
+            <h1>Create a post</h1>
+          </section>
+
+          <div className="h-full flex spacebet flex-col items-center justify-center">
+            <div {...getRootProps()} className={dropzoneStyle}>
+              <ImageIcon className="h-28 stroke-0.5" />
+              <p className="mb-4 text-2xl">Drag a photo here</p>
+              <input {...getInputProps()} />
               <button
-                className="bg-black rounded-full p-2"
-                onClick={clearFiles}
+                onClick={open}
+                className="text-white bg-indigo-700 flex px-3 py-2 rounded-md text-sm font-medium"
               >
-                <XIcon className="stroke-white  h-5 stroke-2 pointer-events-auto" />
+                <UploadIcon className="h-5 mr-2 stroke-2" />
+                Click to upload
               </button>
             </div>
           </div>
-        ) : (
-          // waiting for the image dimensions to set the image size within the crop container
-          <div />
-        )}
-      </div>
-    </div>
+        </div>
+      ) : fileRejections.length > 0 ? (
+        // file errors
+        <div className={styles.form}>
+          <section className={styles.header}>
+            <h1>Couldn't upload files</h1>
+          </section>
+
+          <div className="h-full flex flex-col items-center justify-center">
+            <div {...getRootProps()} className={dropzoneStyle}>
+              <ExclamationIcon className="h-28 stroke-0.5" />
+              <FileErrors fileRejections={fileRejections} />
+              <input {...getInputProps()} />
+              <button
+                onClick={open}
+                className="text-white bg-indigo-700 flex px-3 py-2 rounded-md text-sm font-medium"
+              >
+                <UploadIcon className="h-5 mr-2 stroke-2" />
+                Upload another file
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : !loading ? (
+        // image selected, cropping the image (stage 2)
+        <div className={styles.form}>
+          <section className={styles.headerWithButtons}>
+            <div className="w-10" />
+            <h2>Crop your image</h2>
+            <button
+              className="font-semibold text-indigo-700 w-10"
+              onClick={showCroppedImage}
+            >
+              Next
+            </button>
+          </section>
+
+          <div className="h-full flex flex-col items-center justify-center">
+            <div className="w-full h-full relative p-0 z-0">
+              <Cropper
+                image={files[0].preview}
+                crop={crop}
+                zoom={zoom}
+                aspect={1}
+                onCropChange={setCrop}
+                onCropComplete={onCropComplete}
+                onZoomChange={setZoom}
+                objectFit={cropFit}
+                classes={{
+                  containerClassName: "rounded-b-md",
+                  cropAreaClassName: "cursor-grab active:cursor-grabbing",
+                }}
+              />
+              <div className="absolute pointer-events-none inset-4 flex justify-end items-end z-10">
+                <button
+                  className="bg-black rounded-full p-2"
+                  onClick={clearFiles}
+                >
+                  <XIcon className="stroke-white h-5 stroke-2 pointer-events-auto" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        // waiting for the image dimensions to set the image size within the crop container
+        <div />
+      )}
+    </>
   );
 }
 
