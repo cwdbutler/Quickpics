@@ -10,6 +10,7 @@ const session = require("express-session");
 // won't work with es6 imports
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
 import cors from "cors";
+import { graphqlUploadExpress } from "graphql-upload";
 
 const port = 4000;
 
@@ -40,6 +41,8 @@ const startServer = async () => {
       },
     })
   );
+
+  app.use(graphqlUploadExpress({ maxFileSize: 5_000_000, maxFiles: 1 }));
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({

@@ -20,6 +20,7 @@ type Post {
   createdAt: DateTime!
   updatedAt: DateTime!
   caption: String
+  imageUrl: String!
   author: User!
 }
 
@@ -49,10 +50,13 @@ type Query {
 union Activity = Post
 
 type Mutation {
-  createPost(caption: String!): PostResponse!
+  createPost(caption: String!, file: Upload!): PostResponse!
   updatePost(caption: String!, id: String!): PostResponse!
   deletePost(id: String!): PostResponse!
   register(password: String!, username: String!): UserResponse!
   login(password: String!, username: String!): UserResponse!
   logout: Boolean!
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload

@@ -16,6 +16,9 @@ export class Post {
   @Field({ nullable: true })
   caption?: string;
 
+  @Field()
+  imageUrl: string;
+
   @Field((type) => User)
   author: User;
 }

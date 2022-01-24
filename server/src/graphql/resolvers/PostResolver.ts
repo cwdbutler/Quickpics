@@ -12,6 +12,8 @@ import { PostResponse } from "../types/PostResponse";
 import { NOT_FOUND, NO_PERMISSION } from "../../utils/constants";
 import { createId } from "../../utils/createId";
 import { checkAuthenticated } from "../../middleware/checkAuthenticated";
+import { FileUpload, GraphQLUpload } from "graphql-upload";
+import { uploadFile } from "../../utils/uploadFile";
 
 @Resolver()
 export class PostResolver {
@@ -42,9 +44,12 @@ export class PostResolver {
   @Mutation(() => PostResponse)
   @UseMiddleware(checkAuthenticated)
   async createPost(
+    @Arg("file", () => GraphQLUpload) file: FileUpload,
     @Arg("caption") caption: string,
     @Ctx() { prisma, req }: Context
   ): Promise<PostResponse> {
+    const result = await uploadFile(file);
+
     const postId = createId();
 
     const [post] = await prisma.$transaction([
@@ -52,6 +57,7 @@ export class PostResolver {
         data: {
           id: postId,
           caption: caption,
+          imageUrl: result.Location,
           author: {
             connect: {
               id: req.session.userId,
