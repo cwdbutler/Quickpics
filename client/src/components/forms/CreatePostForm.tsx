@@ -112,7 +112,7 @@ function CreatePostForm() {
     header:
       "flex justify-center items-center text-md py-2 px-4 font-semibold text-gray-900 border-b-2 border-gray-300",
     headerWithButtons:
-      "flex justify-between items-center text-md py-2 px-6 font-semibold text-gray-900 border-b-2 border-gray-300",
+      "flex justify-between items-center text-md py-2 px-4 font-semibold text-gray-900 border-b-2 border-gray-300",
   };
 
   const onCropComplete = useCallback(
@@ -246,11 +246,19 @@ function CreatePostForm() {
             {({ values }) => (
               <Form>
                 <section className={styles.headerWithButtons}>
-                  <div className="w-10" />
+                  <div className="w-14">
+                    <button
+                      onClick={() => {
+                        setCroppedImage(null);
+                      }}
+                    >
+                      <LeftArrowIcon className="h-6 stroke-2" />
+                    </button>
+                  </div>
                   <h2>Share your post</h2>
                   <button
                     type="submit"
-                    className="font-semibold text-indigo-700 w-10"
+                    className="font-semibold text-indigo-700"
                   >
                     Submit
                   </button>
