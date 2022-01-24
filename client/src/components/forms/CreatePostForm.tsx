@@ -139,10 +139,10 @@ function CreatePostForm() {
   }, [croppedAreaPixels]);
 
   return (
-    <>
+    <div className={styles.form}>
       {files.length === 0 && fileRejections.length === 0 ? (
         // no image is selected (stage 1)
-        <div className={styles.form}>
+        <>
           <section className={styles.header}>
             <h1>Create a post</h1>
           </section>
@@ -161,10 +161,10 @@ function CreatePostForm() {
               </button>
             </div>
           </div>
-        </div>
+        </>
       ) : fileRejections.length > 0 ? (
         // file errors
-        <div className={styles.form}>
+        <>
           <section className={styles.header}>
             <h1>Couldn't upload files</h1>
           </section>
@@ -183,12 +183,19 @@ function CreatePostForm() {
               </button>
             </div>
           </div>
-        </div>
+        </>
       ) : loading ? (
-        <div className={styles.form}>Loading...</div> // to be improved
+        <>
+          <section className={styles.header}>
+            <h1>Loading</h1>
+          </section>
+          <div className="flex w-full h-full items-center justify-center">
+            Loading...
+          </div>
+        </> // to be improved
       ) : !croppedImage ? (
         // image selected, cropping the image (stage 2)
-        <div className={styles.form}>
+        <>
           <section className={styles.headerWithButtons}>
             <div className="w-10" />
             <h2>Crop your image</h2>
@@ -226,89 +233,84 @@ function CreatePostForm() {
               </div>
             </div>
           </div>
-        </div>
+        </>
       ) : (
         // image cropped, adding caption (stage 3)
-        <div className={styles.form}>
-          <Formik
-            initialValues={{
-              caption: "",
-            }}
-            onSubmit={async (values) => {
-              setLoading(true);
-              const res: Response = await fetch(croppedImage);
-              const blob: Blob = await res.blob();
-              const imageFile = new File(
-                [blob],
-                `${files[0].name}-cropped.jpg`,
-                // this gets changed in the backend anyway
-                {
-                  type: "image/png",
-                }
-              );
-              const response = await createPost({
-                caption: values.caption,
-                file: imageFile,
-              });
-              setLoading(false);
-              if (response.error) {
-                // do something
-              } else if (response.data?.createPost) {
-                router.push("/");
+        <Formik
+          initialValues={{
+            caption: "",
+          }}
+          onSubmit={async (values) => {
+            setLoading(true);
+            const res: Response = await fetch(croppedImage);
+            const blob: Blob = await res.blob();
+            const imageFile = new File(
+              [blob],
+              `${files[0].name}-cropped.jpg`,
+              // this gets changed in the backend anyway
+              {
+                type: "image/png",
               }
-            }}
-          >
-            {({ values }) => (
-              <Form>
-                <section className={styles.headerWithButtons}>
-                  <div className="w-14">
-                    <button
-                      onClick={() => {
-                        setCroppedImage(null);
-                      }}
-                    >
-                      <LeftArrowIcon className="h-6 stroke-2" />
-                    </button>
-                  </div>
-                  <h2>Share your post</h2>
+            );
+            const response = await createPost({
+              caption: values.caption,
+              file: imageFile,
+            });
+            setLoading(false);
+            if (response.error) {
+              // do something
+            } else if (response.data?.createPost) {
+              router.push("/");
+            }
+          }}
+        >
+          {({ values }) => (
+            <Form>
+              <section className={styles.headerWithButtons}>
+                <div className="w-14">
                   <button
-                    type="submit"
-                    className="font-semibold text-indigo-700"
+                    onClick={() => {
+                      setCroppedImage(null);
+                    }}
                   >
-                    Submit
+                    <LeftArrowIcon className="h-6 stroke-2" />
                   </button>
-                </section>
-
-                <div className="h-full flex flex-col items-center justify-center">
-                  <img src={croppedImage} className="h-full w-full" />
                 </div>
-                <section className="h-64 w-full p-2 flex flex-col justify-center">
-                  <Field
-                    as="textarea"
-                    className="p-2 w-full h-full resize-none focus:outline-none"
-                    id="caption"
-                    name="caption"
-                    placeholder="Add a caption..."
-                    value={
-                      values.caption.length >= MAX_CAPTION_LENGTH
-                        ? values.caption.substring(0, MAX_CAPTION_LENGTH - 1)
-                        : values.caption
-                    }
-                    // prevent typing if max lengh reached
-                  />
-                  <footer
-                    aria-label="character count"
-                    className="text-xs text-gray-400 h-8 p-2"
-                  >
-                    {values.caption.length}/2200
-                  </footer>
-                </section>
-              </Form>
-            )}
-          </Formik>
-        </div>
+                <h2>Add a caption</h2>
+                <button type="submit" className="font-semibold text-indigo-700">
+                  Share
+                </button>
+              </section>
+
+              <div className="h-full flex flex-col items-center justify-center">
+                <img src={croppedImage} className="h-full w-full" />
+              </div>
+              <section className="h-64 w-full p-2 flex flex-col justify-center">
+                <Field
+                  as="textarea"
+                  className="p-2 w-full h-full resize-none focus:outline-none"
+                  id="caption"
+                  name="caption"
+                  placeholder="Caption"
+                  value={
+                    values.caption.length >= MAX_CAPTION_LENGTH
+                      ? values.caption.substring(0, MAX_CAPTION_LENGTH - 1)
+                      : values.caption
+                  }
+                  // prevent typing if max lengh reached
+                />
+                <footer
+                  aria-label="character count"
+                  className="text-xs text-gray-400 h-8 p-2"
+                >
+                  {values.caption.length}/2200
+                </footer>
+              </section>
+            </Form>
+          )}
+        </Formik>
       )}
-    </>
+    </div>
   );
 }
 
