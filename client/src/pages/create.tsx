@@ -12,7 +12,7 @@ function create() {
     if (!fetching && !data?.currentUser) {
       router.replace("/login");
     }
-  }, []);
+  }, [data, router, fetching]);
 
   return (
     <div className="min-h-screen flex justify-center items-center">
