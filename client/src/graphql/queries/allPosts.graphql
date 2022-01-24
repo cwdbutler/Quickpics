@@ -1,8 +1,13 @@
 query allPosts {
   allPosts {
     id
+    imageUrl
     caption
     createdAt
     updatedAt
+    author {
+      id
+      username
+    }
   }
 }

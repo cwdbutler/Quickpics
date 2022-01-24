@@ -24,7 +24,11 @@ function Home() {
             <h3>Loading posts...</h3>
           ) : (
             data?.allPosts.map((post) => (
-              <article key={post.id}>{post.caption}</article>
+              <article key={post.id}>
+                <img src={post.imageUrl} alt="" />
+                <h2>{post.author.username}</h2>
+                {post.caption}
+              </article>
             ))
           )}
         </section>

@@ -15,6 +15,8 @@ import { Point, Area } from "react-easy-crop/types";
 import getCroppedImg from "../../utis/cropImage";
 import { mapToFormErrors } from "../../utis/mapToFormErrors";
 import { MAX_CAPTION_LENGTH } from "../../utis/constants";
+import { useCreatePostMutation } from "../../graphql/generated/graphql";
+import router from "next/router";
 
 function CreatePostForm() {
   interface ImageFile extends File {
@@ -25,6 +27,8 @@ function CreatePostForm() {
     width: number;
     height: number;
   }
+
+  const [, createPost] = useCreatePostMutation();
 
   const [files, setFiles] = useState<ImageFile[]>([]);
   const [dropzoneStyle, setdropzoneStyle] = useState<string>();
@@ -116,7 +120,7 @@ function CreatePostForm() {
   };
 
   const onCropComplete = useCallback(
-    (croppedArea: Area, croppedAreaPixels: Area) => {
+    (_croppedArea: Area, croppedAreaPixels: Area) => {
       setCroppedAreaPixels(croppedAreaPixels);
     },
     []
@@ -128,7 +132,6 @@ function CreatePostForm() {
         files[0].preview!,
         croppedAreaPixels!
       );
-      console.log({ croppedImage });
       setCroppedImage(croppedImage as string);
     } catch (err) {
       console.error(err);
@@ -182,8 +185,7 @@ function CreatePostForm() {
           </div>
         </div>
       ) : loading ? (
-        // waiting for the image dimensions to set the image size within the crop container
-        <div />
+        <div className={styles.form}>Loading...</div> // to be improved
       ) : !croppedImage ? (
         // image selected, cropping the image (stage 2)
         <div className={styles.form}>
@@ -231,16 +233,29 @@ function CreatePostForm() {
           <Formik
             initialValues={{
               caption: "",
-              image: croppedImage,
             }}
-            onSubmit={async (values, { setErrors }) => {
-              alert(JSON.stringify(values, null, 2));
-              // const response = await login(values);
-              // if (response.data?.login.errors) {
-              //   setErrors(mapToFormErrors(response.data.login.errors));
-              // } else if (response.data?.login.user) {
-              //   router.push("/");
-              // }
+            onSubmit={async (values) => {
+              setLoading(true);
+              const res: Response = await fetch(croppedImage);
+              const blob: Blob = await res.blob();
+              const imageFile = new File(
+                [blob],
+                `${files[0].name}-cropped.jpg`,
+                // this gets changed in the backend anyway
+                {
+                  type: "image/png",
+                }
+              );
+              const response = await createPost({
+                caption: values.caption,
+                file: imageFile,
+              });
+              setLoading(false);
+              if (response.error) {
+                // do something
+              } else if (response.data?.createPost) {
+                router.push("/");
+              }
             }}
           >
             {({ values }) => (
@@ -280,11 +295,6 @@ function CreatePostForm() {
                         : values.caption
                     }
                     // prevent typing if max lengh reached
-                  />
-                  <ErrorMessage
-                    component="div"
-                    className="p-2 absolute text-xs text-red-600 font-semibold"
-                    name="caption"
                   />
                   <footer
                     aria-label="character count"

@@ -17,7 +17,11 @@ export type Scalars = {
   Float: number;
   /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
   DateTime: any;
+  /** The `Upload` scalar type represents a file upload. */
+  Upload: any;
 };
+
+export type Activity = Post;
 
 export type FieldError = {
   __typename?: 'FieldError';
@@ -38,11 +42,12 @@ export type Mutation = {
 
 export type MutationCreatePostArgs = {
   caption: Scalars['String'];
+  file: Scalars['Upload'];
 };
 
 
 export type MutationDeletePostArgs = {
-  id: Scalars['Int'];
+  id: Scalars['String'];
 };
 
 
@@ -60,14 +65,16 @@ export type MutationRegisterArgs = {
 
 export type MutationUpdatePostArgs = {
   caption: Scalars['String'];
-  id: Scalars['Int'];
+  id: Scalars['String'];
 };
 
 export type Post = {
   __typename?: 'Post';
+  author: User;
   caption?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
+  imageUrl: Scalars['String'];
   updatedAt: Scalars['DateTime'];
 };
 
@@ -81,13 +88,14 @@ export type Query = {
   __typename?: 'Query';
   allPosts: Array<Post>;
   currentUser?: Maybe<User>;
+  feed: Array<Activity>;
   post?: Maybe<Post>;
   user?: Maybe<User>;
 };
 
 
 export type QueryPostArgs = {
-  id: Scalars['Int'];
+  id: Scalars['String'];
 };
 
 
@@ -108,6 +116,14 @@ export type UserResponse = {
   errors?: Maybe<Array<FieldError>>;
   user?: Maybe<User>;
 };
+
+export type CreatePostMutationVariables = Exact<{
+  caption: Scalars['String'];
+  file: Scalars['Upload'];
+}>;
+
+
+export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'PostResponse', post?: { __typename?: 'Post', id: string, caption?: string | null | undefined, imageUrl: string } | null | undefined } };
 
 export type LoginMutationVariables = Exact<{
   username: Scalars['String'];
@@ -133,7 +149,7 @@ export type RegisterMutation = { __typename?: 'Mutation', register: { __typename
 export type AllPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type AllPostsQuery = { __typename?: 'Query', allPosts: Array<{ __typename?: 'Post', id: string, caption?: string | null | undefined, createdAt: any, updatedAt: any }> };
+export type AllPostsQuery = { __typename?: 'Query', allPosts: Array<{ __typename?: 'Post', id: string, imageUrl: string, caption?: string | null | undefined, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string } }> };
 
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -141,6 +157,21 @@ export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 export type CurrentUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'User', id: string, username: string } | null | undefined };
 
 
+export const CreatePostDocument = gql`
+    mutation createPost($caption: String!, $file: Upload!) {
+  createPost(caption: $caption, file: $file) {
+    post {
+      id
+      caption
+      imageUrl
+    }
+  }
+}
+    `;
+
+export function useCreatePostMutation() {
+  return Urql.useMutation<CreatePostMutation, CreatePostMutationVariables>(CreatePostDocument);
+};
 export const LoginDocument = gql`
     mutation login($username: String!, $password: String!) {
   login(username: $username, password: $password) {
@@ -190,9 +221,14 @@ export const AllPostsDocument = gql`
     query allPosts {
   allPosts {
     id
+    imageUrl
     caption
     createdAt
     updatedAt
+    author {
+      id
+      username
+    }
   }
 }
     `;
@@ -224,6 +260,7 @@ export type GraphCacheKeysConfig = {
 
 export type GraphCacheResolvers = {
   Query?: {
+    feed?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<Activity> | string>>,
     post?: GraphCacheResolver<WithTypename<Query>, QueryPostArgs, WithTypename<Post> | string>,
     allPosts?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<Post> | string>>,
     currentUser?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<User> | string>,
@@ -237,7 +274,9 @@ export type GraphCacheResolvers = {
     id?: GraphCacheResolver<WithTypename<Post>, Record<string, never>, Scalars['ID'] | string>,
     createdAt?: GraphCacheResolver<WithTypename<Post>, Record<string, never>, Scalars['DateTime'] | string>,
     updatedAt?: GraphCacheResolver<WithTypename<Post>, Record<string, never>, Scalars['DateTime'] | string>,
-    caption?: GraphCacheResolver<WithTypename<Post>, Record<string, never>, Scalars['String'] | string>
+    caption?: GraphCacheResolver<WithTypename<Post>, Record<string, never>, Scalars['String'] | string>,
+    imageUrl?: GraphCacheResolver<WithTypename<Post>, Record<string, never>, Scalars['String'] | string>,
+    author?: GraphCacheResolver<WithTypename<Post>, Record<string, never>, WithTypename<User> | string>
   },
   PostResponse?: {
     errors?: GraphCacheResolver<WithTypename<PostResponse>, Record<string, never>, Array<WithTypename<FieldError> | string>>,

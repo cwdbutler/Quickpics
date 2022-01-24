@@ -1,0 +1,9 @@
+mutation createPost($caption: String!, $file: Upload!) {
+  createPost(caption: $caption, file: $file) {
+    post {
+      id
+      caption
+      imageUrl
+    }
+  }
+}
