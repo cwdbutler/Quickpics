@@ -13,6 +13,8 @@ import FileErrors from "./FileErrors";
 import Cropper from "react-easy-crop";
 import { Point, Area } from "react-easy-crop/types";
 import getCroppedImg from "../../utis/cropImage";
+import { mapToFormErrors } from "../../utis/mapToFormErrors";
+import { MAX_CAPTION_LENGTH } from "../../utis/constants";
 
 function CreatePostForm() {
   interface ImageFile extends File {
@@ -110,7 +112,7 @@ function CreatePostForm() {
     header:
       "flex justify-center items-center text-md py-2 px-4 font-semibold text-gray-900 border-b-2 border-gray-300",
     headerWithButtons:
-      "flex justify-between items-center text-md py-2 px-4 font-semibold text-gray-900 border-b-2 border-gray-300",
+      "flex justify-between items-center text-md py-2 px-6 font-semibold text-gray-900 border-b-2 border-gray-300",
   };
 
   const onCropComplete = useCallback(
@@ -179,7 +181,10 @@ function CreatePostForm() {
             </div>
           </div>
         </div>
-      ) : !loading ? (
+      ) : loading ? (
+        // waiting for the image dimensions to set the image size within the crop container
+        <div />
+      ) : !croppedImage ? (
         // image selected, cropping the image (stage 2)
         <div className={styles.form}>
           <section className={styles.headerWithButtons}>
@@ -221,8 +226,69 @@ function CreatePostForm() {
           </div>
         </div>
       ) : (
-        // waiting for the image dimensions to set the image size within the crop container
-        <div />
+        // image cropped, adding caption (stage 3)
+        <div className={styles.form}>
+          <Formik
+            initialValues={{
+              caption: "",
+              image: croppedImage,
+            }}
+            onSubmit={async (values, { setErrors }) => {
+              alert(JSON.stringify(values, null, 2));
+              // const response = await login(values);
+              // if (response.data?.login.errors) {
+              //   setErrors(mapToFormErrors(response.data.login.errors));
+              // } else if (response.data?.login.user) {
+              //   router.push("/");
+              // }
+            }}
+          >
+            {({ values }) => (
+              <Form>
+                <section className={styles.headerWithButtons}>
+                  <div className="w-10" />
+                  <h2>Share your post</h2>
+                  <button
+                    type="submit"
+                    className="font-semibold text-indigo-700 w-10"
+                  >
+                    Submit
+                  </button>
+                </section>
+
+                <div className="h-full flex flex-col items-center justify-center">
+                  <img src={croppedImage} className="h-full w-full" />
+                </div>
+                <section className="h-64 w-full p-2 flex flex-col justify-center">
+                  <Field
+                    as="textarea"
+                    className="p-2 w-full h-full resize-none focus:outline-none"
+                    id="caption"
+                    name="caption"
+                    placeholder="Add a caption..."
+                    value={
+                      values.caption.length >= MAX_CAPTION_LENGTH
+                        ? values.caption.substring(0, MAX_CAPTION_LENGTH - 1)
+                        : values.caption
+                    }
+                    // prevent typing if max lengh reached
+                  />
+                  <ErrorMessage
+                    component="div"
+                    className="p-2 absolute text-xs text-red-600 font-semibold"
+                    name="caption"
+                  />
+                  <footer
+                    aria-label="character count"
+                    className="text-xs text-gray-400 h-8 p-2"
+                  >
+                    {values.caption.length}/2200
+                  </footer>
+                </section>
+              </Form>
+            )}
+          </Formik>
+        </div>
       )}
     </>
   );
