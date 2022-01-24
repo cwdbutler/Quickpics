@@ -14,6 +14,7 @@ import { createId } from "../../utils/createId";
 import { checkAuthenticated } from "../../middleware/checkAuthenticated";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
 import { uploadFile } from "../../utils/uploadFile";
+import { deleteImage } from "../../utils/deleteImage";
 
 @Resolver()
 export class PostResolver {
@@ -48,9 +49,9 @@ export class PostResolver {
     @Arg("caption") caption: string,
     @Ctx() { prisma, req }: Context
   ): Promise<PostResponse> {
-    const result = await uploadFile(file);
-
     const postId = createId();
+    const result = await uploadFile(file, postId);
+    // postId is s3 bucket key
 
     const [post] = await prisma.$transaction([
       prisma.post.create({
@@ -178,6 +179,10 @@ export class PostResolver {
         author: true,
       },
     });
+
+    await deleteImage(post.id);
+    // delete from s3
+
     return {
       post,
     };
