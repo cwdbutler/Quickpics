@@ -109,7 +109,7 @@ function CreatePostForm() {
               <section className="h-64 w-full p-2 flex flex-col justify-center">
                 <Field
                   as="textarea"
-                  className="p-2 w-full h-full resize-none focus:outline-none"
+                  className="p-2 w-full h-full resize-none outline-none"
                   id="caption"
                   name="caption"
                   placeholder="Caption"
