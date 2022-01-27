@@ -5,9 +5,12 @@ import {
   useCurrentUserQuery,
   useLogoutMutation,
 } from "../graphql/generated/graphql";
+import { isServer } from "../utis/isServer";
 
-function NavBar() {
-  const [{ data, fetching }] = useCurrentUserQuery();
+export default function NavBar() {
+  const [{ data, fetching }] = useCurrentUserQuery({
+    pause: isServer(),
+  });
   const [, logout] = useLogoutMutation();
 
   const loggedInButtons = (user: string) => (
@@ -53,7 +56,7 @@ function NavBar() {
             </button>
           </Link>
           <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-end">
-            {fetching
+            {fetching || isServer()
               ? null
               : data?.currentUser
               ? loggedInButtons(data.currentUser.username)
@@ -64,5 +67,3 @@ function NavBar() {
     </nav>
   );
 }
-
-export default withUrqlClient(urqlClient)(NavBar);
