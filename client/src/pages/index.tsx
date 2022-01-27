@@ -8,7 +8,7 @@ import NavBar from "../components/NavBar";
 function Home() {
   const [{ data, fetching }] = useAllPostsQuery({
     variables: {
-      take: 3,
+      take: 10,
     },
   });
 
