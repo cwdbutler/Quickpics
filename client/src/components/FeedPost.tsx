@@ -1,4 +1,3 @@
-import { AllPostsQuery, Post } from "../graphql/generated/graphql";
 import { timeSince } from "../utis/timeSince";
 
 type Props = {

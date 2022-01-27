@@ -117,6 +117,10 @@ export type UserResponse = {
   user?: Maybe<User>;
 };
 
+export type PostWithAuthorFragment = { __typename?: 'Post', id: string, imageUrl: string, caption?: string | null | undefined, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string } };
+
+export type UserInfoFragment = { __typename?: 'User', id: string, username: string };
+
 export type CreatePostMutationVariables = Exact<{
   caption: Scalars['String'];
   file: Scalars['Upload'];
@@ -156,7 +160,25 @@ export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type CurrentUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'User', id: string, username: string } | null | undefined };
 
-
+export const PostWithAuthorFragmentDoc = gql`
+    fragment PostWithAuthor on Post {
+  id
+  imageUrl
+  caption
+  createdAt
+  updatedAt
+  author {
+    id
+    username
+  }
+}
+    `;
+export const UserInfoFragmentDoc = gql`
+    fragment UserInfo on User {
+  id
+  username
+}
+    `;
 export const CreatePostDocument = gql`
     mutation createPost($caption: String!, $file: Upload!) {
   createPost(caption: $caption, file: $file) {
@@ -176,8 +198,7 @@ export const LoginDocument = gql`
     mutation login($username: String!, $password: String!) {
   login(username: $username, password: $password) {
     user {
-      id
-      username
+      ...UserInfo
     }
     errors {
       field
@@ -185,7 +206,7 @@ export const LoginDocument = gql`
     }
   }
 }
-    `;
+    ${UserInfoFragmentDoc}`;
 
 export function useLoginMutation() {
   return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
@@ -203,8 +224,7 @@ export const RegisterDocument = gql`
     mutation register($username: String!, $password: String!) {
   register(username: $username, password: $password) {
     user {
-      id
-      username
+      ...UserInfo
     }
     errors {
       field
@@ -212,7 +232,7 @@ export const RegisterDocument = gql`
     }
   }
 }
-    `;
+    ${UserInfoFragmentDoc}`;
 
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
@@ -220,18 +240,10 @@ export function useRegisterMutation() {
 export const AllPostsDocument = gql`
     query allPosts {
   allPosts {
-    id
-    imageUrl
-    caption
-    createdAt
-    updatedAt
-    author {
-      id
-      username
-    }
+    ...PostWithAuthor
   }
 }
-    `;
+    ${PostWithAuthorFragmentDoc}`;
 
 export function useAllPostsQuery(options: Omit<Urql.UseQueryArgs<AllPostsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<AllPostsQuery>({ query: AllPostsDocument, ...options });
@@ -239,11 +251,10 @@ export function useAllPostsQuery(options: Omit<Urql.UseQueryArgs<AllPostsQueryVa
 export const CurrentUserDocument = gql`
     query currentUser {
   currentUser {
-    id
-    username
+    ...UserInfo
   }
 }
-    `;
+    ${UserInfoFragmentDoc}`;
 
 export function useCurrentUserQuery(options: Omit<Urql.UseQueryArgs<CurrentUserQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<CurrentUserQuery>({ query: CurrentUserDocument, ...options });

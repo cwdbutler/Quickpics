@@ -1,0 +1,11 @@
+fragment PostWithAuthor on Post {
+  id
+  imageUrl
+  caption
+  createdAt
+  updatedAt
+  author {
+    id
+    username
+  }
+}
