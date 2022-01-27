@@ -111,6 +111,7 @@ export type QueryUserArgs = {
 
 export type User = {
   __typename?: 'User';
+  avatarUrl: Scalars['String'];
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
@@ -123,9 +124,9 @@ export type UserResponse = {
   user?: Maybe<User>;
 };
 
-export type PostWithAuthorFragment = { __typename?: 'Post', id: string, imageUrl: string, caption?: string | null | undefined, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string } };
+export type PostWithAuthorFragment = { __typename?: 'Post', id: string, imageUrl: string, caption?: string | null | undefined, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string, avatarUrl: string } };
 
-export type UserInfoFragment = { __typename?: 'User', id: string, username: string };
+export type UserInfoFragment = { __typename?: 'User', id: string, username: string, avatarUrl: string };
 
 export type CreatePostMutationVariables = Exact<{
   caption: Scalars['String'];
@@ -141,7 +142,7 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, avatarUrl: string } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -154,7 +155,7 @@ export type RegisterMutationVariables = Exact<{
 }>;
 
 
-export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
+export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, avatarUrl: string } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
 
 export type AllPostsQueryVariables = Exact<{
   take: Scalars['Int'];
@@ -162,13 +163,20 @@ export type AllPostsQueryVariables = Exact<{
 }>;
 
 
-export type AllPostsQuery = { __typename?: 'Query', allPosts: Array<{ __typename?: 'Post', id: string, imageUrl: string, caption?: string | null | undefined, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string } }> };
+export type AllPostsQuery = { __typename?: 'Query', allPosts: Array<{ __typename?: 'Post', id: string, imageUrl: string, caption?: string | null | undefined, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string, avatarUrl: string } }> };
 
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CurrentUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'User', id: string, username: string } | null | undefined };
+export type CurrentUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'User', id: string, username: string, avatarUrl: string } | null | undefined };
 
+export const UserInfoFragmentDoc = gql`
+    fragment UserInfo on User {
+  id
+  username
+  avatarUrl
+}
+    `;
 export const PostWithAuthorFragmentDoc = gql`
     fragment PostWithAuthor on Post {
   id
@@ -177,17 +185,10 @@ export const PostWithAuthorFragmentDoc = gql`
   createdAt
   updatedAt
   author {
-    id
-    username
+    ...UserInfo
   }
 }
-    `;
-export const UserInfoFragmentDoc = gql`
-    fragment UserInfo on User {
-  id
-  username
-}
-    `;
+    ${UserInfoFragmentDoc}`;
 export const CreatePostDocument = gql`
     mutation createPost($caption: String!, $file: Upload!) {
   createPost(caption: $caption, file: $file) {
@@ -306,7 +307,8 @@ export type GraphCacheResolvers = {
     id?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['ID'] | string>,
     createdAt?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['DateTime'] | string>,
     updatedAt?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['DateTime'] | string>,
-    username?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>
+    username?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
+    avatarUrl?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>
   },
   UserResponse?: {
     errors?: GraphCacheResolver<WithTypename<UserResponse>, Record<string, never>, Array<WithTypename<FieldError> | string>>,

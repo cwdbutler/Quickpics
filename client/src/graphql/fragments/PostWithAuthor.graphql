@@ -5,7 +5,6 @@ fragment PostWithAuthor on Post {
   createdAt
   updatedAt
   author {
-    id
-    username
+    ...UserInfo
   }
 }

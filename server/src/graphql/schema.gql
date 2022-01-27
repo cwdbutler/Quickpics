@@ -8,6 +8,7 @@ type User {
   createdAt: DateTime!
   updatedAt: DateTime!
   username: String!
+  avatarUrl: String
 }
 
 """
