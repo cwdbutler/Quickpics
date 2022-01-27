@@ -13,16 +13,16 @@ import FileErrors from "./FileErrors";
 import Cropper from "react-easy-crop";
 import { Point, Area } from "react-easy-crop/types";
 import getCroppedImg from "../../utis/cropImage";
-import { mapToFormErrors } from "../../utis/mapToFormErrors";
 import { MAX_CAPTION_LENGTH } from "../../utis/constants";
 import { useCreatePostMutation } from "../../graphql/generated/graphql";
 import router from "next/router";
+import ImageUploader from "./ImageUploader";
+
+export interface ImageFile extends File {
+  preview?: string;
+}
 
 function CreatePostForm() {
-  interface ImageFile extends File {
-    preview?: string;
-  }
-
   interface ImageDimensions {
     width: number;
     height: number;
@@ -31,7 +31,6 @@ function CreatePostForm() {
   const [, createPost] = useCreatePostMutation();
 
   const [files, setFiles] = useState<ImageFile[]>([]);
-  const [dropzoneStyle, setdropzoneStyle] = useState<string>();
   const [imageDimensions, setImageDimensions] =
     useState<ImageDimensions | null>();
   const [cropFit, setCropFit] = useState<
@@ -64,15 +63,6 @@ function CreatePostForm() {
   // users cannot click the dropzone or focus it with tab, they can only click the upload button and keyboard navigate to it
 
   // change colour if file is being dragged over the dropzone
-  useEffect(() => {
-    isDragActive
-      ? setdropzoneStyle(
-          "bg-slate-100 h-full w-full flex flex-col items-center justify-center pb-12"
-        )
-      : setdropzoneStyle(
-          "h-full w-full flex flex-col items-center justify-center pb-12"
-        );
-  }, [isDragActive]);
 
   useEffect(() => {
     if (files.length > 0) {
@@ -114,8 +104,6 @@ function CreatePostForm() {
   const styles = {
     form: "aspect-square transition-all duration-500 ease-in-out w-[350px] sm:w-3/5 xl:w-[900px] rounded-xl mx-auto shadow-lg p-0 border-2 border-gray-50",
     header:
-      "flex justify-center items-center text-md py-2 px-4 font-semibold text-gray-900 border-b-2 border-gray-300",
-    headerWithButtons:
       "flex justify-between items-center text-md py-2 px-4 font-semibold text-gray-900 border-b-2 border-gray-300",
   };
 
@@ -140,50 +128,9 @@ function CreatePostForm() {
 
   return (
     <div className={styles.form}>
-      {files.length === 0 && fileRejections.length === 0 ? (
+      {files.length === 0 ? (
         // no image is selected (stage 1)
-        <>
-          <section className={styles.header}>
-            <h1>Create a post</h1>
-          </section>
-
-          <div className="h-full flex spacebet flex-col items-center justify-center">
-            <div {...getRootProps()} className={dropzoneStyle}>
-              <ImageIcon className="h-28 stroke-0.5" />
-              <p className="mb-4 text-2xl">Drag a photo here</p>
-              <input {...getInputProps()} />
-              <button
-                onClick={open}
-                className="text-white bg-indigo-700 flex px-3 py-2 rounded-md text-sm font-medium"
-              >
-                <UploadIcon className="h-5 mr-2 stroke-2" />
-                Click to upload
-              </button>
-            </div>
-          </div>
-        </>
-      ) : fileRejections.length > 0 ? (
-        // file errors
-        <>
-          <section className={styles.header}>
-            <h1>Couldn't upload files</h1>
-          </section>
-
-          <div className="h-full flex flex-col items-center justify-center">
-            <div {...getRootProps()} className={dropzoneStyle}>
-              <ExclamationIcon className="h-28 stroke-0.5" />
-              <FileErrors fileRejections={fileRejections} />
-              <input {...getInputProps()} />
-              <button
-                onClick={open}
-                className="text-white bg-indigo-700 flex px-3 py-2 rounded-md text-sm font-medium"
-              >
-                <UploadIcon className="h-5 mr-2 stroke-2" />
-                Upload another file
-              </button>
-            </div>
-          </div>
-        </>
+        <ImageUploader setFiles={setFiles} styles={styles} />
       ) : loading ? (
         <>
           <section className={styles.header}>
@@ -196,7 +143,7 @@ function CreatePostForm() {
       ) : !croppedImage ? (
         // image selected, cropping the image (stage 2)
         <>
-          <section className={styles.headerWithButtons}>
+          <section className={styles.header}>
             <div className="w-10" />
             <h2>Crop your image</h2>
             <button
@@ -266,7 +213,7 @@ function CreatePostForm() {
         >
           {({ values }) => (
             <Form>
-              <section className={styles.headerWithButtons}>
+              <section className={styles.header}>
                 <div className="w-14">
                   <button
                     onClick={() => {
