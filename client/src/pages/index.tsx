@@ -2,6 +2,7 @@ import Head from "next/head";
 import { withUrqlClient } from "next-urql";
 import { urqlClient } from "../urqlClient";
 import { useAllPostsQuery } from "../graphql/generated/graphql";
+import FeedPost from "../components/FeedPost";
 
 function Home() {
   const [{ data, fetching }] = useAllPostsQuery();
@@ -23,17 +24,12 @@ function Home() {
           {fetching ? (
             <h3>Loading posts...</h3>
           ) : (
-            data?.allPosts.map((post) => (
-              <article key={post.id}>
-                <img src={post.imageUrl} alt="" />
-                <h2>{post.author.username}</h2>
-                {post.caption}
-              </article>
-            ))
+            data?.allPosts.map((post) => <FeedPost key={post.id} post={post} />)
           )}
         </section>
       </main>
     </div>
   );
 }
+
 export default withUrqlClient(urqlClient, { ssr: true })(Home);
