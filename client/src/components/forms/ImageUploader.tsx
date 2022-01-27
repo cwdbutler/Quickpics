@@ -5,7 +5,7 @@ import { ImageFile } from "./CreatePostForm";
 import FileErrors from "./FileErrors";
 
 type Props = {
-  setFiles: (file: ImageFile[]) => void;
+  setFiles: (files: ImageFile[]) => void;
   styles: {
     header: string;
   };
