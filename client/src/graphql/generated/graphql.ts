@@ -94,6 +94,12 @@ export type Query = {
 };
 
 
+export type QueryAllPostsArgs = {
+  cursor?: InputMaybe<Scalars['String']>;
+  take: Scalars['Int'];
+};
+
+
 export type QueryPostArgs = {
   id: Scalars['String'];
 };
@@ -150,7 +156,10 @@ export type RegisterMutationVariables = Exact<{
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
 
-export type AllPostsQueryVariables = Exact<{ [key: string]: never; }>;
+export type AllPostsQueryVariables = Exact<{
+  take: Scalars['Int'];
+  cursor?: InputMaybe<Scalars['String']>;
+}>;
 
 
 export type AllPostsQuery = { __typename?: 'Query', allPosts: Array<{ __typename?: 'Post', id: string, imageUrl: string, caption?: string | null | undefined, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string } }> };
@@ -238,8 +247,8 @@ export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
 };
 export const AllPostsDocument = gql`
-    query allPosts {
-  allPosts {
+    query allPosts($take: Int!, $cursor: String) {
+  allPosts(take: $take, cursor: $cursor) {
     ...PostWithAuthor
   }
 }
@@ -273,7 +282,7 @@ export type GraphCacheResolvers = {
   Query?: {
     feed?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<Activity> | string>>,
     post?: GraphCacheResolver<WithTypename<Query>, QueryPostArgs, WithTypename<Post> | string>,
-    allPosts?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<Post> | string>>,
+    allPosts?: GraphCacheResolver<WithTypename<Query>, QueryAllPostsArgs, Array<WithTypename<Post> | string>>,
     currentUser?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<User> | string>,
     user?: GraphCacheResolver<WithTypename<Query>, QueryUserArgs, WithTypename<User> | string>
   },

@@ -1,6 +1,7 @@
 import {
   Arg,
   Ctx,
+  Int,
   Mutation,
   Query,
   Resolver,
@@ -34,12 +35,41 @@ export class PostResolver {
   }
 
   @Query(() => [Post])
-  allPosts(@Ctx() { prisma }: Context): Promise<Post[]> {
-    return prisma.post.findMany({
-      include: {
-        author: true,
-      },
-    });
+  allPosts(
+    @Ctx() { prisma }: Context,
+    @Arg("take", () => Int) take: number,
+    @Arg("cursor", { nullable: true }) cursor: string
+  ): Promise<Post[]> {
+    // const maxTake = 20
+
+    let posts: Promise<Post[]>;
+    if (cursor) {
+      posts = prisma.post.findMany({
+        orderBy: {
+          createdAt: "desc",
+        },
+        cursor: {
+          id: cursor,
+        },
+        take: take,
+        skip: 1, // skips the cursor
+        include: {
+          author: true,
+        },
+      });
+    } else {
+      posts = prisma.post.findMany({
+        orderBy: {
+          createdAt: "desc",
+        },
+        take: take,
+        include: {
+          author: true,
+        },
+      });
+    }
+
+    return posts;
   }
 
   @Mutation(() => PostResponse)

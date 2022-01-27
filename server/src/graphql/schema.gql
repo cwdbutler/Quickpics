@@ -42,7 +42,7 @@ type UserResponse {
 type Query {
   feed: [Activity!]!
   post(id: String!): Post
-  allPosts: [Post!]!
+  allPosts(cursor: String, take: Int!): [Post!]!
   currentUser: User
   user(id: Int!): User
 }
