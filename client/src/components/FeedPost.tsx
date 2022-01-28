@@ -1,6 +1,12 @@
 import { PostWithAuthorFragment } from "../graphql/generated/graphql";
 import { timeSince } from "../utis/timeSince";
-import { BookmarkIcon, CommentIcon, HappyIcon, HeartIcon } from "./Icons";
+import {
+  BookmarkIcon,
+  CommentIcon,
+  DotsIcon,
+  HappyIcon,
+  HeartIcon,
+} from "./Icons";
 
 type Props = {
   post: PostWithAuthorFragment;
@@ -12,16 +18,21 @@ export default function FeedPost({ post }: Props) {
   };
   return (
     <article className="w-[480px] overflow-v border-2 mb-3">
-      <header className="h-14 border-b-2 flex items-center p-3">
-        <img
-          src={
-            post.author.avatarUrl
-              ? post.author.avatarUrl
-              : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
-          }
-          className="h-8 rounded-full"
-        />
-        <h3 className="ml-3 font-semibold">{post.author.username}</h3>
+      <header className="h-14 border-b-2 flex items-center justify-between p-3">
+        <div className="flex items-center">
+          <img
+            src={
+              post.author.avatarUrl
+                ? post.author.avatarUrl
+                : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
+            }
+            className="h-8 rounded-full"
+          />
+          <h3 className="ml-3 font-semibold">{post.author.username}</h3>
+        </div>
+        <button>
+          <DotsIcon className={styles.icon} />
+        </button>
       </header>
       <img src={post.imageUrl} className="w-full" />
       <div className="h-12 border-b-2 flex items-center justify-between">
