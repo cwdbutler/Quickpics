@@ -25,6 +25,15 @@ once it has compiled to /dist:
 yarn dev
 ```
 
+Seeding the database (additional instructions in /prisma/seed.ts)
+
+```
+npx prisma db seed
+```
+
+For options/troubleshooting when seeding, refer to the comments in the seed.ts file.
+Includes an option to generate posts with a date in the last week, for more realistic data, at the cost of it being unique to you.
+
 Removed eslint as there were compatibility issues with typegraphql
 
 Testing is done by creating a new schema (identified by a randomly generated string) and connecting to the test database, before starting a test server.
