@@ -1,6 +1,4 @@
 import { createUnionType } from "type-graphql";
-
-import "reflect-metadata";
 import { Post } from "./Post";
 
 export const ActivityUnion = createUnionType({

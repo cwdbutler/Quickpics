@@ -9,7 +9,7 @@ import {
 } from "type-graphql";
 import { Post } from "../types/Post";
 import { Context } from "../../context";
-import { PostResponse } from "../types/PostResponse";
+import { CreatePostResponse } from "../types/CreatePostResponse";
 import { NOT_FOUND, NO_PERMISSION } from "../../utils/constants";
 import { createId } from "../../utils/createId";
 import { checkAuthenticated } from "../../middleware/checkAuthenticated";
@@ -72,13 +72,13 @@ export class PostResolver {
     return posts;
   }
 
-  @Mutation(() => PostResponse)
+  @Mutation(() => CreatePostResponse)
   @UseMiddleware(checkAuthenticated)
   async createPost(
     @Arg("file", () => GraphQLUpload) file: FileUpload,
     @Arg("caption") caption: string,
     @Ctx() { prisma, req }: Context
-  ): Promise<PostResponse> {
+  ): Promise<CreatePostResponse> {
     const postId = createId();
     const result = await uploadFile(file, postId);
     // postId is s3 bucket key
@@ -109,13 +109,13 @@ export class PostResolver {
     };
   }
 
-  @Mutation(() => PostResponse)
+  @Mutation(() => CreatePostResponse)
   @UseMiddleware(checkAuthenticated)
   async updatePost(
     @Arg("id", () => String) id: string,
     @Arg("caption") caption: string,
     @Ctx() { prisma, req }: Context
-  ): Promise<PostResponse> {
+  ): Promise<CreatePostResponse> {
     const foundPost = await prisma.post.findUnique({
       where: {
         id: id,
@@ -164,12 +164,12 @@ export class PostResolver {
     };
   }
 
-  @Mutation(() => PostResponse)
+  @Mutation(() => CreatePostResponse)
   @UseMiddleware(checkAuthenticated)
   async deletePost(
     @Arg("id", () => String) id: string,
     @Ctx() { prisma, req }: Context
-  ): Promise<PostResponse> | null {
+  ): Promise<CreatePostResponse> | null {
     const foundPost = await prisma.post.findUnique({
       where: {
         id: id,

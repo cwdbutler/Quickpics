@@ -30,12 +30,12 @@ type FieldError {
   message: String!
 }
 
-type PostResponse {
+type CreatePostResponse {
   errors: [FieldError!]
   post: Post
 }
 
-type UserResponse {
+type CreateUserResponse {
   errors: [FieldError!]
   user: User
 }
@@ -51,11 +51,11 @@ type Query {
 union Activity = Post
 
 type Mutation {
-  createPost(caption: String!, file: Upload!): PostResponse!
-  updatePost(caption: String!, id: String!): PostResponse!
-  deletePost(id: String!): PostResponse!
-  register(password: String!, username: String!): UserResponse!
-  login(password: String!, username: String!): UserResponse!
+  createPost(caption: String!, file: Upload!): CreatePostResponse!
+  updatePost(caption: String!, id: String!): CreatePostResponse!
+  deletePost(id: String!): CreatePostResponse!
+  register(password: String!, username: String!): CreateUserResponse!
+  login(password: String!, username: String!): CreateUserResponse!
   logout: Boolean!
 }
 
