@@ -19,3 +19,5 @@ export const TOO_SHORT = (field: string) =>
 export const TOO_LONG = (field: string) =>
   `Your ${field} cannot be greater than ${MAX_FIELD_LENGTH} characters long`;
 export const NO_PERMISSION = "You don't have permission to do that";
+
+export const MAX_TAKE = 50;

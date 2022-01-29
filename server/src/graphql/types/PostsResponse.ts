@@ -4,7 +4,7 @@ import { Post } from "./Post";
 @ObjectType()
 export class PostsResponse {
   @Field(() => [Post])
-  posts: [Post];
+  posts: Post[];
 
   @Field()
   hasMore: boolean;

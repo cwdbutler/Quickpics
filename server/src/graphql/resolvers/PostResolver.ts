@@ -10,12 +10,13 @@ import {
 import { Post } from "../types/Post";
 import { Context } from "../../context";
 import { CreatePostResponse } from "../types/CreatePostResponse";
-import { NOT_FOUND, NO_PERMISSION } from "../../utils/constants";
+import { MAX_TAKE, NOT_FOUND, NO_PERMISSION } from "../../utils/constants";
 import { createId } from "../../utils/createId";
 import { checkAuthenticated } from "../../middleware/checkAuthenticated";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
 import { uploadFile } from "../../utils/uploadFile";
 import { deleteImage } from "../../utils/deleteImage";
+import { PostsResponse } from "../types/PostsResponse";
 
 @Resolver()
 export class PostResolver {
@@ -34,42 +35,49 @@ export class PostResolver {
     });
   }
 
-  @Query(() => [Post])
-  allPosts(
+  @Query(() => PostsResponse)
+  async allPosts(
     @Ctx() { prisma }: Context,
     @Arg("take", () => Int) take: number,
     @Arg("cursor", { nullable: true }) cursor: string
-  ): Promise<Post[]> {
-    // const maxTake = 20
+  ): Promise<PostsResponse> {
+    const cappedTake = Math.min(take, MAX_TAKE);
+    const takePlusOne = cappedTake + 1;
+    // cap the take, and + 1 to check if there is more
 
-    let posts: Promise<Post[]>;
+    let posts: Post[];
     if (cursor) {
-      posts = prisma.post.findMany({
+      posts = await prisma.post.findMany({
         orderBy: {
           createdAt: "desc",
         },
         cursor: {
           id: cursor,
         },
-        take: take,
+        take: takePlusOne,
         skip: 1, // skips the cursor
         include: {
           author: true,
         },
       });
     } else {
-      posts = prisma.post.findMany({
+      posts = await prisma.post.findMany({
         orderBy: {
           createdAt: "desc",
         },
-        take: take,
+        take: takePlusOne,
         include: {
           author: true,
         },
       });
     }
 
-    return posts;
+    return {
+      posts: posts.slice(0, cappedTake),
+      // return the original requested amount
+      hasMore: posts.length === takePlusOne,
+      // check if there is still one more post
+    };
   }
 
   @Mutation(() => CreatePostResponse)

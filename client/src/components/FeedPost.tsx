@@ -31,7 +31,7 @@ export default function FeedPost({ post }: Props) {
           <h3 className="ml-3 font-semibold">{post.author.username}</h3>
         </div>
         <button>
-          <DotsIcon className={styles.icon} />
+          <DotsIcon className={"h-6 stroke-1.5"} />
         </button>
       </header>
       <img src={post.imageUrl} className="w-full" />

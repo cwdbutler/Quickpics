@@ -23,6 +23,18 @@ export type Scalars = {
 
 export type Activity = Post;
 
+export type CreatePostResponse = {
+  __typename?: 'CreatePostResponse';
+  errors?: Maybe<Array<FieldError>>;
+  post?: Maybe<Post>;
+};
+
+export type CreateUserResponse = {
+  __typename?: 'CreateUserResponse';
+  errors?: Maybe<Array<FieldError>>;
+  user?: Maybe<User>;
+};
+
 export type FieldError = {
   __typename?: 'FieldError';
   field: Scalars['String'];
@@ -31,12 +43,12 @@ export type FieldError = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createPost: PostResponse;
-  deletePost: PostResponse;
-  login: UserResponse;
+  createPost: CreatePostResponse;
+  deletePost: CreatePostResponse;
+  login: CreateUserResponse;
   logout: Scalars['Boolean'];
-  register: UserResponse;
-  updatePost: PostResponse;
+  register: CreateUserResponse;
+  updatePost: CreatePostResponse;
 };
 
 
@@ -78,15 +90,15 @@ export type Post = {
   updatedAt: Scalars['DateTime'];
 };
 
-export type PostResponse = {
-  __typename?: 'PostResponse';
-  errors?: Maybe<Array<FieldError>>;
-  post?: Maybe<Post>;
+export type PostsResponse = {
+  __typename?: 'PostsResponse';
+  hasMore: Scalars['Boolean'];
+  posts: Array<Post>;
 };
 
 export type Query = {
   __typename?: 'Query';
-  allPosts: Array<Post>;
+  allPosts: PostsResponse;
   currentUser?: Maybe<User>;
   feed: Array<Activity>;
   post?: Maybe<Post>;
@@ -111,22 +123,16 @@ export type QueryUserArgs = {
 
 export type User = {
   __typename?: 'User';
-  avatarUrl: Scalars['String'];
+  avatarUrl?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
   username: Scalars['String'];
 };
 
-export type UserResponse = {
-  __typename?: 'UserResponse';
-  errors?: Maybe<Array<FieldError>>;
-  user?: Maybe<User>;
-};
+export type PostWithAuthorFragment = { __typename?: 'Post', id: string, imageUrl: string, caption?: string | null | undefined, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined } };
 
-export type PostWithAuthorFragment = { __typename?: 'Post', id: string, imageUrl: string, caption?: string | null | undefined, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string, avatarUrl: string } };
-
-export type UserInfoFragment = { __typename?: 'User', id: string, username: string, avatarUrl: string };
+export type UserInfoFragment = { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined };
 
 export type CreatePostMutationVariables = Exact<{
   caption: Scalars['String'];
@@ -134,7 +140,7 @@ export type CreatePostMutationVariables = Exact<{
 }>;
 
 
-export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'PostResponse', post?: { __typename?: 'Post', id: string, caption?: string | null | undefined, imageUrl: string } | null | undefined } };
+export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'CreatePostResponse', post?: { __typename?: 'Post', id: string, caption?: string | null | undefined, imageUrl: string } | null | undefined } };
 
 export type LoginMutationVariables = Exact<{
   username: Scalars['String'];
@@ -142,7 +148,7 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, avatarUrl: string } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'CreateUserResponse', user?: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -155,7 +161,7 @@ export type RegisterMutationVariables = Exact<{
 }>;
 
 
-export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, avatarUrl: string } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
+export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'CreateUserResponse', user?: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
 
 export type AllPostsQueryVariables = Exact<{
   take: Scalars['Int'];
@@ -163,12 +169,12 @@ export type AllPostsQueryVariables = Exact<{
 }>;
 
 
-export type AllPostsQuery = { __typename?: 'Query', allPosts: Array<{ __typename?: 'Post', id: string, imageUrl: string, caption?: string | null | undefined, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string, avatarUrl: string } }> };
+export type AllPostsQuery = { __typename?: 'Query', allPosts: { __typename?: 'PostsResponse', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: string, imageUrl: string, caption?: string | null | undefined, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined } }> } };
 
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CurrentUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'User', id: string, username: string, avatarUrl: string } | null | undefined };
+export type CurrentUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined } | null | undefined };
 
 export const UserInfoFragmentDoc = gql`
     fragment UserInfo on User {
@@ -250,7 +256,10 @@ export function useRegisterMutation() {
 export const AllPostsDocument = gql`
     query allPosts($take: Int!, $cursor: String) {
   allPosts(take: $take, cursor: $cursor) {
-    ...PostWithAuthor
+    posts {
+      ...PostWithAuthor
+    }
+    hasMore
   }
 }
     ${PostWithAuthorFragmentDoc}`;
@@ -272,20 +281,29 @@ export function useCurrentUserQuery(options: Omit<Urql.UseQueryArgs<CurrentUserQ
 export type WithTypename<T extends { __typename?: any }> = { [K in Exclude<keyof T, '__typename'>]?: T[K] } & { __typename: NonNullable<T['__typename']> };
 
 export type GraphCacheKeysConfig = {
+  CreatePostResponse?: (data: WithTypename<CreatePostResponse>) => null | string,
+  CreateUserResponse?: (data: WithTypename<CreateUserResponse>) => null | string,
   FieldError?: (data: WithTypename<FieldError>) => null | string,
   Post?: (data: WithTypename<Post>) => null | string,
-  PostResponse?: (data: WithTypename<PostResponse>) => null | string,
-  User?: (data: WithTypename<User>) => null | string,
-  UserResponse?: (data: WithTypename<UserResponse>) => null | string
+  PostsResponse?: (data: WithTypename<PostsResponse>) => null | string,
+  User?: (data: WithTypename<User>) => null | string
 }
 
 export type GraphCacheResolvers = {
   Query?: {
     feed?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<Activity> | string>>,
     post?: GraphCacheResolver<WithTypename<Query>, QueryPostArgs, WithTypename<Post> | string>,
-    allPosts?: GraphCacheResolver<WithTypename<Query>, QueryAllPostsArgs, Array<WithTypename<Post> | string>>,
+    allPosts?: GraphCacheResolver<WithTypename<Query>, QueryAllPostsArgs, WithTypename<PostsResponse> | string>,
     currentUser?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<User> | string>,
     user?: GraphCacheResolver<WithTypename<Query>, QueryUserArgs, WithTypename<User> | string>
+  },
+  CreatePostResponse?: {
+    errors?: GraphCacheResolver<WithTypename<CreatePostResponse>, Record<string, never>, Array<WithTypename<FieldError> | string>>,
+    post?: GraphCacheResolver<WithTypename<CreatePostResponse>, Record<string, never>, WithTypename<Post> | string>
+  },
+  CreateUserResponse?: {
+    errors?: GraphCacheResolver<WithTypename<CreateUserResponse>, Record<string, never>, Array<WithTypename<FieldError> | string>>,
+    user?: GraphCacheResolver<WithTypename<CreateUserResponse>, Record<string, never>, WithTypename<User> | string>
   },
   FieldError?: {
     field?: GraphCacheResolver<WithTypename<FieldError>, Record<string, never>, Scalars['String'] | string>,
@@ -299,9 +317,9 @@ export type GraphCacheResolvers = {
     imageUrl?: GraphCacheResolver<WithTypename<Post>, Record<string, never>, Scalars['String'] | string>,
     author?: GraphCacheResolver<WithTypename<Post>, Record<string, never>, WithTypename<User> | string>
   },
-  PostResponse?: {
-    errors?: GraphCacheResolver<WithTypename<PostResponse>, Record<string, never>, Array<WithTypename<FieldError> | string>>,
-    post?: GraphCacheResolver<WithTypename<PostResponse>, Record<string, never>, WithTypename<Post> | string>
+  PostsResponse?: {
+    posts?: GraphCacheResolver<WithTypename<PostsResponse>, Record<string, never>, Array<WithTypename<Post> | string>>,
+    hasMore?: GraphCacheResolver<WithTypename<PostsResponse>, Record<string, never>, Scalars['Boolean'] | string>
   },
   User?: {
     id?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['ID'] | string>,
@@ -309,29 +327,25 @@ export type GraphCacheResolvers = {
     updatedAt?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['DateTime'] | string>,
     username?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
     avatarUrl?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>
-  },
-  UserResponse?: {
-    errors?: GraphCacheResolver<WithTypename<UserResponse>, Record<string, never>, Array<WithTypename<FieldError> | string>>,
-    user?: GraphCacheResolver<WithTypename<UserResponse>, Record<string, never>, WithTypename<User> | string>
   }
 };
 
 export type GraphCacheOptimisticUpdaters = {
-  createPost?: GraphCacheOptimisticMutationResolver<MutationCreatePostArgs, WithTypename<PostResponse>>,
-  updatePost?: GraphCacheOptimisticMutationResolver<MutationUpdatePostArgs, WithTypename<PostResponse>>,
-  deletePost?: GraphCacheOptimisticMutationResolver<MutationDeletePostArgs, WithTypename<PostResponse>>,
-  register?: GraphCacheOptimisticMutationResolver<MutationRegisterArgs, WithTypename<UserResponse>>,
-  login?: GraphCacheOptimisticMutationResolver<MutationLoginArgs, WithTypename<UserResponse>>,
+  createPost?: GraphCacheOptimisticMutationResolver<MutationCreatePostArgs, WithTypename<CreatePostResponse>>,
+  updatePost?: GraphCacheOptimisticMutationResolver<MutationUpdatePostArgs, WithTypename<CreatePostResponse>>,
+  deletePost?: GraphCacheOptimisticMutationResolver<MutationDeletePostArgs, WithTypename<CreatePostResponse>>,
+  register?: GraphCacheOptimisticMutationResolver<MutationRegisterArgs, WithTypename<CreateUserResponse>>,
+  login?: GraphCacheOptimisticMutationResolver<MutationLoginArgs, WithTypename<CreateUserResponse>>,
   logout?: GraphCacheOptimisticMutationResolver<Record<string, never>, Scalars['Boolean']>
 };
 
 export type GraphCacheUpdaters = {
   Mutation?: {
-    createPost?: GraphCacheUpdateResolver<{ createPost: WithTypename<PostResponse> }, MutationCreatePostArgs>,
-    updatePost?: GraphCacheUpdateResolver<{ updatePost: WithTypename<PostResponse> }, MutationUpdatePostArgs>,
-    deletePost?: GraphCacheUpdateResolver<{ deletePost: WithTypename<PostResponse> }, MutationDeletePostArgs>,
-    register?: GraphCacheUpdateResolver<{ register: WithTypename<UserResponse> }, MutationRegisterArgs>,
-    login?: GraphCacheUpdateResolver<{ login: WithTypename<UserResponse> }, MutationLoginArgs>,
+    createPost?: GraphCacheUpdateResolver<{ createPost: WithTypename<CreatePostResponse> }, MutationCreatePostArgs>,
+    updatePost?: GraphCacheUpdateResolver<{ updatePost: WithTypename<CreatePostResponse> }, MutationUpdatePostArgs>,
+    deletePost?: GraphCacheUpdateResolver<{ deletePost: WithTypename<CreatePostResponse> }, MutationDeletePostArgs>,
+    register?: GraphCacheUpdateResolver<{ register: WithTypename<CreateUserResponse> }, MutationRegisterArgs>,
+    login?: GraphCacheUpdateResolver<{ login: WithTypename<CreateUserResponse> }, MutationLoginArgs>,
     logout?: GraphCacheUpdateResolver<{ logout: Scalars['Boolean'] }, Record<string, never>>
   },
   Subscription?: {},

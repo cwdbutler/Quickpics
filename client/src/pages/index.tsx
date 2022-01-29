@@ -26,15 +26,17 @@ function Page({ variables, isLastPage, loadMore }: Props) {
         <h3>Loading posts...</h3>
       ) : data ? (
         <>
-          {data.allPosts.map((post) => (
+          {data.allPosts.posts.map((post) => (
             <FeedPost key={post.id} post={post} />
           ))}
-          {isLastPage && (
+          {isLastPage && data.allPosts.hasMore && (
             // show the button at the bottom of the screen
             <button
               onClick={() => {
                 if (data.allPosts) {
-                  loadMore(data.allPosts[data.allPosts.length - 1].id);
+                  loadMore(
+                    data.allPosts.posts[data.allPosts.posts.length - 1].id
+                  );
                   // set the last post as the cursor
                 }
               }}
@@ -61,18 +63,18 @@ function Home() {
 
   const [pageVariables, setPageVariables] = useState<PageVariables[]>([
     {
-      take: 10, // how many posts to fetch
+      take: take, // how many posts to fetch
       cursor: null,
     },
   ]);
 
-  // pageVariables stores an array of pages, and the variables requested to get each one
+  // pageVariables stores an array of pages (of posts), and the variables requested to get each one
   // when pageVariables changes, it forces this component to rerender, and therefore rerender it's children (Page)
   // this creats a new Page component with the new variables (take and cursor), and extends the list
 
   return (
     <>
-      <NavBar />;
+      <NavBar />
       <div className="flex flex-col items-center justify-center min-h-screen py-2">
         <Head>
           <title>QuickPics</title>

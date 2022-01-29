@@ -14,6 +14,9 @@ export const urqlClient = (ssrExchange: any) => ({
   exchanges: [
     dedupExchange, // prevents duplication of queries
     cacheExchange<GraphCacheConfig>({
+      keys: {
+        PostsResponse: () => null,
+      }, // urql needs a key for each response, and returning null forces it to look at posts for one
       updates: {
         Mutation: {
           login: (result, _args, cache, _info) => {

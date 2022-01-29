@@ -35,6 +35,11 @@ type CreatePostResponse {
   post: Post
 }
 
+type PostsResponse {
+  posts: [Post!]!
+  hasMore: Boolean!
+}
+
 type CreateUserResponse {
   errors: [FieldError!]
   user: User
@@ -43,7 +48,7 @@ type CreateUserResponse {
 type Query {
   feed: [Activity!]!
   post(id: String!): Post
-  allPosts(cursor: String, take: Int!): [Post!]!
+  allPosts(cursor: String, take: Int!): PostsResponse!
   currentUser: User
   user(id: Int!): User
 }

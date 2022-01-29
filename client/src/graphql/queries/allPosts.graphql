@@ -1,5 +1,8 @@
 query allPosts($take: Int!, $cursor: String) {
   allPosts(take: $take, cursor: $cursor) {
-    ...PostWithAuthor
+    posts {
+      ...PostWithAuthor
+    }
+    hasMore
   }
 }
