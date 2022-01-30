@@ -12,6 +12,9 @@ export class User {
   updatedAt: Date;
 
   @Field()
+  email: string;
+
+  @Field()
   username: string;
 
   @Field({ nullable: true })

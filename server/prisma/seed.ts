@@ -19,6 +19,7 @@ const main = async () => {
     const hashed = await bcrypt.hash(user.password, 10);
     await prisma.user.create({
       data: {
+        email: user.email,
         username: user.username,
         passwordHash: hashed,
         avatarUrl: user.avatarUrl,
@@ -38,8 +39,8 @@ const main = async () => {
           imageUrl: post.imageUrl,
           authorId: post.userId,
           createdAt: post.createdAt,
-        },
-      }), // some imageUrls may return 404
+        }, // takes a random picture from picsum, some urls may return 404 so just delete those posts
+      }),
       prisma.activity.create({
         data: {
           id: post.id,
@@ -49,7 +50,7 @@ const main = async () => {
         },
       }),
     ]);
-  } // takes a random picture from picsum, some urls may return 404 so just delete those posts
+  }
 };
 
 main()
