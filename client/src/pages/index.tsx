@@ -8,6 +8,7 @@ import {
 import FeedPost from "../components/FeedPost";
 import NavBar from "../components/NavBar";
 import { useState } from "react";
+import { Waypoint } from "react-waypoint";
 
 interface Props {
   variables: AllPostsQueryVariables;
@@ -30,20 +31,16 @@ function Page({ variables, isLastPage, loadMore }: Props) {
             <FeedPost key={post.id} post={post} />
           ))}
           {isLastPage && data.allPosts.hasMore && (
-            // show the button at the bottom of the screen
-            <button
-              onClick={() => {
+            // when this becomes visible on the screen, it loads more posts
+            <Waypoint
+              onEnter={() => {
                 if (data.allPosts) {
                   loadMore(
                     data.allPosts.posts[data.allPosts.posts.length - 1].id
                   );
-                  // set the last post as the cursor
                 }
               }}
-              className="bg-indigo-700 text-white py-2 px-4 font-semibold m-4 rounded-md"
-            >
-              Load more
-            </button>
+            />
           )}
         </>
       ) : (
