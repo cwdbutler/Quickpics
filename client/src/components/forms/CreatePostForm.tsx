@@ -24,7 +24,7 @@ function CreatePostForm() {
   // storing the previous crop in case the user wants to ammend it
 
   const styles = {
-    form: "aspect-square transition-all duration-500 ease-in-out w-[350px] sm:w-3/5 xl:w-[900px] rounded-xl mx-auto shadow-lg p-0 border-2 border-gray-50",
+    form: "aspect-square bg-white transition-all duration-500 ease-in-out w-[350px] sm:w-3/5 xl:w-[900px] rounded-xl mx-auto shadow-lg p-0 border-2 border-gray-50",
     header:
       "flex justify-between items-center text-md py-2 px-4 font-semibold text-gray-900 border-b-2 border-gray-300",
   };
@@ -98,7 +98,7 @@ function CreatePostForm() {
                   </button>
                 </div>
                 <h2>Add a caption</h2>
-                <button type="submit" className="font-semibold text-indigo-700">
+                <button type="submit" className="font-semibold text-blue">
                   Share
                 </button>
               </section>

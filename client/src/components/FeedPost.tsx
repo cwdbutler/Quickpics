@@ -46,7 +46,7 @@ export default function FeedPost({ post }: Props) {
       </div>
       <section className="flex flex-col items-start justify-between p-3 border-b-[1px] border-gray-300">
         <div>likes</div>
-        <span className="inline-block text-left leading-5 my-2">
+        <span className="w-full text-left leading-5 my-2">
           <h3 className="font-semibold float-left mr-1">
             {post.author.username}
           </h3>

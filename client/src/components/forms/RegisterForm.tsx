@@ -9,6 +9,11 @@ import {
 import { mapToFormErrors } from "../../utis/mapToFormErrors";
 import * as Yup from "yup";
 import { TickCircleIcon, XCircleIcon } from "../Icons";
+import {
+  MAX_PASSWORD_LENGTH,
+  MAX_USERNAME_LENGTH,
+  MIN_PASSWORD_LENGTH,
+} from "../../utis/constants";
 
 export default function RegisterForm() {
   const [, register] = useRegisterMutation();
@@ -26,10 +31,13 @@ export default function RegisterForm() {
   const registerSchema = Yup.object().shape({
     email: Yup.string().email("Invalid email").required(),
     username: Yup.string()
-      .max(30)
+      .max(MAX_USERNAME_LENGTH)
       .matches(/^[a-zA-Z0-9]+$/, "Usernames can only be alphanumeric")
       .required(),
-    password: Yup.string().min(3).max(100).required(),
+    password: Yup.string()
+      .min(MIN_PASSWORD_LENGTH)
+      .max(MAX_PASSWORD_LENGTH)
+      .required(),
   });
 
   return (
