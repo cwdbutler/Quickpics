@@ -3,96 +3,135 @@ import { urqlClient } from "../../urqlClient";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useLoginMutation } from "../../graphql/generated/graphql";
+import { FieldError, useLoginMutation } from "../../graphql/generated/graphql";
 import { mapToFormErrors } from "../../utis/mapToFormErrors";
+import { useState } from "react";
+import * as Yup from "yup";
+import { TickCircleIcon, XCircleIcon } from "../Icons";
 
 export default function LoginForm() {
   const [, login] = useLoginMutation();
   const router = useRouter();
 
+  const [showPassword, setShowPassword] = useState(false);
+
+  const [loginErrors, setLoginErrors] = useState<FieldError[]>();
+
+  const styles = {
+    field:
+      "w-full h-9 text-xs rounded-s bg-background border-[1px] border-gray-300 outline-none",
+  };
+
   return (
-    <div className="w-96 rounded-sm mx-auto overflow-hidden shadow-lg border-2 border-gray-50">
-      <div className="px-10 pt-24 pb-12 bg-white">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-16 pb-4 border-b-2 border-gray-300">
-          Welcome back
-        </h1>
+    <div className="w-[350px] space-y-3 leading-5">
+      <div className=" border-[1px] border-gray-300 p-10 bg-white">
+        <div className="my-7  flex flex-col items-center justify-center">
+          <h1 className="font-logo text-5xl mb-4">Quickpics</h1>
+        </div>
+
         <Formik
           initialValues={{
-            username: "",
+            emailOrUsername: "",
             password: "",
           }}
           onSubmit={async (values, { setErrors }) => {
             const response = await login(values);
             if (response.data?.login.errors) {
               setErrors(mapToFormErrors(response.data.login.errors));
+              setLoginErrors(response.data.login.errors);
             } else if (response.data?.login.user) {
               router.push("/");
             }
           }}
         >
-          <Form>
-            <div className="relative mt-10">
-              <Field
-                className="peer h-10 w-full border-2 px-2 pt-7 pb-3 text-xs rounded-sm border-gray-300 text-gray-900 placeholder-transparent transition-colors focus:outline-none focus:border-indigo-600"
-                id="username"
-                name="username"
-                placeholder=" "
-              />
-              <label
-                htmlFor="username"
-                className="px-2.5 pt-2 absolute left-0 -top-0.5 text-gray-400 text-xs transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-0.5 peer-focus:-top-0.5 peer-focus:text-xs"
-              >
-                Username
-              </label>
+          {({ values }) => (
+            <Form>
+              <div className="space-y-2">
+                <div className="relative">
+                  <label className="relative" htmlFor="email">
+                    <Field
+                      className={`${
+                        values.emailOrUsername ? "pt-3 px-2" : "p-2"
+                      } ${styles.field}`}
+                      id="emailOrUsername"
+                      name="emailOrUsername"
+                    />
+                    <span
+                      className={`${
+                        values.emailOrUsername
+                          ? "left-2 -top-3 text-xxs"
+                          : "left-2 top-1 text-xs"
+                      } absolute text-gray-500 pointer-events-none transition-all ease-linear duration-100`}
+                    >
+                      Email address
+                    </span>
+                  </label>
+                </div>
 
-              <ErrorMessage
-                component="div"
-                className="my-2 absolute text-xs text-red-600 font-semibold"
-                name="username"
-              />
-            </div>
+                <div className="relative">
+                  <label className="relative" htmlFor="password">
+                    <Field
+                      className={`${values.password ? "pt-3 px-2" : "p-2"} ${
+                        styles.field
+                      } pr-[4.5rem]`}
+                      id="password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                    />
+                    <span
+                      className={`${
+                        values.password
+                          ? "left-2 -top-3 text-xxs"
+                          : "left-2 top-1 text-xs"
+                      } absolute text-gray-500 pointer-events-none transition-all ease-linear duration-100`}
+                    >
+                      Password
+                    </span>
+                  </label>
+                  <button
+                    type="button"
+                    className={`absolute right-2 top-2 bg-background text-sm font-semibold`}
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {values.password ? (showPassword ? "Hide" : "Show") : ""}
+                  </button>
+                </div>
+              </div>
 
-            <div className="relative mt-10">
-              <Field
-                className="peer h-10 w-full border-2 px-2 pt-7 pb-3 text-xs rounded-sm border-gray-300 text-gray-900 placeholder-transparent transition-colors focus:outline-none focus:border-indigo-600"
-                id="password"
-                name="password"
-                placeholder=" "
-                type="password"
-              />
-              <label
-                htmlFor="password"
-                className="px-2.5 pt-2 absolute left-0 -top-0.5 text-gray-400 text-xs transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-0.5 peer-focus:-top-0.5 peer-focus:text-xs"
-              >
-                Password
-              </label>
-            </div>
-            <ErrorMessage
-              component="div"
-              className="my-2 absolute text-xs text-red-600 font-semibold"
-              name="password"
-            />
+              <div className="my-4">
+                <button
+                  type="submit"
+                  disabled={
+                    !Object.values(values).every((value) => value.length > 0)
+                  }
+                  className={`${
+                    !Object.values(values).every((value) => value.length > 0)
+                      ? "bg-lightblue"
+                      : "bg-blue"
+                  } text-white text-sm h-8 font-bold w-full rounded-m focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900`}
+                >
+                  Log in
+                </button>
+              </div>
 
-            <div className="mt-16">
-              <button
-                type="submit"
-                className="bg-indigo-700 text-white font-bold py-2 px-4 w-full rounded-sm focus:outline-none focus-visible:ring focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
-              >
-                Log in
-              </button>
-            </div>
-
-            <footer className="flex mt-4 justify-center">
-              <p className="text-sm font-medium">Don't have an account?</p>
-              <Link href="/register">
-                <a className="ml-2 rounded-sm bg-white text-sm font-semibold text-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                  {" "}
-                  Sign up
-                </a>
-              </Link>
-            </footer>
-          </Form>
+              {loginErrors && (
+                <h3
+                  aria-label="register errors"
+                  className="text-red-600 text-sm text-center"
+                >
+                  {loginErrors[0].message}
+                </h3>
+              )}
+            </Form>
+          )}
         </Formik>
+      </div>
+
+      <div className="border-[1px] h-[70px] border-gray-300 bg-white flex justify-center items-center">
+        <p className="text-sm">Don't have an account?</p>
+        <Link href="/register">
+          <a className="ml-2 rounded-sm bg-white text-sm text-blue"> Sign up</a>
+        </Link>
       </div>
     </div>
   );

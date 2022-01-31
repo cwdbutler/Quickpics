@@ -64,8 +64,8 @@ export type MutationDeletePostArgs = {
 
 
 export type MutationLoginArgs = {
+  emailOrUsername: Scalars['String'];
   password: Scalars['String'];
-  username: Scalars['String'];
 };
 
 
@@ -145,7 +145,7 @@ export type CreatePostMutationVariables = Exact<{
 export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'CreatePostResponse', post?: { __typename?: 'Post', id: string, caption?: string | null | undefined, imageUrl: string } | null | undefined } };
 
 export type LoginMutationVariables = Exact<{
-  username: Scalars['String'];
+  emailOrUsername: Scalars['String'];
   password: Scalars['String'];
 }>;
 
@@ -214,8 +214,8 @@ export function useCreatePostMutation() {
   return Urql.useMutation<CreatePostMutation, CreatePostMutationVariables>(CreatePostDocument);
 };
 export const LoginDocument = gql`
-    mutation login($username: String!, $password: String!) {
-  login(username: $username, password: $password) {
+    mutation login($emailOrUsername: String!, $password: String!) {
+  login(emailOrUsername: $emailOrUsername, password: $password) {
     user {
       ...UserInfo
     }

@@ -2,7 +2,10 @@ import { Formik, Field, Form, ErrorMessage } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { useRegisterMutation } from "../../graphql/generated/graphql";
+import {
+  FieldError,
+  useRegisterMutation,
+} from "../../graphql/generated/graphql";
 import { mapToFormErrors } from "../../utis/mapToFormErrors";
 import * as Yup from "yup";
 import { TickCircleIcon, XCircleIcon } from "../Icons";
@@ -13,7 +16,7 @@ export default function RegisterForm() {
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const [registerErrors, setRegisterErrors] = useState<any>();
+  const [registerErrors, setRegisterErrors] = useState<FieldError[]>();
 
   const styles = {
     field:
