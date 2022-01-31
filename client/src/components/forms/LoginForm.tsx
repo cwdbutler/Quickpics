@@ -59,11 +59,11 @@ export default function LoginForm() {
                     <span
                       className={`${
                         values.emailOrUsername
-                          ? "left-2 -top-3 text-xxs"
-                          : "left-2 top-1 text-xs"
+                          ? "left-2.5 -top-3 text-xxs"
+                          : "left-2.5 top-1 text-xs"
                       } absolute text-gray-500 pointer-events-none transition-all ease-linear duration-100`}
                     >
-                      Email address
+                      Username or email address
                     </span>
                   </label>
                 </div>
@@ -81,8 +81,8 @@ export default function LoginForm() {
                     <span
                       className={`${
                         values.password
-                          ? "left-2 -top-3 text-xxs"
-                          : "left-2 top-1 text-xs"
+                          ? "left-2.5 -top-3 text-xxs"
+                          : "left-2.5 top-1 text-xs"
                       } absolute text-gray-500 pointer-events-none transition-all ease-linear duration-100`}
                     >
                       Password
