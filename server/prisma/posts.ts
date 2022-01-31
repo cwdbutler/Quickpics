@@ -294,7 +294,7 @@ export const posts = [
     id: "lUWNQedgoh",
     caption:
       "Echo Alfa Romeo Golf November Hotel Lima Oscar Sierra Kilo Yankee X-ray Victor Whiskey Papa Charlie India Delta Quebec",
-    imageUrl: "https://picsum.photos/id/246/1000/1000",
+    imageUrl: "https://picsum.photos/id/247/1000/1000",
     userId: 5,
     createdAt: "2022-01-25T06:11:01Z",
   },

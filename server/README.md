@@ -10,6 +10,11 @@ The technologies I'm using are:
 - Express for using middleware that I have experiene with (express-session)
 
 Setup:
+
+```
+yarn install
+```
+
 Create a database and save the url in .env
 
 ```

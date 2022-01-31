@@ -168,9 +168,13 @@ export class UserResolver {
   ): Promise<CreateUserResponse> {
     // this works because emails are validated as valid emails, and usernames are validated as alphanumeric
     // it should be impossible to match a username with an email or vice versa
-    const user = await prisma.user.findFirst({
+    // they are also both unique, so findMany shouldn't be an issue
+    const [user] = await prisma.user.findMany({
       where: {
-        OR: [{ email: emailOrUsername }, { username: emailOrUsername }],
+        OR: [
+          { email: { equals: emailOrUsername, mode: "insensitive" } },
+          { username: { equals: emailOrUsername, mode: "insensitive" } },
+        ],
       },
     });
 
