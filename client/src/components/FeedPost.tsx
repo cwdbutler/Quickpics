@@ -17,8 +17,8 @@ export default function FeedPost({ post }: Props) {
     icon: "h-12 stroke-1.5 p-2 flex-shrink-0",
   };
   return (
-    <article className="w-[480px] overflow-v border-2 mb-3">
-      <header className="h-14 border-b-2 flex items-center justify-between p-3">
+    <article className="w-[480px] overflow-v border-[1px] bg-white border-gray-300 mb-3">
+      <header className="h-14 flex items-center justify-between p-3">
         <div className="flex items-center">
           <img
             src={
@@ -35,7 +35,7 @@ export default function FeedPost({ post }: Props) {
         </button>
       </header>
       <img src={post.imageUrl} className="w-full" />
-      <div className="h-12 border-b-2 flex items-center justify-between">
+      <div className="h-12 border-b-[1px] border-gray-300 flex items-center justify-between">
         <div className="flex">
           <HeartIcon className={styles.icon} />
           <CommentIcon className={styles.icon} />
@@ -44,7 +44,7 @@ export default function FeedPost({ post }: Props) {
           <BookmarkIcon className={styles.icon} />
         </div>
       </div>
-      <section className="flex flex-col items-start justify-between p-3 border-b-2">
+      <section className="flex flex-col items-start justify-between p-3 border-b-[1px] border-gray-300">
         <div>likes</div>
         <span className="inline-block text-left leading-5 my-2">
           <h3 className="font-semibold float-left mr-1">
@@ -63,7 +63,7 @@ export default function FeedPost({ post }: Props) {
           placeholder="Add a comment..."
           className="outline-none w-full p-2"
         />
-        <button className="p-2 text-indigo-400 font-semibold">Post</button>
+        <button className="p-2 text-lightblue  font-semibold">Post</button>
       </footer>
     </article>
   );

@@ -6,6 +6,21 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        logo: ["Logo"],
+      },
+      fontSize: {
+        xxs: "10px",
+      },
+      borderRadius: {
+        s: "3px",
+        m: "4px",
+      },
+      colors: {
+        background: "#FAFAFA",
+        lightblue: "#B2DFFC",
+        blue: "#0095F6",
+      },
       transitionProperty: {
         width: "width",
         height: "height",

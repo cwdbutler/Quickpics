@@ -1,96 +1,201 @@
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { useRegisterMutation } from "../../graphql/generated/graphql";
 import { mapToFormErrors } from "../../utis/mapToFormErrors";
+import * as Yup from "yup";
+import { TickCircleIcon, XCircleIcon } from "../Icons";
 
 export default function RegisterForm() {
   const [, register] = useRegisterMutation();
   const router = useRouter();
 
+  const [showPassword, setShowPassword] = useState(false);
+
+  const [registerErrors, setRegisterErrors] = useState<any>();
+
+  const styles = {
+    field:
+      "w-full h-9 text-xs rounded-s bg-background border-[1px] border-gray-300 outline-none",
+  };
+
+  const registerSchema = Yup.object().shape({
+    email: Yup.string().email("Invalid email").required(),
+    username: Yup.string()
+      .max(30)
+      .matches(/^[a-zA-Z0-9]+$/, "Usernames can only be alphanumeric")
+      .required(),
+    password: Yup.string().min(3).max(100).required(),
+  });
+
   return (
-    <div className="w-96 rounded-sm mx-auto overflow-hidden shadow-lg border-2 border-gray-50">
-      <div className="px-10 pt-24 pb-12 bg-white">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-16 pb-4 border-b-2 border-gray-300">
-          Create your account
-        </h1>
+    <div className="w-[350px] space-y-3 leading-5">
+      <div className=" border-[1px] border-gray-300 px-10 py-16 bg-white">
+        <div className="my-7 pb-4 flex flex-col items-center justify-center border-b-[1px] border-b-gray-200">
+          <h1 className="font-logo text-5xl mb-4">Quickpics</h1>
+          <h3 className="font-semibold text-gray-500 text-center">
+            Sign up to edit and share your photos with friends.
+          </h3>
+        </div>
+
         <Formik
           initialValues={{
+            email: "",
             username: "",
             password: "",
           }}
+          validationSchema={registerSchema}
           onSubmit={async (values, { setErrors }) => {
             const response = await register(values);
             if (response.data?.register.errors) {
               setErrors(mapToFormErrors(response.data.register.errors));
+              setRegisterErrors(response.data.register.errors);
             } else if (response.data?.register.user) {
               router.push("/");
             }
           }}
         >
-          <Form>
-            <div className="relative mt-10">
-              <Field
-                className="peer h-10 w-full border-2 px-2 pt-7 pb-3 text-xs rounded-sm border-gray-300 text-gray-900 placeholder-transparent transition-colors focus:outline-none focus:border-indigo-600"
-                id="username"
-                name="username"
-                placeholder=" "
-              />
-              <label
-                htmlFor="username"
-                className="px-2.5 pt-2 absolute left-0 -top-0.5 text-gray-400 text-xs transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-0.5 peer-focus:-top-0.5 peer-focus:text-xs"
-              >
-                Username
-              </label>
+          {({ values, touched, errors, isValid, dirty }) => (
+            <Form>
+              <div className="space-y-2">
+                <div className="relative">
+                  <label className="relative" htmlFor="email">
+                    <Field
+                      className={`${values.email ? "pt-3 px-2" : "p-2"} ${
+                        styles.field
+                      }`}
+                      id="email"
+                      name="email"
+                    />
+                    <span
+                      className={`${
+                        values.email
+                          ? "left-2 -top-3 text-xxs"
+                          : "left-2 top-1 text-xs"
+                      } absolute text-gray-500 pointer-events-none transition-all ease-linear duration-100`}
+                    >
+                      Email address
+                    </span>
+                  </label>
+                  {touched.email &&
+                    (errors.email ? (
+                      <XCircleIcon className="absolute top-1 right-1 h-7 stroke-1 stroke-red-600 bg-background" />
+                    ) : (
+                      <TickCircleIcon className="absolute top-1 right-1 h-7 stroke-gray-500 stroke-1 bg-background" />
+                    ))}
+                </div>
 
-              <ErrorMessage
-                component="div"
-                className="my-2 absolute text-xs text-red-600 font-semibold"
-                name="username"
-              />
-            </div>
+                <div className="relative">
+                  <label className="relative" htmlFor="username">
+                    <Field
+                      className={`${values.username ? "pt-3 px-2" : "p-2"} ${
+                        styles.field
+                      }`}
+                      id="username"
+                      name="username"
+                    />
+                    <span
+                      className={`${
+                        values.username
+                          ? "left-2 -top-3 text-xxs"
+                          : "left-2 top-1 text-xs"
+                      } absolute text-gray-500 pointer-events-none transition-all ease-linear duration-100`}
+                    >
+                      Username
+                    </span>
+                  </label>
+                  {touched.username &&
+                    (errors.username ? (
+                      <XCircleIcon className="absolute top-1 right-1 h-7 stroke-1 stroke-red-600 bg-background" />
+                    ) : (
+                      <TickCircleIcon className="absolute top-1 right-1 h-7 stroke-gray-500 stroke-1 bg-background" />
+                    ))}
+                </div>
 
-            <div className="relative mt-10">
-              <Field
-                className="peer h-10 w-full border-2 px-2 pt-7 pb-3 text-xs rounded-sm border-gray-300 text-gray-900 placeholder-transparent transition-colors focus:outline-none focus:border-indigo-600"
-                id="password"
-                name="password"
-                placeholder=" "
-                type="password"
-              />
-              <label
-                htmlFor="password"
-                className="px-2.5 pt-2 absolute left-0 -top-0.5 text-gray-400 text-xs transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-0.5 peer-focus:-top-0.5 peer-focus:text-xs"
-              >
-                Password
-              </label>
-            </div>
-            <ErrorMessage
-              component="div"
-              className="my-2 absolute text-xs text-red-600 font-semibold"
-              name="password"
-            />
+                <div className="relative">
+                  <label className="relative" htmlFor="password">
+                    <Field
+                      className={`${values.password ? "pt-3 px-2" : "p-2"} ${
+                        styles.field
+                      } pr-[4.5rem]`}
+                      id="password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                    />
+                    <span
+                      className={`${
+                        values.password
+                          ? "left-2 -top-3 text-xxs"
+                          : "left-2 top-1 text-xs"
+                      } absolute text-gray-500 pointer-events-none transition-all ease-linear duration-100`}
+                    >
+                      Password
+                    </span>
+                  </label>
+                  <button
+                    type="button"
+                    className={`absolute ${
+                      touched.password ? "right-9" : "right-2"
+                    } top-2 bg-background text-sm font-semibold`}
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {values.password ? (showPassword ? "Hide" : "Show") : ""}
+                  </button>
+                  {touched.password &&
+                    (errors.password ? (
+                      <XCircleIcon className="absolute top-1 right-1 h-7 stroke-1 stroke-red-600 bg-background" />
+                    ) : (
+                      <TickCircleIcon className="absolute top-1 right-1 h-7 stroke-gray-500 stroke-1 bg-background" />
+                    ))}
+                </div>
+              </div>
 
-            <div className="mt-16">
-              <button
-                type="submit"
-                className="bg-indigo-700 text-white font-bold py-2 px-4 w-full rounded-sm focus:outline-none focus-visible:ring focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
-              >
-                Sign up
-              </button>
-            </div>
+              <div className="my-4">
+                <button
+                  type="submit"
+                  disabled={!(isValid && dirty)}
+                  className={`${
+                    !(isValid && dirty) ? "bg-lightblue" : "bg-blue"
+                  } text-white text-sm h-8 font-bold w-full rounded-m focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900`}
+                >
+                  Sign up
+                </button>
+              </div>
 
-            <footer className="flex mt-4 justify-center">
-              <p className="text-sm font-medium">Already have an account?</p>
-              <Link href="/login">
-                <a className="ml-2 rounded-sm bg-white text-sm font-semibold text-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                  {" "}
-                  Log in
-                </a>
-              </Link>
-            </footer>
-          </Form>
+              {registerErrors && (
+                <h3
+                  aria-label="register errors"
+                  className="text-red-600 text-sm text-center"
+                >
+                  {registerErrors[0].message}
+                </h3>
+              )}
+            </Form>
+          )}
         </Formik>
+
+        <footer className="text-center text-xs mt-10">
+          <p className="text-gray-400">
+            This is a project made for learning purposes only. You can view the
+            source code{" "}
+            <a
+              href="https://github.com/ConorButler/QuickPics"
+              className="text-gray-900"
+            >
+              here.
+            </a>
+          </p>
+        </footer>
+      </div>
+      <div className="border-[1px] h-[70px] border-gray-300 bg-white flex justify-center items-center">
+        <p className="text-sm">Have an account?</p>
+        <Link href="/login">
+          <a className="ml-2 rounded-sm bg-white text-sm text-blue focus:outline-none focus:ring-2 focus:ring-offset-2">
+            {" "}
+            Log in
+          </a>
+        </Link>
       </div>
     </div>
   );

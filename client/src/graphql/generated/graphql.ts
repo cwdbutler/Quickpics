@@ -70,6 +70,7 @@ export type MutationLoginArgs = {
 
 
 export type MutationRegisterArgs = {
+  email: Scalars['String'];
   password: Scalars['String'];
   username: Scalars['String'];
 };
@@ -125,6 +126,7 @@ export type User = {
   __typename?: 'User';
   avatarUrl?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
+  email: Scalars['String'];
   id: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
   username: Scalars['String'];
@@ -156,6 +158,7 @@ export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
 
 export type RegisterMutationVariables = Exact<{
+  email: Scalars['String'];
   username: Scalars['String'];
   password: Scalars['String'];
 }>;
@@ -237,8 +240,8 @@ export function useLogoutMutation() {
   return Urql.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument);
 };
 export const RegisterDocument = gql`
-    mutation register($username: String!, $password: String!) {
-  register(username: $username, password: $password) {
+    mutation register($email: String!, $username: String!, $password: String!) {
+  register(email: $email, username: $username, password: $password) {
     user {
       ...UserInfo
     }
@@ -325,6 +328,7 @@ export type GraphCacheResolvers = {
     id?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['ID'] | string>,
     createdAt?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['DateTime'] | string>,
     updatedAt?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['DateTime'] | string>,
+    email?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
     username?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
     avatarUrl?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>
   }
