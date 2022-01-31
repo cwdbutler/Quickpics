@@ -12,6 +12,7 @@ import { Context } from "../../context";
 import bcrypt from "bcrypt";
 import { CreateUserResponse } from "../types/CreateUserResponse";
 import {
+  ALPHANUMERIC_USERNAME,
   BAD_CREDENTIALS,
   COOKIE_NAME,
   MAX_FIELD_LENGTH,
@@ -63,6 +64,17 @@ export class UserResolver {
           {
             field: "username",
             message: TOO_SHORT("username"),
+          },
+        ],
+      };
+    }
+
+    if (!username.match(/^[a-zA-Z0-9]+$/)) {
+      return {
+        errors: [
+          {
+            field: "username",
+            message: ALPHANUMERIC_USERNAME,
           },
         ],
       };
@@ -150,13 +162,15 @@ export class UserResolver {
   @Mutation(() => CreateUserResponse)
   @UseMiddleware(checkNotAuthenticated)
   async login(
-    @Arg("username") username: string,
+    @Arg("emailOrUsername") emailOrUsername: string,
     @Arg("password") password: string,
     @Ctx() { prisma, req }
   ): Promise<CreateUserResponse> {
-    const user = await prisma.user.findUnique({
+    // this works because emails are validated as valid emails, and usernames are validated as alphanumeric
+    // it should be impossible to match a username with an email or vice versa
+    const user = await prisma.user.findFirst({
       where: {
-        username: username,
+        OR: [{ email: emailOrUsername }, { username: emailOrUsername }],
       },
     });
 
