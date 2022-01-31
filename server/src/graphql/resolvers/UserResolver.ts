@@ -52,11 +52,12 @@ export class UserResolver {
 
   @Mutation(() => CreateUserResponse)
   async register(
+    @Arg("email") email: string,
     @Arg("username") username: string,
     @Arg("password") password: string,
     @Ctx() { prisma, req }
   ): Promise<CreateUserResponse> {
-    if (username.length < MIN_FIELD_LENGTH) {
+    if (username.length < 1) {
       return {
         errors: [
           {
@@ -89,7 +90,28 @@ export class UserResolver {
       };
     }
 
-    const existingUser = await prisma.user.count({
+    // i don't just create the user and catch the errors here because it won't be case insensitive
+    const existingEmail = await prisma.user.count({
+      where: {
+        email: {
+          contains: email,
+          mode: "insensitive",
+        },
+        // Prisma workaround
+      },
+    });
+    if (existingEmail > 0) {
+      return {
+        errors: [
+          {
+            field: "email",
+            message: NOT_UNIQUE("email"),
+          },
+        ],
+      };
+    }
+
+    const existingUsername = await prisma.user.count({
       where: {
         username: {
           contains: username,
@@ -98,7 +120,7 @@ export class UserResolver {
         // Prisma workaround
       },
     });
-    if (existingUser > 0) {
+    if (existingUsername > 0) {
       return {
         errors: [
           {
@@ -112,6 +134,7 @@ export class UserResolver {
     const hashed = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
       data: {
+        email: email,
         username: username,
         passwordHash: hashed,
       },

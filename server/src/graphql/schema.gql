@@ -60,7 +60,7 @@ type Mutation {
   createPost(caption: String!, file: Upload!): CreatePostResponse!
   updatePost(caption: String!, id: String!): CreatePostResponse!
   deletePost(id: String!): CreatePostResponse!
-  register(password: String!, username: String!): CreateUserResponse!
+  register(password: String!, username: String!, email: String!): CreateUserResponse!
   login(password: String!, username: String!): CreateUserResponse!
   logout: Boolean!
 }
