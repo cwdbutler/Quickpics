@@ -97,4 +97,4 @@ function Home() {
   );
 }
 
-export default withUrqlClient(urqlClient, { ssr: false })(Home);
+export default withUrqlClient(urqlClient, { ssr: true })(Home);
