@@ -12,7 +12,6 @@ export class Like {
   @Field()
   updatedAt: Date;
 
-  @Field()
   entityId: string;
 
   @Field((type) => User)

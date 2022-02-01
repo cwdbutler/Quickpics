@@ -1,10 +1,12 @@
 import {
   Arg,
   Ctx,
+  FieldResolver,
   Int,
   Mutation,
   Query,
   Resolver,
+  Root,
   UseMiddleware,
 } from "type-graphql";
 import { Post } from "../types/Post";
@@ -17,9 +19,41 @@ import { FileUpload, GraphQLUpload } from "graphql-upload";
 import { uploadFile } from "../../utils/uploadFile";
 import { deleteImage } from "../../utils/deleteImage";
 import { PostsResponse } from "../types/PostsResponse";
+import { prisma } from "@prisma/client";
+import { Like } from "../types/Like";
 
-@Resolver()
+@Resolver(Post)
 export class PostResolver {
+  @FieldResolver(() => [Like])
+  async likes(@Root() post: Post, @Ctx() { prisma }: Context): Promise<Like[]> {
+    const likes = await prisma.like.findMany({
+      where: {
+        entityId: post.id,
+      },
+      include: {
+        author: true,
+      },
+    });
+    return likes;
+  }
+
+  @FieldResolver(() => Boolean)
+  async liked(
+    @Root() post: Post,
+    @Ctx() { prisma, req }: Context
+  ): Promise<boolean> {
+    const [alreadyLiked] = await prisma.like.findMany({
+      where: {
+        AND: [
+          { entityId: { equals: post.id } },
+          { authorId: { equals: req.session.userId } },
+        ],
+      },
+    });
+
+    return alreadyLiked ? true : false;
+  }
+
   @Query(() => Post, { nullable: true })
   post(
     @Arg("id", () => String) id: string,

@@ -24,6 +24,8 @@ type Post {
   caption: String
   imageUrl: String!
   author: User!
+  likes: [Like!]!
+  liked: Boolean!
 }
 
 type FieldError {
@@ -39,6 +41,13 @@ type CreatePostResponse {
 type PostsResponse {
   posts: [Post!]!
   hasMore: Boolean!
+}
+
+type Like {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  author: User!
 }
 
 type CreateUserResponse {
