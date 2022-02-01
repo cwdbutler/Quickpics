@@ -60,6 +60,12 @@ export const urqlClient = (ssrExchange: any) => ({
               return data;
             });
           },
+          createPost: (result, _args, cache, _info) => {
+            // refetches allPosts when a new post is made
+            cache.invalidate("Query", "allPosts", {
+              take: 10,
+            }); // for some reason cursor: null doesn't work
+          },
         },
       },
     }),
