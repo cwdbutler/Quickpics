@@ -5,3 +5,15 @@ Using Next.js and urql client for consuming the backend API, making use of SSR a
 Using GraphQL codegen to generate hooks and types (shown in /generated)
 
 Tailwind for styling
+
+Setup:
+
+```
+yarn install
+```
+
+To start the server:
+
+```
+yarn dev
+```

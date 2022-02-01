@@ -1,0 +1,17 @@
+fragment PostWithAuthorAndLikes on Post {
+  id
+  createdAt
+  imageUrl
+  caption
+  author {
+    ...UserInfo
+  }
+  likes {
+    id
+    createdAt
+    author {
+      username
+    }
+  }
+  liked
+}
