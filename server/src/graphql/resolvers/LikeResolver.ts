@@ -50,4 +50,48 @@ export class PostResolver {
 
     return like ? true : false;
   }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(checkAuthenticated)
+  async removeLike(
+    @Arg("entityId") entityId: string,
+    @Ctx() { prisma, req }: Context
+  ) {
+    // check if the entity exists
+    const entity = await prisma.activity.findUnique({
+      where: {
+        id: entityId,
+      },
+    });
+
+    if (!entity) {
+      return false;
+    }
+
+    // check if liked by this user already
+    const [alreadyLiked] = await prisma.like.findMany({
+      where: {
+        AND: [
+          { entityId: { equals: entityId } },
+          { authorId: { equals: req.session.userId } },
+        ],
+      },
+    });
+
+    if (!alreadyLiked) {
+      return false;
+    }
+
+    // because a user can only like a post once, and entityId is not unique to the database
+    const deleted = await prisma.like.deleteMany({
+      where: {
+        entityId: entityId,
+        author: {
+          id: req.session.userId,
+        },
+      },
+    });
+
+    return deleted.count === 1 ? true : false;
+  }
 }

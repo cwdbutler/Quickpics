@@ -67,6 +67,7 @@ union Activity = Post
 
 type Mutation {
   like(entityId: String!): Boolean!
+  removeLike(entityId: String!): Boolean!
   createPost(caption: String!, file: Upload!): CreatePostResponse!
   updatePost(caption: String!, id: String!): CreatePostResponse!
   deletePost(id: String!): CreatePostResponse!
