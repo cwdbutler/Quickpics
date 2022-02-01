@@ -53,7 +53,7 @@ model Like {
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
   model           String
-  entityId        String
+  entityId        String      
   author          User        @relation(fields: [authorId], references: [id])
   authorId        Int
 }
