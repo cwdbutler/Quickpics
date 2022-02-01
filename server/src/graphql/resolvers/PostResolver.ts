@@ -37,11 +37,30 @@ export class PostResolver {
     return likes;
   }
 
+  @FieldResolver(() => Int)
+  async likeCount(
+    @Root() post: Post,
+    @Ctx() { prisma }: Context
+  ): Promise<number> {
+    // could have combined this with the like resolver but it was too cluttered (would have to do likes.likes)
+    const likes = await prisma.like.findMany({
+      where: {
+        entityId: post.id,
+      },
+    });
+
+    return likes.length;
+  }
+
   @FieldResolver(() => Boolean)
   async liked(
     @Root() post: Post,
     @Ctx() { prisma, req }: Context
   ): Promise<boolean> {
+    if (!req.session.userId) {
+      return false;
+    }
+
     const [alreadyLiked] = await prisma.like.findMany({
       where: {
         AND: [

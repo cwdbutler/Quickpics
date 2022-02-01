@@ -50,8 +50,7 @@ model Post {
 
 model Like {
   id              Int         @id @default(autoincrement())
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
+  likedAt         DateTime    @default(now()) @map("createdAt")
   model           String
   entityId        String      
   author          User        @relation(fields: [authorId], references: [id])

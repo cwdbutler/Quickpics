@@ -25,6 +25,7 @@ type Post {
   imageUrl: String!
   author: User!
   likes: [Like!]!
+  likeCount: Int!
   liked: Boolean!
 }
 
@@ -45,8 +46,8 @@ type PostsResponse {
 
 type Like {
   id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  likedAt: DateTime!
+  entityId: String!
   author: User!
 }
 

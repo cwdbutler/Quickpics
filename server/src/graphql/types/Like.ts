@@ -7,11 +7,9 @@ export class Like {
   id: number;
 
   @Field()
-  createdAt: Date;
+  likedAt: Date;
 
   @Field()
-  updatedAt: Date;
-
   entityId: string;
 
   @Field((type) => User)
