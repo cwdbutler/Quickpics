@@ -61,7 +61,7 @@ export class PostResolver {
       return false;
     }
 
-    const [alreadyLiked] = await prisma.like.findMany({
+    const [liked] = await prisma.like.findMany({
       where: {
         AND: [
           { entityId: { equals: post.id } },
@@ -70,7 +70,7 @@ export class PostResolver {
       },
     });
 
-    return alreadyLiked ? true : false;
+    return liked ? true : false;
   }
 
   @Query(() => Post, { nullable: true })
