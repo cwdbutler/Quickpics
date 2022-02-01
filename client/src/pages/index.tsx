@@ -72,7 +72,7 @@ function Home() {
   return (
     <>
       <NavBar />
-      <div className="flex flex-col items-center justify-center min-h-screen py-2">
+      <div className="flex flex-col items-center justify-center py-2">
         <Head>
           <title>QuickPics</title>
           <link rel="icon" href="/favicon.ico" />

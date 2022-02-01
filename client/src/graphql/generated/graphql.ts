@@ -266,6 +266,13 @@ export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type CurrentUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined } | null | undefined };
 
+export type PostQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type PostQuery = { __typename?: 'Query', post?: { __typename?: 'Post', id: string, createdAt: any, imageUrl: string, caption?: string | null | undefined, liked: boolean, likeCount: number, commentCount: number, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined }, likes: Array<{ __typename?: 'Like', likedAt: any, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined } }>, comments: Array<{ __typename?: 'Comment', id: string, text: string, liked: boolean, likeCount: number, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined } }> } | null | undefined };
+
 export const UserInfoFragmentDoc = gql`
     fragment UserInfo on User {
   id
@@ -415,6 +422,41 @@ export const CurrentUserDocument = gql`
 
 export function useCurrentUserQuery(options: Omit<Urql.UseQueryArgs<CurrentUserQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<CurrentUserQuery>({ query: CurrentUserDocument, ...options });
+};
+export const PostDocument = gql`
+    query post($id: String!) {
+  post(id: $id) {
+    id
+    createdAt
+    imageUrl
+    caption
+    author {
+      ...UserInfo
+    }
+    liked
+    likeCount
+    likes {
+      likedAt
+      author {
+        ...UserInfo
+      }
+    }
+    comments {
+      id
+      text
+      author {
+        ...UserInfo
+      }
+      liked
+      likeCount
+    }
+    commentCount
+  }
+}
+    ${UserInfoFragmentDoc}`;
+
+export function usePostQuery(options: Omit<Urql.UseQueryArgs<PostQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<PostQuery>({ query: PostDocument, ...options });
 };
 export type WithTypename<T extends { __typename?: any }> = { [K in Exclude<keyof T, '__typename'>]?: T[K] } & { __typename: NonNullable<T['__typename']> };
 
