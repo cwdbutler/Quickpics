@@ -1,6 +1,7 @@
 import {
   PostWithAuthorAndLikesFragment,
   useLikeMutation,
+  useRemoveLikeMutation,
 } from "../graphql/generated/graphql";
 import { timeSince } from "../utis/timeSince";
 import {
@@ -17,13 +18,17 @@ type Props = {
 
 export default function FeedPost({ post }: Props) {
   const [, like] = useLikeMutation();
+  const [, removeLike] = useRemoveLikeMutation();
 
-  const handleLike = async (postId: string) => {
-    const response = await like({
-      entityId: postId,
-    });
-    if (response.data?.like) {
-      // do
+  const handleLike = async () => {
+    if (post.liked) {
+      removeLike({
+        entityId: post.id,
+      });
+    } else {
+      like({
+        entityId: post.id,
+      });
     }
   };
 
@@ -53,7 +58,7 @@ export default function FeedPost({ post }: Props) {
       <img src={post.imageUrl} className="w-full" />
       <div className="h-12 border-b-[1px] border-gray-300 flex items-center justify-between">
         <div className="flex">
-          <button type="button" onClick={() => handleLike(post.id)}>
+          <button type="button" onClick={handleLike}>
             <HeartIcon
               className={`${post.liked && "fill-red-600 stroke-red-600"} ${
                 styles.icon

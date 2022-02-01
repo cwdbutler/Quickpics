@@ -1,0 +1,3 @@
+mutation removeLike($entityId: String!) {
+  removeLike(entityId: $entityId)
+}

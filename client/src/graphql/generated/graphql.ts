@@ -57,6 +57,7 @@ export type Mutation = {
   login: CreateUserResponse;
   logout: Scalars['Boolean'];
   register: CreateUserResponse;
+  removeLike: Scalars['Boolean'];
   updatePost: CreatePostResponse;
 };
 
@@ -87,6 +88,11 @@ export type MutationRegisterArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
   username: Scalars['String'];
+};
+
+
+export type MutationRemoveLikeArgs = {
+  entityId: Scalars['String'];
 };
 
 
@@ -188,6 +194,13 @@ export type RegisterMutationVariables = Exact<{
 
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'CreateUserResponse', user?: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
+
+export type RemoveLikeMutationVariables = Exact<{
+  entityId: Scalars['String'];
+}>;
+
+
+export type RemoveLikeMutation = { __typename?: 'Mutation', removeLike: boolean };
 
 export type AllPostsQueryVariables = Exact<{
   take: Scalars['Int'];
@@ -295,6 +308,15 @@ export const RegisterDocument = gql`
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
 };
+export const RemoveLikeDocument = gql`
+    mutation removeLike($entityId: String!) {
+  removeLike(entityId: $entityId)
+}
+    `;
+
+export function useRemoveLikeMutation() {
+  return Urql.useMutation<RemoveLikeMutation, RemoveLikeMutationVariables>(RemoveLikeDocument);
+};
 export const AllPostsDocument = gql`
     query allPosts($take: Int!, $cursor: String) {
   allPosts(take: $take, cursor: $cursor) {
@@ -384,6 +406,7 @@ export type GraphCacheResolvers = {
 
 export type GraphCacheOptimisticUpdaters = {
   like?: GraphCacheOptimisticMutationResolver<MutationLikeArgs, Scalars['Boolean']>,
+  removeLike?: GraphCacheOptimisticMutationResolver<MutationRemoveLikeArgs, Scalars['Boolean']>,
   createPost?: GraphCacheOptimisticMutationResolver<MutationCreatePostArgs, WithTypename<CreatePostResponse>>,
   updatePost?: GraphCacheOptimisticMutationResolver<MutationUpdatePostArgs, WithTypename<CreatePostResponse>>,
   deletePost?: GraphCacheOptimisticMutationResolver<MutationDeletePostArgs, WithTypename<CreatePostResponse>>,
@@ -395,6 +418,7 @@ export type GraphCacheOptimisticUpdaters = {
 export type GraphCacheUpdaters = {
   Mutation?: {
     like?: GraphCacheUpdateResolver<{ like: Scalars['Boolean'] }, MutationLikeArgs>,
+    removeLike?: GraphCacheUpdateResolver<{ removeLike: Scalars['Boolean'] }, MutationRemoveLikeArgs>,
     createPost?: GraphCacheUpdateResolver<{ createPost: WithTypename<CreatePostResponse> }, MutationCreatePostArgs>,
     updatePost?: GraphCacheUpdateResolver<{ updatePost: WithTypename<CreatePostResponse> }, MutationUpdatePostArgs>,
     deletePost?: GraphCacheUpdateResolver<{ deletePost: WithTypename<CreatePostResponse> }, MutationDeletePostArgs>,

@@ -1,4 +1,4 @@
-import { dedupExchange } from "urql";
+import { dedupExchange, gql } from "urql";
 import { cacheExchange } from "@urql/exchange-graphcache";
 import { multipartFetchExchange } from "@urql/exchange-multipart-fetch";
 import {
@@ -65,6 +65,34 @@ export const urqlClient = (ssrExchange: any) => ({
             cache.invalidate("Query", "allPosts", {
               take: 10,
             }); // for some reason cursor: null doesn't work
+          },
+          like: (result, args, cache, _info) => {
+            const { entityId } = args;
+            if (result.like) {
+              cache.writeFragment(
+                gql`
+                  fragment __ on Post {
+                    id
+                    liked
+                  }
+                `,
+                { id: entityId, liked: true }
+              );
+            }
+          },
+          removeLike: (result, args, cache, _info) => {
+            const { entityId } = args;
+            if (result.removeLike) {
+              cache.writeFragment(
+                gql`
+                  fragment __ on Post {
+                    id
+                    liked
+                  }
+                `,
+                { id: entityId, liked: false }
+              );
+            }
           },
         },
       },

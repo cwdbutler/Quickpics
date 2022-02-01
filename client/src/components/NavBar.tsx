@@ -12,7 +12,6 @@ export default function NavBar() {
     pause: isServer(),
   });
   const [, logout] = useLogoutMutation();
-  console.log(router.pathname);
 
   return (
     <nav className="bg-white sticky top-0 z-10 border-b-[1px] border-gray-300">
@@ -29,7 +28,7 @@ export default function NavBar() {
               <div className="flex items-center justify-center space-x-4">
                 <Link href="/">
                   <button>
-                    {router.pathname == "/" ? (
+                    {router.pathname === "/" ? (
                       <HomeIconFilled className="h-8" />
                     ) : (
                       <HomeIcon className="h-8" />
