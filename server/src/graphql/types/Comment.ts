@@ -1,6 +1,4 @@
 import { Field, ID, ObjectType } from "type-graphql";
-import { Post } from "./Post";
-import { User } from "./User";
 
 @ObjectType()
 export class Comment {
@@ -16,9 +14,10 @@ export class Comment {
   @Field()
   text: string;
 
-  @Field((type) => Post)
-  post: Post;
+  // just including the ideas here to avoid an infinite nesting loop
+  @Field()
+  postId: string;
 
-  @Field((type) => User)
-  author: User;
+  @Field()
+  authorId: number;
 }

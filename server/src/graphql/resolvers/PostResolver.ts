@@ -84,6 +84,7 @@ export class PostResolver {
       },
       include: {
         author: true,
+        comments: true,
       },
     });
   }
@@ -111,6 +112,7 @@ export class PostResolver {
         skip: 1, // skips the cursor
         include: {
           author: true,
+          comments: true,
         },
       });
     } else {
@@ -121,6 +123,7 @@ export class PostResolver {
         take: takePlusOne,
         include: {
           author: true,
+          comments: true,
         },
       });
     }
@@ -158,6 +161,7 @@ export class PostResolver {
         },
         include: {
           author: true,
+          comments: true,
         },
       }),
       prisma.activity.create({
@@ -218,6 +222,7 @@ export class PostResolver {
       },
       include: {
         author: true,
+        comments: true,
       },
     });
     return {
@@ -268,6 +273,7 @@ export class PostResolver {
       },
       include: {
         author: true,
+        comments: true,
       },
     });
 

@@ -43,7 +43,7 @@ model Comment {
   id              String      @id
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
-  text            String     @db.VarChar(2200)
+  text            String      @db.VarChar(2200)
   author          User        @relation(fields: [authorId], references: [id])
   authorId        Int
   post            Post        @relation(fields: [postId], references: [id])

@@ -3,6 +3,20 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+type Comment {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  text: String!
+  postId: String!
+  authorId: Float!
+}
+
+"""
+The javascript `Date` as string. Type represents date and time as the ISO Date string.
+"""
+scalar DateTime
+
 type User {
   id: ID!
   createdAt: DateTime!
@@ -12,11 +26,6 @@ type User {
   avatarUrl: String
 }
 
-"""
-The javascript `Date` as string. Type represents date and time as the ISO Date string.
-"""
-scalar DateTime
-
 type Post {
   id: ID!
   createdAt: DateTime!
@@ -24,6 +33,7 @@ type Post {
   caption: String
   imageUrl: String!
   author: User!
+  comments: [Comment!]!
   likes: [Like!]!
   likeCount: Int!
   liked: Boolean!
