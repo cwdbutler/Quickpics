@@ -144,6 +144,7 @@ export type Post = {
   __typename?: 'Post';
   author: User;
   caption?: Maybe<Scalars['String']>;
+  commentCount: Scalars['Int'];
   comments: Array<Comment>;
   commentsPreview: Array<Comment>;
   createdAt: Scalars['DateTime'];
@@ -196,7 +197,7 @@ export type User = {
   username: Scalars['String'];
 };
 
-export type FeedPostFragment = { __typename?: 'Post', id: string, createdAt: any, imageUrl: string, caption?: string | null | undefined, liked: boolean, likeCount: number, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined }, commentsPreview: Array<{ __typename?: 'Comment', id: string, text: string, author: { __typename?: 'User', username: string } }> };
+export type FeedPostFragment = { __typename?: 'Post', id: string, createdAt: any, imageUrl: string, caption?: string | null | undefined, liked: boolean, likeCount: number, commentCount: number, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined }, commentsPreview: Array<{ __typename?: 'Comment', id: string, text: string, author: { __typename?: 'User', username: string } }> };
 
 export type UserInfoFragment = { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined };
 
@@ -258,7 +259,7 @@ export type AllPostsQueryVariables = Exact<{
 }>;
 
 
-export type AllPostsQuery = { __typename?: 'Query', allPosts: { __typename?: 'PostsResponse', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: string, createdAt: any, imageUrl: string, caption?: string | null | undefined, liked: boolean, likeCount: number, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined }, commentsPreview: Array<{ __typename?: 'Comment', id: string, text: string, author: { __typename?: 'User', username: string } }> }> } };
+export type AllPostsQuery = { __typename?: 'Query', allPosts: { __typename?: 'PostsResponse', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: string, createdAt: any, imageUrl: string, caption?: string | null | undefined, liked: boolean, likeCount: number, commentCount: number, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined }, commentsPreview: Array<{ __typename?: 'Comment', id: string, text: string, author: { __typename?: 'User', username: string } }> }> } };
 
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -290,6 +291,7 @@ export const FeedPostFragmentDoc = gql`
       username
     }
   }
+  commentCount
 }
     ${UserInfoFragmentDoc}`;
 export const CreateCommentDocument = gql`
@@ -480,7 +482,8 @@ export type GraphCacheResolvers = {
     likes?: GraphCacheResolver<WithTypename<Post>, Record<string, never>, Array<WithTypename<Like> | string>>,
     likeCount?: GraphCacheResolver<WithTypename<Post>, Record<string, never>, Scalars['Int'] | string>,
     liked?: GraphCacheResolver<WithTypename<Post>, Record<string, never>, Scalars['Boolean'] | string>,
-    commentsPreview?: GraphCacheResolver<WithTypename<Post>, Record<string, never>, Array<WithTypename<Comment> | string>>
+    commentsPreview?: GraphCacheResolver<WithTypename<Post>, Record<string, never>, Array<WithTypename<Comment> | string>>,
+    commentCount?: GraphCacheResolver<WithTypename<Post>, Record<string, never>, Scalars['Int'] | string>
   },
   PostsResponse?: {
     posts?: GraphCacheResolver<WithTypename<PostsResponse>, Record<string, never>, Array<WithTypename<Post> | string>>,

@@ -78,7 +78,7 @@ function Home() {
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        <div className="my-12 flex flex-col items-center w-full flex-1 px-20 text-center">
+        <div className="my-12 flex flex-col items-center w-full flex-1 text-center">
           {pageVariables.map((variables, index) => {
             return (
               <Page

@@ -38,7 +38,7 @@ export default function FeedPost({ post }: Props) {
   };
 
   return (
-    <article className="w-[480px] text-m sm:border-[1px] bg-white border-gray-300 mb-3">
+    <article className="w-full sm:w-[600px] text-m sm:border-[1px] bg-white border-gray-300 mb-3">
       <header className="h-14 flex items-center justify-between p-3">
         <div className="flex items-center">
           <img
@@ -84,6 +84,9 @@ export default function FeedPost({ post }: Props) {
             </h3>
             <p>{post.caption}</p>
           </span>
+        )}
+        {post.commentCount > 2 && (
+          <a className="text-gray-500">View all {post.commentCount} comments</a>
         )}
         <div>
           {post.commentsPreview.map((comment) => (

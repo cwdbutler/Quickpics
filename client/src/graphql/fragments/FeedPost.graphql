@@ -15,4 +15,5 @@ fragment FeedPost on Post {
       username
     }
   }
+  commentCount
 }
