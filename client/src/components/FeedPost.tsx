@@ -1,9 +1,10 @@
 import {
-  PostWithAuthorAndLikesFragment,
+  FeedPostFragment,
   useLikeMutation,
   useRemoveLikeMutation,
 } from "../graphql/generated/graphql";
 import { timeSince } from "../utis/timeSince";
+import FeedCommentForm from "./forms/FeedCommentForm";
 import {
   BookmarkIcon,
   CommentIcon,
@@ -13,7 +14,7 @@ import {
 } from "./Icons";
 
 type Props = {
-  post: PostWithAuthorAndLikesFragment;
+  post: FeedPostFragment;
 };
 
 export default function FeedPost({ post }: Props) {
@@ -37,7 +38,7 @@ export default function FeedPost({ post }: Props) {
   };
 
   return (
-    <article className="w-[480px] overflow-v border-[1px] bg-white border-gray-300 mb-3">
+    <article className="w-[480px] text-m sm:border-[1px] bg-white border-gray-300 mb-3">
       <header className="h-14 flex items-center justify-between p-3">
         <div className="flex items-center">
           <img
@@ -55,7 +56,7 @@ export default function FeedPost({ post }: Props) {
         </button>
       </header>
       <img src={post.imageUrl} className="w-full" />
-      <div className="h-12 border-b-[1px] border-gray-300 flex items-center justify-between">
+      <div className="h-12 flex items-center justify-between">
         <div className="flex">
           <button type="button" onClick={handleLike}>
             <HeartIcon
@@ -70,37 +71,36 @@ export default function FeedPost({ post }: Props) {
           <BookmarkIcon className={styles.icon} />
         </div>
       </div>
-      <section className="flex flex-col items-start justify-between p-3 border-b-[1px] border-gray-300">
-        <div>
-          {post.likeCount > 0 ? (
-            <h3 className="font-semibold">
-              {post.likeCount} {`like${post.likeCount > 1 ? "s" : ""}`}
-            </h3>
-          ) : (
-            <h3 className="flex">
-              Be the first to
-              <p className="ml-1 font-semibold">like this</p>
-            </h3>
-          )}
-        </div>
-        <span className="w-full text-left leading-5 my-2">
-          <h3 className="font-semibold float-left mr-1">
-            {post.author.username}
+      <section className="flex flex-col items-start px-3 pb-3">
+        {post.likeCount > 0 && (
+          <h3 className="font-semibold mb-1">
+            {post.likeCount} {`like${post.likeCount > 1 ? "s" : ""}`}
           </h3>
-          <p>{post.caption}</p>
-        </span>
-        <p className="text-xs text-gray-500">
+        )}
+        {post.caption && (
+          <span className="w-full text-left">
+            <h3 className="font-semibold float-left mr-1">
+              {post.author.username}
+            </h3>
+            <p>{post.caption}</p>
+          </span>
+        )}
+        <div>
+          {post.commentsPreview.map((comment) => (
+            <div key={comment.id} className="flex">
+              <h3 className="font-semibold float-left mr-1">
+                {comment.author.username}
+              </h3>
+              <p>{comment.text}</p>
+            </div>
+          ))}
+        </div>
+        <p className="text-gray-500 text-xxs mt-2">
           {timeSince(post.createdAt).toUpperCase()}
         </p>
       </section>
-      <footer className="flex">
-        <HappyIcon className={styles.icon} />
-        <input
-          type="text"
-          placeholder="Add a comment..."
-          className="outline-none w-full p-2"
-        />
-        <button className="p-2 text-lightblue  font-semibold">Post</button>
+      <footer className="hidden md:flex sm:border-t-[1px] border-gray-300">
+        <FeedCommentForm post={post} iconStyles={styles.icon} />
       </footer>
     </article>
   );

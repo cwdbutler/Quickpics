@@ -23,6 +23,25 @@ export type Scalars = {
 
 export type Activity = Post;
 
+export type Comment = {
+  __typename?: 'Comment';
+  author: User;
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  likeCount: Scalars['Int'];
+  liked: Scalars['Boolean'];
+  likes: Array<Like>;
+  postId: Scalars['String'];
+  text: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type CreateCommentResponse = {
+  __typename?: 'CreateCommentResponse';
+  comment?: Maybe<Comment>;
+  errors?: Maybe<Array<FieldError>>;
+};
+
 export type CreatePostResponse = {
   __typename?: 'CreatePostResponse';
   errors?: Maybe<Array<FieldError>>;
@@ -51,20 +70,34 @@ export type Like = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createComment: CreateCommentResponse;
   createPost: CreatePostResponse;
+  deleteComment: CreateCommentResponse;
   deletePost: CreatePostResponse;
   like: Scalars['Boolean'];
   login: CreateUserResponse;
   logout: Scalars['Boolean'];
   register: CreateUserResponse;
   removeLike: Scalars['Boolean'];
+  updateComment: CreateCommentResponse;
   updatePost: CreatePostResponse;
+};
+
+
+export type MutationCreateCommentArgs = {
+  postId: Scalars['String'];
+  text: Scalars['String'];
 };
 
 
 export type MutationCreatePostArgs = {
   caption: Scalars['String'];
   file: Scalars['Upload'];
+};
+
+
+export type MutationDeleteCommentArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -96,6 +129,12 @@ export type MutationRemoveLikeArgs = {
 };
 
 
+export type MutationUpdateCommentArgs = {
+  id: Scalars['String'];
+  text: Scalars['String'];
+};
+
+
 export type MutationUpdatePostArgs = {
   caption: Scalars['String'];
   id: Scalars['String'];
@@ -105,6 +144,8 @@ export type Post = {
   __typename?: 'Post';
   author: User;
   caption?: Maybe<Scalars['String']>;
+  comments: Array<Comment>;
+  commentsPreview: Array<Comment>;
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   imageUrl: Scalars['String'];
@@ -155,9 +196,17 @@ export type User = {
   username: Scalars['String'];
 };
 
-export type PostWithAuthorAndLikesFragment = { __typename?: 'Post', id: string, createdAt: any, imageUrl: string, caption?: string | null | undefined, likeCount: number, liked: boolean, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined }, likes: Array<{ __typename?: 'Like', id: string, likedAt: any, author: { __typename?: 'User', username: string } }> };
+export type FeedPostFragment = { __typename?: 'Post', id: string, createdAt: any, imageUrl: string, caption?: string | null | undefined, liked: boolean, likeCount: number, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined }, commentsPreview: Array<{ __typename?: 'Comment', id: string, text: string, author: { __typename?: 'User', username: string } }> };
 
 export type UserInfoFragment = { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined };
+
+export type CreateCommentMutationVariables = Exact<{
+  text: Scalars['String'];
+  postId: Scalars['String'];
+}>;
+
+
+export type CreateCommentMutation = { __typename?: 'Mutation', createComment: { __typename?: 'CreateCommentResponse', comment?: { __typename?: 'Comment', id: string, text: string, author: { __typename?: 'User', username: string } } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
 
 export type CreatePostMutationVariables = Exact<{
   caption: Scalars['String'];
@@ -209,7 +258,7 @@ export type AllPostsQueryVariables = Exact<{
 }>;
 
 
-export type AllPostsQuery = { __typename?: 'Query', allPosts: { __typename?: 'PostsResponse', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: string, createdAt: any, imageUrl: string, caption?: string | null | undefined, likeCount: number, liked: boolean, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined }, likes: Array<{ __typename?: 'Like', id: string, likedAt: any, author: { __typename?: 'User', username: string } }> }> } };
+export type AllPostsQuery = { __typename?: 'Query', allPosts: { __typename?: 'PostsResponse', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: string, createdAt: any, imageUrl: string, caption?: string | null | undefined, liked: boolean, likeCount: number, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined }, commentsPreview: Array<{ __typename?: 'Comment', id: string, text: string, author: { __typename?: 'User', username: string } }> }> } };
 
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -223,8 +272,8 @@ export const UserInfoFragmentDoc = gql`
   avatarUrl
 }
     `;
-export const PostWithAuthorAndLikesFragmentDoc = gql`
-    fragment PostWithAuthorAndLikes on Post {
+export const FeedPostFragmentDoc = gql`
+    fragment FeedPost on Post {
   id
   createdAt
   imageUrl
@@ -232,17 +281,38 @@ export const PostWithAuthorAndLikesFragmentDoc = gql`
   author {
     ...UserInfo
   }
-  likes {
+  liked
+  likeCount
+  commentsPreview {
     id
-    likedAt
+    text
     author {
       username
     }
   }
-  likeCount
-  liked
 }
     ${UserInfoFragmentDoc}`;
+export const CreateCommentDocument = gql`
+    mutation createComment($text: String!, $postId: String!) {
+  createComment(text: $text, postId: $postId) {
+    comment {
+      id
+      text
+      author {
+        username
+      }
+    }
+    errors {
+      field
+      message
+    }
+  }
+}
+    `;
+
+export function useCreateCommentMutation() {
+  return Urql.useMutation<CreateCommentMutation, CreateCommentMutationVariables>(CreateCommentDocument);
+};
 export const CreatePostDocument = gql`
     mutation createPost($caption: String!, $file: Upload!) {
   createPost(caption: $caption, file: $file) {
@@ -323,12 +393,12 @@ export const AllPostsDocument = gql`
     query allPosts($take: Int!, $cursor: String) {
   allPosts(take: $take, cursor: $cursor) {
     posts {
-      ...PostWithAuthorAndLikes
+      ...FeedPost
     }
     hasMore
   }
 }
-    ${PostWithAuthorAndLikesFragmentDoc}`;
+    ${FeedPostFragmentDoc}`;
 
 export function useAllPostsQuery(options: Omit<Urql.UseQueryArgs<AllPostsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<AllPostsQuery>({ query: AllPostsDocument, ...options });
@@ -347,6 +417,8 @@ export function useCurrentUserQuery(options: Omit<Urql.UseQueryArgs<CurrentUserQ
 export type WithTypename<T extends { __typename?: any }> = { [K in Exclude<keyof T, '__typename'>]?: T[K] } & { __typename: NonNullable<T['__typename']> };
 
 export type GraphCacheKeysConfig = {
+  Comment?: (data: WithTypename<Comment>) => null | string,
+  CreateCommentResponse?: (data: WithTypename<CreateCommentResponse>) => null | string,
   CreatePostResponse?: (data: WithTypename<CreatePostResponse>) => null | string,
   CreateUserResponse?: (data: WithTypename<CreateUserResponse>) => null | string,
   FieldError?: (data: WithTypename<FieldError>) => null | string,
@@ -363,6 +435,21 @@ export type GraphCacheResolvers = {
     allPosts?: GraphCacheResolver<WithTypename<Query>, QueryAllPostsArgs, WithTypename<PostsResponse> | string>,
     currentUser?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<User> | string>,
     user?: GraphCacheResolver<WithTypename<Query>, QueryUserArgs, WithTypename<User> | string>
+  },
+  Comment?: {
+    id?: GraphCacheResolver<WithTypename<Comment>, Record<string, never>, Scalars['ID'] | string>,
+    createdAt?: GraphCacheResolver<WithTypename<Comment>, Record<string, never>, Scalars['DateTime'] | string>,
+    updatedAt?: GraphCacheResolver<WithTypename<Comment>, Record<string, never>, Scalars['DateTime'] | string>,
+    text?: GraphCacheResolver<WithTypename<Comment>, Record<string, never>, Scalars['String'] | string>,
+    postId?: GraphCacheResolver<WithTypename<Comment>, Record<string, never>, Scalars['String'] | string>,
+    author?: GraphCacheResolver<WithTypename<Comment>, Record<string, never>, WithTypename<User> | string>,
+    likes?: GraphCacheResolver<WithTypename<Comment>, Record<string, never>, Array<WithTypename<Like> | string>>,
+    likeCount?: GraphCacheResolver<WithTypename<Comment>, Record<string, never>, Scalars['Int'] | string>,
+    liked?: GraphCacheResolver<WithTypename<Comment>, Record<string, never>, Scalars['Boolean'] | string>
+  },
+  CreateCommentResponse?: {
+    errors?: GraphCacheResolver<WithTypename<CreateCommentResponse>, Record<string, never>, Array<WithTypename<FieldError> | string>>,
+    comment?: GraphCacheResolver<WithTypename<CreateCommentResponse>, Record<string, never>, WithTypename<Comment> | string>
   },
   CreatePostResponse?: {
     errors?: GraphCacheResolver<WithTypename<CreatePostResponse>, Record<string, never>, Array<WithTypename<FieldError> | string>>,
@@ -389,9 +476,11 @@ export type GraphCacheResolvers = {
     caption?: GraphCacheResolver<WithTypename<Post>, Record<string, never>, Scalars['String'] | string>,
     imageUrl?: GraphCacheResolver<WithTypename<Post>, Record<string, never>, Scalars['String'] | string>,
     author?: GraphCacheResolver<WithTypename<Post>, Record<string, never>, WithTypename<User> | string>,
+    comments?: GraphCacheResolver<WithTypename<Post>, Record<string, never>, Array<WithTypename<Comment> | string>>,
     likes?: GraphCacheResolver<WithTypename<Post>, Record<string, never>, Array<WithTypename<Like> | string>>,
     likeCount?: GraphCacheResolver<WithTypename<Post>, Record<string, never>, Scalars['Int'] | string>,
-    liked?: GraphCacheResolver<WithTypename<Post>, Record<string, never>, Scalars['Boolean'] | string>
+    liked?: GraphCacheResolver<WithTypename<Post>, Record<string, never>, Scalars['Boolean'] | string>,
+    commentsPreview?: GraphCacheResolver<WithTypename<Post>, Record<string, never>, Array<WithTypename<Comment> | string>>
   },
   PostsResponse?: {
     posts?: GraphCacheResolver<WithTypename<PostsResponse>, Record<string, never>, Array<WithTypename<Post> | string>>,
@@ -408,6 +497,9 @@ export type GraphCacheResolvers = {
 };
 
 export type GraphCacheOptimisticUpdaters = {
+  createComment?: GraphCacheOptimisticMutationResolver<MutationCreateCommentArgs, WithTypename<CreateCommentResponse>>,
+  updateComment?: GraphCacheOptimisticMutationResolver<MutationUpdateCommentArgs, WithTypename<CreateCommentResponse>>,
+  deleteComment?: GraphCacheOptimisticMutationResolver<MutationDeleteCommentArgs, WithTypename<CreateCommentResponse>>,
   like?: GraphCacheOptimisticMutationResolver<MutationLikeArgs, Scalars['Boolean']>,
   removeLike?: GraphCacheOptimisticMutationResolver<MutationRemoveLikeArgs, Scalars['Boolean']>,
   createPost?: GraphCacheOptimisticMutationResolver<MutationCreatePostArgs, WithTypename<CreatePostResponse>>,
@@ -420,6 +512,9 @@ export type GraphCacheOptimisticUpdaters = {
 
 export type GraphCacheUpdaters = {
   Mutation?: {
+    createComment?: GraphCacheUpdateResolver<{ createComment: WithTypename<CreateCommentResponse> }, MutationCreateCommentArgs>,
+    updateComment?: GraphCacheUpdateResolver<{ updateComment: WithTypename<CreateCommentResponse> }, MutationUpdateCommentArgs>,
+    deleteComment?: GraphCacheUpdateResolver<{ deleteComment: WithTypename<CreateCommentResponse> }, MutationDeleteCommentArgs>,
     like?: GraphCacheUpdateResolver<{ like: Scalars['Boolean'] }, MutationLikeArgs>,
     removeLike?: GraphCacheUpdateResolver<{ removeLike: Scalars['Boolean'] }, MutationRemoveLikeArgs>,
     createPost?: GraphCacheUpdateResolver<{ createPost: WithTypename<CreatePostResponse> }, MutationCreatePostArgs>,

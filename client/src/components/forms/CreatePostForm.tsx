@@ -2,7 +2,7 @@ import { Formik, Form, Field } from "formik";
 import { useState } from "react";
 import { LeftArrowIcon } from "../Icons";
 import { Area } from "react-easy-crop/types";
-import { MAX_CAPTION_LENGTH } from "../../utis/constants";
+import { MAX_TEXT_LENGTH } from "../../utis/constants";
 import { useCreatePostMutation } from "../../graphql/generated/graphql";
 import router from "next/router";
 import ImageUploader from "./ImageUploader";
@@ -114,8 +114,8 @@ function CreatePostForm() {
                   name="caption"
                   placeholder="Caption"
                   value={
-                    values.caption.length >= MAX_CAPTION_LENGTH
-                      ? values.caption.substring(0, MAX_CAPTION_LENGTH - 1)
+                    values.caption.length >= MAX_TEXT_LENGTH
+                      ? values.caption.substring(0, MAX_TEXT_LENGTH - 1)
                       : values.caption
                   }
                   // prevent typing if max lengh reached

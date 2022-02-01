@@ -4,6 +4,7 @@ import { multipartFetchExchange } from "@urql/exchange-multipart-fetch";
 import {
   GraphCacheConfig,
   CurrentUserDocument,
+  Comment,
 } from "./graphql/generated/graphql";
 import { isServer } from "./utis/isServer";
 
@@ -74,25 +75,79 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
                 take: 10,
               });
             },
-            createPost: (result, _args, cache, _info) => {
+            createPost: (result, args, cache, _info) => {
               cache.invalidate("Query", "allPosts", {
                 take: 10,
               });
             },
-            like: (result, args, cache, _info) => {
-              const { entityId } = args;
-              const post = cache.readFragment(
-                gql`
-                  fragment _ on Post {
-                    id
-                    liked
-                    likeCount
-                  }
-                `,
-                { id: entityId }
-              );
+            createComment: (result, args, cache, _info) => {
+              if (result.createComment.comment) {
+                const { postId } = args;
+                const { commentsPreview } = cache.readFragment(
+                  gql`
+                    fragment _ on Post {
+                      id
+                      commentsPreview {
+                        id
+                        text
+                        author {
+                          username
+                        }
+                      }
+                    }
+                  `,
+                  { id: postId }
+                );
 
+                // necessary or urql gets upset
+                const commentsWithTypename = commentsPreview.map(
+                  (comment: Comment) => {
+                    return {
+                      __typename: "Comment",
+                      ...comment,
+                    };
+                  }
+                );
+
+                // add the newly created comment to the preview
+                commentsWithTypename.unshift({
+                  __typename: "Comment",
+                  ...result.createComment.comment,
+                });
+
+                cache.writeFragment(
+                  gql`
+                    fragment __ on Post {
+                      id
+                      commentsPreview {
+                        id
+                        text
+                        author {
+                          username
+                        }
+                      }
+                    }
+                  `,
+                  {
+                    id: postId,
+                    commentsPreview: commentsWithTypename,
+                  }
+                );
+              }
+            },
+            like: (result, args, cache, _info) => {
               if (result.like) {
+                const { entityId } = args;
+                const post = cache.readFragment(
+                  gql`
+                    fragment _ on Post {
+                      id
+                      liked
+                      likeCount
+                    }
+                  `,
+                  { id: entityId }
+                );
                 cache.writeFragment(
                   gql`
                     fragment __ on Post {
@@ -106,21 +161,21 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
               }
             },
             removeLike: (result, args, cache, _info) => {
-              const { entityId } = args;
-              const post = cache.readFragment(
-                gql`
-                  fragment _dsdsdsds on Post {
-                    id
-                    liked
-                    likeCount
-                  }
-                `,
-                { id: entityId }
-              );
               if (result.removeLike) {
+                const { entityId } = args;
+                const post = cache.readFragment(
+                  gql`
+                    fragment _ on Post {
+                      id
+                      liked
+                      likeCount
+                    }
+                  `,
+                  { id: entityId }
+                );
                 cache.writeFragment(
                   gql`
-                    fragment _dsdsdssd__ on Post {
+                    fragment __ on Post {
                       id
                       liked
                       likeCount
