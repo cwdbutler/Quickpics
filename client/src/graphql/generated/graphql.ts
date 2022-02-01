@@ -44,9 +44,9 @@ export type FieldError = {
 export type Like = {
   __typename?: 'Like';
   author: User;
-  createdAt: Scalars['DateTime'];
+  entityId: Scalars['String'];
   id: Scalars['ID'];
-  updatedAt: Scalars['DateTime'];
+  likedAt: Scalars['DateTime'];
 };
 
 export type Mutation = {
@@ -108,6 +108,7 @@ export type Post = {
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   imageUrl: Scalars['String'];
+  likeCount: Scalars['Int'];
   liked: Scalars['Boolean'];
   likes: Array<Like>;
   updatedAt: Scalars['DateTime'];
@@ -154,7 +155,7 @@ export type User = {
   username: Scalars['String'];
 };
 
-export type PostWithAuthorAndLikesFragment = { __typename?: 'Post', id: string, createdAt: any, imageUrl: string, caption?: string | null | undefined, liked: boolean, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined }, likes: Array<{ __typename?: 'Like', id: string, createdAt: any, author: { __typename?: 'User', username: string } }> };
+export type PostWithAuthorAndLikesFragment = { __typename?: 'Post', id: string, createdAt: any, imageUrl: string, caption?: string | null | undefined, likeCount: number, liked: boolean, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined }, likes: Array<{ __typename?: 'Like', id: string, likedAt: any, author: { __typename?: 'User', username: string } }> };
 
 export type UserInfoFragment = { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined };
 
@@ -208,7 +209,7 @@ export type AllPostsQueryVariables = Exact<{
 }>;
 
 
-export type AllPostsQuery = { __typename?: 'Query', allPosts: { __typename?: 'PostsResponse', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: string, createdAt: any, imageUrl: string, caption?: string | null | undefined, liked: boolean, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined }, likes: Array<{ __typename?: 'Like', id: string, createdAt: any, author: { __typename?: 'User', username: string } }> }> } };
+export type AllPostsQuery = { __typename?: 'Query', allPosts: { __typename?: 'PostsResponse', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: string, createdAt: any, imageUrl: string, caption?: string | null | undefined, likeCount: number, liked: boolean, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined }, likes: Array<{ __typename?: 'Like', id: string, likedAt: any, author: { __typename?: 'User', username: string } }> }> } };
 
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -233,11 +234,12 @@ export const PostWithAuthorAndLikesFragmentDoc = gql`
   }
   likes {
     id
-    createdAt
+    likedAt
     author {
       username
     }
   }
+  likeCount
   liked
 }
     ${UserInfoFragmentDoc}`;
@@ -376,8 +378,8 @@ export type GraphCacheResolvers = {
   },
   Like?: {
     id?: GraphCacheResolver<WithTypename<Like>, Record<string, never>, Scalars['ID'] | string>,
-    createdAt?: GraphCacheResolver<WithTypename<Like>, Record<string, never>, Scalars['DateTime'] | string>,
-    updatedAt?: GraphCacheResolver<WithTypename<Like>, Record<string, never>, Scalars['DateTime'] | string>,
+    likedAt?: GraphCacheResolver<WithTypename<Like>, Record<string, never>, Scalars['DateTime'] | string>,
+    entityId?: GraphCacheResolver<WithTypename<Like>, Record<string, never>, Scalars['String'] | string>,
     author?: GraphCacheResolver<WithTypename<Like>, Record<string, never>, WithTypename<User> | string>
   },
   Post?: {
@@ -388,6 +390,7 @@ export type GraphCacheResolvers = {
     imageUrl?: GraphCacheResolver<WithTypename<Post>, Record<string, never>, Scalars['String'] | string>,
     author?: GraphCacheResolver<WithTypename<Post>, Record<string, never>, WithTypename<User> | string>,
     likes?: GraphCacheResolver<WithTypename<Post>, Record<string, never>, Array<WithTypename<Like> | string>>,
+    likeCount?: GraphCacheResolver<WithTypename<Post>, Record<string, never>, Scalars['Int'] | string>,
     liked?: GraphCacheResolver<WithTypename<Post>, Record<string, never>, Scalars['Boolean'] | string>
   },
   PostsResponse?: {

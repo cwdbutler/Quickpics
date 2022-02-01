@@ -8,10 +8,11 @@ fragment PostWithAuthorAndLikes on Post {
   }
   likes {
     id
-    createdAt
+    likedAt
     author {
       username
     }
   }
+  likeCount
   liked
 }

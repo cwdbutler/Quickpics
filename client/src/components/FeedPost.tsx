@@ -35,7 +35,6 @@ export default function FeedPost({ post }: Props) {
   const styles = {
     icon: "h-12 stroke-1.5 p-2 flex-shrink-0",
   };
-  const likeCount = post.likes.length;
 
   return (
     <article className="w-[480px] overflow-v border-[1px] bg-white border-gray-300 mb-3">
@@ -73,9 +72,9 @@ export default function FeedPost({ post }: Props) {
       </div>
       <section className="flex flex-col items-start justify-between p-3 border-b-[1px] border-gray-300">
         <div>
-          {likeCount > 0 ? (
+          {post.likeCount > 0 ? (
             <h3 className="font-semibold">
-              {likeCount} {`like${likeCount > 1 ? "s" : ""}`}
+              {post.likeCount} {`like${post.likeCount > 1 ? "s" : ""}`}
             </h3>
           ) : (
             <h3 className="flex">
