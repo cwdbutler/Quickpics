@@ -40,6 +40,7 @@ type Post {
   likes: [Like!]!
   likeCount: Int!
   liked: Boolean!
+  commentsPreview: [Comment!]!
 }
 
 type Like {
@@ -85,9 +86,9 @@ type Query {
 union Activity = Post
 
 type Mutation {
-  createcomment(text: String!, postId: String!): CreateCommentResponse!
-  updatecomment(text: String!, id: String!): CreateCommentResponse!
-  deletecomment(id: String!): CreateCommentResponse!
+  createComment(text: String!, postId: String!): CreateCommentResponse!
+  updateComment(text: String!, id: String!): CreateCommentResponse!
+  deleteComment(id: String!): CreateCommentResponse!
   like(entityId: String!): Boolean!
   removeLike(entityId: String!): Boolean!
   createPost(caption: String!, file: Upload!): CreatePostResponse!

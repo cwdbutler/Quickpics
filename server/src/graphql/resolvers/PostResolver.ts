@@ -26,6 +26,7 @@ import { uploadFile } from "../../utils/uploadFile";
 import { deleteImage } from "../../utils/deleteImage";
 import { PostsResponse } from "../types/PostsResponse";
 import { Like } from "../types/Like";
+import { Comment } from "../types/Comment";
 
 @Resolver(Post)
 export class PostResolver {
@@ -78,6 +79,14 @@ export class PostResolver {
     return liked ? true : false;
   }
 
+  @FieldResolver(() => [Comment])
+  async commentsPreview(
+    @Root() post: Post,
+    @Ctx() { prisma, req }: Context
+  ): Promise<Comment[]> {
+    return post.comments.slice(0, 2); // return the first 2 comments
+  }
+
   @Query(() => Post, { nullable: true })
   post(
     @Arg("id", () => String) id: string,
@@ -90,6 +99,9 @@ export class PostResolver {
       include: {
         author: true,
         comments: {
+          orderBy: {
+            createdAt: "desc",
+          },
           include: {
             author: true,
           },
@@ -122,6 +134,9 @@ export class PostResolver {
         include: {
           author: true,
           comments: {
+            orderBy: {
+              createdAt: "desc",
+            },
             include: {
               author: true,
             },
@@ -137,6 +152,9 @@ export class PostResolver {
         include: {
           author: true,
           comments: {
+            orderBy: {
+              createdAt: "desc",
+            },
             include: {
               author: true,
             },
@@ -190,6 +208,9 @@ export class PostResolver {
         include: {
           author: true,
           comments: {
+            orderBy: {
+              createdAt: "desc",
+            },
             include: {
               author: true,
             },
@@ -266,6 +287,9 @@ export class PostResolver {
       include: {
         author: true,
         comments: {
+          orderBy: {
+            createdAt: "desc",
+          },
           include: {
             author: true,
           },
@@ -321,6 +345,9 @@ export class PostResolver {
       include: {
         author: true,
         comments: {
+          orderBy: {
+            createdAt: "desc",
+          },
           include: {
             author: true,
           },

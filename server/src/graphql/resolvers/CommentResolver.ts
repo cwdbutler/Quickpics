@@ -77,7 +77,7 @@ export class CommentResolver {
 
   @Mutation(() => CreateCommentResponse)
   @UseMiddleware(checkAuthenticated)
-  async createcomment(
+  async createComment(
     @Arg("postId") postId: string,
     @Arg("text") text: string,
     @Ctx() { prisma, req }: Context
@@ -127,7 +127,7 @@ export class CommentResolver {
 
   @Mutation(() => CreateCommentResponse)
   @UseMiddleware(checkAuthenticated)
-  async updatecomment(
+  async updateComment(
     @Arg("id", () => String) id: string,
     @Arg("text") text: string,
     @Ctx() { prisma, req }: Context
@@ -192,7 +192,7 @@ export class CommentResolver {
 
   @Mutation(() => CreateCommentResponse)
   @UseMiddleware(checkAuthenticated)
-  async deletecomment(
+  async deleteComment(
     @Arg("id", () => String) id: string,
     @Ctx() { prisma, req }: Context
   ): Promise<CreateCommentResponse> | null {
