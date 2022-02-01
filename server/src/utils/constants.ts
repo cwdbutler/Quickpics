@@ -6,7 +6,8 @@ export const COOKIE_SECRET = process.env.COOKIE_SECRET;
 
 // field validations
 export const MIN_FIELD_LENGTH = 3;
-export const MAX_FIELD_LENGTH = 30; // same as db
+export const MAX_USERNAME_LENGTH = 30; // same as db
+export const MAX_TEXT_FIELD_LENGTH = 2_200;
 
 // error messages
 export const NOT_FOUND = (entity: string) =>
@@ -16,10 +17,11 @@ export const NOT_UNIQUE = (field: string) =>
 export const BAD_CREDENTIALS = (field: string) => `Invalid ${field}.`;
 export const TOO_SHORT = (field: string) =>
   `Your ${field} must be at least ${MIN_FIELD_LENGTH} characters long.`;
-export const TOO_LONG = (field: string) =>
-  `Your ${field} cannot be greater than ${MAX_FIELD_LENGTH} characters long.`;
+export const USERNAME_TOO_LONG = `Your username cannot be greater than ${MAX_USERNAME_LENGTH} characters long.`;
 export const ALPHANUMERIC_USERNAME =
   "Usernames can only be letters and numbers.";
 export const NO_PERMISSION = "You don't have permission to do that.";
+export const TEXT_TOO_LONG = `The maximum length is ${MAX_TEXT_FIELD_LENGTH}`;
 
+// post pagination
 export const MAX_TAKE = 50;

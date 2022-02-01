@@ -17,10 +17,10 @@ import {
   ALPHANUMERIC_USERNAME,
   BAD_CREDENTIALS,
   COOKIE_NAME,
-  MAX_FIELD_LENGTH,
+  MAX_USERNAME_LENGTH,
   MIN_FIELD_LENGTH,
   NOT_UNIQUE,
-  TOO_LONG,
+  USERNAME_TOO_LONG,
   TOO_SHORT,
 } from "../../utils/constants";
 import { checkNotAuthenticated } from "../../middleware/checkNotAuhenticated";
@@ -91,12 +91,12 @@ export class UserResolver {
       };
     }
 
-    if (username.length > MAX_FIELD_LENGTH) {
+    if (username.length > MAX_USERNAME_LENGTH) {
       return {
         errors: [
           {
             field: "username",
-            message: TOO_LONG("username"),
+            message: USERNAME_TOO_LONG,
           },
         ],
       };

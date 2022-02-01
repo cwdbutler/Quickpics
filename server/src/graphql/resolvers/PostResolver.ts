@@ -12,14 +12,19 @@ import {
 import { Post } from "../types/Post";
 import { Context } from "../../context";
 import { CreatePostResponse } from "../types/CreatePostResponse";
-import { MAX_TAKE, NOT_FOUND, NO_PERMISSION } from "../../utils/constants";
+import {
+  MAX_TAKE,
+  MAX_TEXT_FIELD_LENGTH,
+  NOT_FOUND,
+  NO_PERMISSION,
+  TEXT_TOO_LONG,
+} from "../../utils/constants";
 import { createId } from "../../utils/createId";
 import { checkAuthenticated } from "../../middleware/checkAuthenticated";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
 import { uploadFile } from "../../utils/uploadFile";
 import { deleteImage } from "../../utils/deleteImage";
 import { PostsResponse } from "../types/PostsResponse";
-import { prisma } from "@prisma/client";
 import { Like } from "../types/Like";
 
 @Resolver(Post)
@@ -84,7 +89,11 @@ export class PostResolver {
       },
       include: {
         author: true,
-        comments: true,
+        comments: {
+          include: {
+            author: true,
+          },
+        },
       },
     });
   }
@@ -112,7 +121,11 @@ export class PostResolver {
         skip: 1, // skips the cursor
         include: {
           author: true,
-          comments: true,
+          comments: {
+            include: {
+              author: true,
+            },
+          },
         },
       });
     } else {
@@ -123,7 +136,11 @@ export class PostResolver {
         take: takePlusOne,
         include: {
           author: true,
-          comments: true,
+          comments: {
+            include: {
+              author: true,
+            },
+          },
         },
       });
     }
@@ -143,6 +160,17 @@ export class PostResolver {
     @Arg("caption") caption: string,
     @Ctx() { prisma, req }: Context
   ): Promise<CreatePostResponse> {
+    if (caption.length > MAX_TEXT_FIELD_LENGTH) {
+      return {
+        errors: [
+          {
+            field: "caption",
+            message: TEXT_TOO_LONG,
+          },
+        ],
+      };
+    }
+
     const postId = createId();
     const result = await uploadFile(file, postId);
     // postId is s3 bucket key
@@ -161,7 +189,11 @@ export class PostResolver {
         },
         include: {
           author: true,
-          comments: true,
+          comments: {
+            include: {
+              author: true,
+            },
+          },
         },
       }),
       prisma.activity.create({
@@ -181,6 +213,17 @@ export class PostResolver {
     @Arg("caption") caption: string,
     @Ctx() { prisma, req }: Context
   ): Promise<CreatePostResponse> {
+    if (caption.length > MAX_TEXT_FIELD_LENGTH) {
+      return {
+        errors: [
+          {
+            field: "caption",
+            message: TEXT_TOO_LONG,
+          },
+        ],
+      };
+    }
+
     const foundPost = await prisma.post.findUnique({
       where: {
         id: id,
@@ -222,7 +265,11 @@ export class PostResolver {
       },
       include: {
         author: true,
-        comments: true,
+        comments: {
+          include: {
+            author: true,
+          },
+        },
       },
     });
     return {
@@ -273,7 +320,11 @@ export class PostResolver {
       },
       include: {
         author: true,
-        comments: true,
+        comments: {
+          include: {
+            author: true,
+          },
+        },
       },
     });
 

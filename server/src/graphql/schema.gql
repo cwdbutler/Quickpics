@@ -3,20 +3,6 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
-type Comment {
-  id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  text: String!
-  postId: String!
-  authorId: Float!
-}
-
-"""
-The javascript `Date` as string. Type represents date and time as the ISO Date string.
-"""
-scalar DateTime
-
 type User {
   id: ID!
   createdAt: DateTime!
@@ -24,6 +10,23 @@ type User {
   email: String!
   username: String!
   avatarUrl: String
+}
+
+"""
+The javascript `Date` as string. Type represents date and time as the ISO Date string.
+"""
+scalar DateTime
+
+type Comment {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  text: String!
+  postId: String!
+  author: User!
+  likes: [Like!]!
+  likeCount: Int!
+  liked: Boolean!
 }
 
 type Post {
@@ -39,9 +42,21 @@ type Post {
   liked: Boolean!
 }
 
+type Like {
+  id: ID!
+  likedAt: DateTime!
+  entityId: String!
+  author: User!
+}
+
 type FieldError {
   field: String!
   message: String!
+}
+
+type CreateCommentResponse {
+  errors: [FieldError!]
+  comment: Comment
 }
 
 type CreatePostResponse {
@@ -52,13 +67,6 @@ type CreatePostResponse {
 type PostsResponse {
   posts: [Post!]!
   hasMore: Boolean!
-}
-
-type Like {
-  id: ID!
-  likedAt: DateTime!
-  entityId: String!
-  author: User!
 }
 
 type CreateUserResponse {
@@ -77,6 +85,9 @@ type Query {
 union Activity = Post
 
 type Mutation {
+  createcomment(text: String!, postId: String!): CreateCommentResponse!
+  updatecomment(text: String!, id: String!): CreateCommentResponse!
+  deletecomment(id: String!): CreateCommentResponse!
   like(entityId: String!): Boolean!
   removeLike(entityId: String!): Boolean!
   createPost(caption: String!, file: Upload!): CreatePostResponse!
