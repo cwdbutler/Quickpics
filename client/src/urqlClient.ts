@@ -10,7 +10,7 @@ import { isServer } from "./utis/isServer";
 
 export const urqlClient = (ssrExchange: any, ctx: any) => {
   let cookie; // telling the Next.js server to include the cookie sent from the client in the header
-  if (isServer()) {
+  if (isServer() && ctx) {
     cookie = ctx.req.headers.cookie;
   }
   // without this, the cookie won't get sent for pages with SSR
@@ -26,6 +26,7 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
         keys: {
           PostsResponse: () => null,
           User: () => null,
+          Like: () => null,
         }, // urql needs a key for each response, and returning null forces it to look at posts for one
         updates: {
           Mutation: {

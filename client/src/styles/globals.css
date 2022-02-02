@@ -7,6 +7,18 @@
   src: url(/fonts/logo.otf) format("opentype");
 }
 
+@layer utilities {
+  /* Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
 /* overriding tailwind */
 .reactEasyCrop_Cover_Vertical {
   max-width: none !important;

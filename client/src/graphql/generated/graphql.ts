@@ -197,6 +197,8 @@ export type User = {
   username: Scalars['String'];
 };
 
+export type CommentInfoFragment = { __typename?: 'Comment', id: string, text: string, liked: boolean, likeCount: number, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined } };
+
 export type FeedPostFragment = { __typename?: 'Post', id: string, createdAt: any, imageUrl: string, caption?: string | null | undefined, liked: boolean, likeCount: number, commentCount: number, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined }, commentsPreview: Array<{ __typename?: 'Comment', id: string, text: string, author: { __typename?: 'User', username: string } }> };
 
 export type UserInfoFragment = { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined };
@@ -280,6 +282,17 @@ export const UserInfoFragmentDoc = gql`
   avatarUrl
 }
     `;
+export const CommentInfoFragmentDoc = gql`
+    fragment CommentInfo on Comment {
+  id
+  text
+  author {
+    ...UserInfo
+  }
+  liked
+  likeCount
+}
+    ${UserInfoFragmentDoc}`;
 export const FeedPostFragmentDoc = gql`
     fragment FeedPost on Post {
   id
@@ -442,18 +455,13 @@ export const PostDocument = gql`
       }
     }
     comments {
-      id
-      text
-      author {
-        ...UserInfo
-      }
-      liked
-      likeCount
+      ...CommentInfo
     }
     commentCount
   }
 }
-    ${UserInfoFragmentDoc}`;
+    ${UserInfoFragmentDoc}
+${CommentInfoFragmentDoc}`;
 
 export function usePostQuery(options: Omit<Urql.UseQueryArgs<PostQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<PostQuery>({ query: PostDocument, ...options });

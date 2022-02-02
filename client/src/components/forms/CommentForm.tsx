@@ -2,18 +2,18 @@ import { Field, Form, Formik } from "formik";
 import { useState } from "react";
 import {
   FeedPostFragment,
+  PostQuery,
   useCreateCommentMutation,
 } from "../../graphql/generated/graphql";
 import { MAX_TEXT_LENGTH } from "../../utis/constants";
-import { mapToFormErrors } from "../../utis/mapToFormErrors";
 import { HappyIcon } from "../Icons";
 
 type Props = {
-  post: FeedPostFragment;
+  post: FeedPostFragment | PostQuery["post"];
   iconStyles: string;
 };
 
-export default function FeedCommentForm({ post, iconStyles }: Props) {
+export default function CommentForm({ post, iconStyles }: Props) {
   const [loading, setLoading] = useState(false);
   const [, createComment] = useCreateCommentMutation();
 
@@ -23,13 +23,16 @@ export default function FeedCommentForm({ post, iconStyles }: Props) {
         text: "",
       }}
       onSubmit={async (values, { resetForm }) => {
+        console.log("i submitted");
         setLoading(true);
         const response = await createComment({
           text: values.text,
-          postId: post.id,
+          postId: post!.id,
         });
+        console.log("res", response);
         setLoading(false);
         if (response.data?.createComment.comment) {
+          console.log("done");
           resetForm();
         }
         // need to handle errors here, although there shouldn't be many

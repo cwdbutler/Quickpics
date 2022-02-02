@@ -16,13 +16,7 @@ query post($id: String!) {
       }
     }
     comments {
-      id
-      text
-      author {
-        ...UserInfo
-      }
-      liked
-      likeCount
+      ...CommentInfo
     }
     commentCount
   }
