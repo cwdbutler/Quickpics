@@ -84,7 +84,7 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
             createComment: (result, args, cache, _info) => {
               if (result.createComment.comment) {
                 const { postId } = args;
-                const { commentsPreview } = cache.readFragment(
+                const feedPost = cache.readFragment(
                   gql`
                     fragment _ on Post {
                       id
@@ -100,27 +100,51 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
                   { id: postId }
                 );
 
-                // necessary or urql gets upset
-                const commentsWithTypename = commentsPreview.map(
-                  (comment: Comment) => {
-                    return {
-                      __typename: "Comment",
-                      ...comment,
-                    };
-                  }
-                );
+                if (feedPost) {
+                  const { commentsPreview } = feedPost;
+                  // if this was on the feed, update the comments preview
 
-                // add the newly created comment to the preview
-                commentsWithTypename.unshift({
-                  __typename: "Comment",
-                  ...result.createComment.comment,
-                });
+                  // necessary or urql gets upset
+                  const commentsWithTypename = commentsPreview.map(
+                    (comment: Comment) => {
+                      return {
+                        __typename: "Comment",
+                        ...comment,
+                      };
+                    }
+                  );
 
-                cache.writeFragment(
+                  // add the newly created comment to the preview
+                  commentsWithTypename.unshift({
+                    __typename: "Comment",
+                    ...result.createComment.comment,
+                  });
+
+                  cache.writeFragment(
+                    gql`
+                      fragment __ on Post {
+                        id
+                        commentsPreview {
+                          id
+                          text
+                          author {
+                            username
+                          }
+                        }
+                      }
+                    `,
+                    {
+                      id: postId,
+                      commentsPreview: commentsWithTypename,
+                    }
+                  );
+                }
+
+                const post = cache.readFragment(
                   gql`
-                    fragment __ on Post {
+                    fragment _ on Post {
                       id
-                      commentsPreview {
+                      comments {
                         id
                         text
                         author {
@@ -129,11 +153,45 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
                       }
                     }
                   `,
-                  {
-                    id: postId,
-                    commentsPreview: commentsWithTypename,
-                  }
+                  { id: postId }
                 );
+
+                if (post) {
+                  const { comments } = post;
+                  // if this was on the post page
+                  const commentsWithTypename = comments.map(
+                    (comment: Comment) => {
+                      return {
+                        __typename: "Comment",
+                        ...comment,
+                      };
+                    }
+                  );
+
+                  commentsWithTypename.unshift({
+                    __typename: "Comment",
+                    ...result.createComment.comment,
+                  });
+
+                  cache.writeFragment(
+                    gql`
+                      fragment __ on Post {
+                        id
+                        comments {
+                          id
+                          text
+                          author {
+                            username
+                          }
+                        }
+                      }
+                    `,
+                    {
+                      id: postId,
+                      comments: commentsWithTypename,
+                    }
+                  );
+                }
               }
             },
             like: (result, args, cache, _info) => {

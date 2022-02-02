@@ -31,7 +31,7 @@ export default function NavBar() {
                     {router.pathname === "/" ? (
                       <HomeIconFilled className="h-8" />
                     ) : (
-                      <HomeIcon className="h-8" />
+                      <HomeIcon className="h-8 stroke-1.5" />
                     )}
                   </button>
                 </Link>
@@ -41,7 +41,12 @@ export default function NavBar() {
                   </button>
                 </Link>
                 <button
-                  onClick={() => logout()}
+                  onClick={async () => {
+                    const response = await logout();
+                    if (response.data?.logout) {
+                      router.push("/");
+                    }
+                  }}
                   className="px-3 py-2 rounded-md text-sm font-medium"
                 >
                   Logout

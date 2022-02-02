@@ -25,16 +25,13 @@ export default function CommentForm({ post, iconStyles }: Props) {
         text: "",
       }}
       onSubmit={async (values, { resetForm }) => {
-        console.log("i submitted");
         setLoading(true);
         const response = await createComment({
           text: values.text,
           postId: post!.id,
         });
-        console.log("res", response);
         setLoading(false);
         if (response.data?.createComment.comment) {
-          console.log("done");
           resetForm();
         }
         // need to handle errors here, although there shouldn't be many
