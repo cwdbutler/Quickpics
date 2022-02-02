@@ -48,11 +48,12 @@ export default function CommentForm({ post, iconStyles }: Props) {
             <>
               <HappyIcon className={iconStyles} />
               <Field
+                as="textarea"
                 type="text"
                 id="text"
                 name="text"
                 placeholder="Add a comment..."
-                className="outline-none w-full p-2"
+                className="outline-none w-full p-2 h-12 resize-none pt-3.5 leading-5"
                 value={
                   values.text.length >= MAX_TEXT_LENGTH
                     ? values.text.substring(0, MAX_TEXT_LENGTH - 1)

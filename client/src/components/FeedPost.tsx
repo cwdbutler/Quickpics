@@ -3,6 +3,7 @@ import { timeSince } from "../utis/timeSince";
 import CommentForm from "./forms/CommentForm";
 import { DotsIcon } from "./Icons";
 import PostInteractionBar from "./post/PostInteractionBar";
+import Link from "next/link";
 
 type Props = {
   post: FeedPostFragment;
@@ -51,7 +52,11 @@ export default function FeedPost({ post }: Props) {
           </span>
         )}
         {post.commentCount > 2 && (
-          <a className="text-gray-500">View all {post.commentCount} comments</a>
+          <Link href={`/p/${post.id}`}>
+            <a className="text-gray-500 hover:underline">
+              View all {post.commentCount} comments
+            </a>
+          </Link>
         )}
         <div>
           {post.commentsPreview.map((comment) => (

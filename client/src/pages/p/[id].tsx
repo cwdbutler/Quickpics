@@ -39,11 +39,11 @@ function Post() {
   return mounted && data && data.post ? (
     <>
       <NavBar />
-      <div className="flex items-center justify-center my-6">
-        <article className="w-[935px] h-[600px] border-[1px] flex text-m border-gray-300 bg-white">
-          <img src={data.post.imageUrl} className="h-full" />
+      <div className="flex w-full justify-center my-6">
+        <article className="w-full md:w-[935px] md:h-[600px] border-[1px] flex flex-col md:flex-row text-m border-gray-300 bg-white">
+          <img src={data.post.imageUrl} className="w-full" />
           <div className="w-full flex flex-col justify-between">
-            <header className="h-[60px] w-full flex items-center justify-between p-4 border-b-[1px] border-gray-300">
+            <header className="h-[60px] w-full hidden md:flex items-center justify-between p-4 border-b-[1px] border-gray-300">
               <div className="flex items-center">
                 <img
                   src={
@@ -61,7 +61,15 @@ function Post() {
                 <DotsIcon className={"h-6 stroke-1.5"} />
               </button>
             </header>
-            <section className="h-full flex flex-col items-start justify-start p-4 overflow-auto no-scrollbar">
+            <section className="hidden h-full md:flex flex-col items-start justify-start p-4 overflow-auto no-scrollbar">
+              {data.post.caption && (
+                <span className="w-full text-left">
+                  <h3 className="font-semibold float-left mr-1">
+                    {data.post.author.username}
+                  </h3>
+                  <p>{data.post.caption}</p>
+                </span>
+              )}
               {data.post.comments.map((comment) => (
                 <Comment key={comment.id} comment={comment} />
               ))}
@@ -87,7 +95,7 @@ function Post() {
               <p className="text-gray-500 text-xxs flex items-center px-4 mb-4">
                 {timeSince(data.post.createdAt).toUpperCase()}
               </p>
-              <section className="border-t-[1px] border-gray-300">
+              <section className="border-t-[1px] border-gray-300 hidden md:flex">
                 <CommentForm post={data.post} iconStyles={styles.icon} />
               </section>
             </footer>

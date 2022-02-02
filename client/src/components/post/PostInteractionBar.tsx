@@ -3,6 +3,7 @@ import {
   useRemoveLikeMutation,
 } from "../../graphql/generated/graphql";
 import { HeartIcon, CommentIcon, BookmarkIcon } from "../Icons";
+import Link from "next/link";
 
 type Props = {
   post: {
@@ -41,7 +42,11 @@ export default function PostInteractionBar({ post, className }: Props) {
             }`}
           />
         </button>
-        <CommentIcon className={styles.icon} />
+        <Link href={`/p/${post.id}`}>
+          <button>
+            <CommentIcon className={styles.icon} />
+          </button>
+        </Link>
       </div>
       <div>
         <BookmarkIcon className={styles.icon} />
