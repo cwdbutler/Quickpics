@@ -6,6 +6,7 @@ mutation createComment($text: String!, $postId: String!) {
       author {
         username
       }
+      createdAt
     }
     errors {
       field

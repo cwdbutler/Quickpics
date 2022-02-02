@@ -31,7 +31,7 @@ export default function Comment({ comment }: Props) {
           aria-label="comment information"
           className="flex text-gray-500 text-xs mt-2"
         >
-          <p>{timeSince(comment.createdAt)}</p>
+          <p>{timeSince(comment.createdAt, { short: true })}</p>
           {comment.likeCount > 0 && (
             <p className="font-medium ml-4">
               {comment.likeCount} {`like${comment.likeCount > 1 ? "s" : ""}`}

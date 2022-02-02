@@ -209,7 +209,7 @@ export type CreateCommentMutationVariables = Exact<{
 }>;
 
 
-export type CreateCommentMutation = { __typename?: 'Mutation', createComment: { __typename?: 'CreateCommentResponse', comment?: { __typename?: 'Comment', id: string, text: string, author: { __typename?: 'User', username: string } } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
+export type CreateCommentMutation = { __typename?: 'Mutation', createComment: { __typename?: 'CreateCommentResponse', comment?: { __typename?: 'Comment', id: string, text: string, createdAt: any, author: { __typename?: 'User', username: string } } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
 
 export type CreatePostMutationVariables = Exact<{
   caption: Scalars['String'];
@@ -325,6 +325,7 @@ export const CreateCommentDocument = gql`
       author {
         username
       }
+      createdAt
     }
     errors {
       field
