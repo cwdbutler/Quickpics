@@ -1,6 +1,6 @@
 import { withUrqlClient } from "next-urql";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CommentForm from "../../components/forms/CommentForm";
 import { DotsIcon } from "../../components/Icons";
 import NavBar from "../../components/NavBar";
@@ -20,6 +20,7 @@ function Post() {
   // prevent server side render conflicting with client
 
   const router = useRouter();
+
   const [{ data, fetching }] = usePostQuery({
     pause: !(router.query.id as string).match(/^[a-zA-Z0-9]+$/),
     // don't send the query if it's not a valid id
@@ -35,6 +36,8 @@ function Post() {
   if (!fetching && !data?.post) {
     return <ErrorPage />;
   }
+
+  const commentInputRef = useRef();
 
   return mounted && data && data.post ? (
     <>
@@ -61,13 +64,23 @@ function Post() {
                 <DotsIcon className={"h-6 stroke-1.5"} />
               </button>
             </header>
-            <section className="hidden h-full md:flex flex-col items-start justify-start p-4 overflow-auto no-scrollbar">
+            <section className="hidden h-full md:flex flex-col items-start justify-start p-4 leading-5 overflow-auto no-scrollbar">
               {data.post.caption && (
-                <span className="w-full text-left">
-                  <h3 className="font-semibold float-left mr-1">
-                    {data.post.author.username}
-                  </h3>
-                  <p>{data.post.caption}</p>
+                <span className="flex">
+                  <img
+                    src={
+                      data.post.author.avatarUrl
+                        ? data.post.author.avatarUrl
+                        : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
+                    }
+                    className="h-8 rounded-full mr-2"
+                  />
+                  <span>
+                    <h3 className="font-semibold float-left mr-1">
+                      {data.post.author.username}
+                    </h3>
+                    <p>{data.post.caption}</p>
+                  </span>
                 </span>
               )}
               {data.post.comments.map((comment) => (
@@ -86,10 +99,10 @@ function Post() {
                     {`like${data.post.likeCount > 1 ? "s" : ""}`}
                   </p>
                 ) : (
-                  <p className="flex">
+                  <span className="flex">
                     Be the first to
                     <p className="ml-1 font-semibold"> like this</p>
-                  </p>
+                  </span>
                 )}
               </div>
               <p className="text-gray-500 text-xxs flex items-center px-4 mb-4">

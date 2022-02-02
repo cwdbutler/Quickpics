@@ -6,4 +6,6 @@ fragment CommentInfo on Comment {
   }
   liked
   likeCount
+  createdAt
+  updatedAt
 }

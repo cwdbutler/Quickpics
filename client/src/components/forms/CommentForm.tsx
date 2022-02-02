@@ -1,5 +1,5 @@
 import { Field, Form, Formik } from "formik";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   FeedPostFragment,
   PostQuery,
@@ -16,6 +16,8 @@ type Props = {
 export default function CommentForm({ post, iconStyles }: Props) {
   const [loading, setLoading] = useState(false);
   const [, createComment] = useCreateCommentMutation();
+
+  const inputRef = useRef<any>();
 
   return (
     <Formik
@@ -48,6 +50,7 @@ export default function CommentForm({ post, iconStyles }: Props) {
             <>
               <HappyIcon className={iconStyles} />
               <Field
+                innerRef={(el: any) => (inputRef.current = el)}
                 as="textarea"
                 type="text"
                 id="text"

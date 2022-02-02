@@ -138,7 +138,10 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
             },
             like: (result, args, cache, _info) => {
               if (result.like) {
+                // if like was successful
                 const { entityId } = args;
+
+                // checking if it was a post that was liked
                 const post = cache.readFragment(
                   gql`
                     fragment _ on Post {
@@ -149,21 +152,56 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
                   `,
                   { id: entityId }
                 );
-                cache.writeFragment(
+
+                if (post) {
+                  // find the post in the cache update it
+                  cache.writeFragment(
+                    gql`
+                      fragment __ on Post {
+                        id
+                        liked
+                        likeCount
+                      }
+                    `,
+                    { id: entityId, liked: true, likeCount: post.likeCount + 1 }
+                  );
+                }
+
+                // the same for a comment
+                const comment = cache.readFragment(
                   gql`
-                    fragment __ on Post {
+                    fragment _ on Comment {
                       id
                       liked
                       likeCount
                     }
                   `,
-                  { id: entityId, liked: true, likeCount: post.likeCount + 1 }
+                  { id: entityId }
                 );
+
+                if (comment) {
+                  cache.writeFragment(
+                    gql`
+                      fragment __ on Comment {
+                        id
+                        liked
+                        likeCount
+                      }
+                    `,
+                    {
+                      id: entityId,
+                      liked: true,
+                      likeCount: comment.likeCount + 1,
+                    }
+                  );
+                }
               }
             },
             removeLike: (result, args, cache, _info) => {
+              // same logic as like
               if (result.removeLike) {
                 const { entityId } = args;
+
                 const post = cache.readFragment(
                   gql`
                     fragment _ on Post {
@@ -174,16 +212,51 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
                   `,
                   { id: entityId }
                 );
-                cache.writeFragment(
+
+                if (post) {
+                  cache.writeFragment(
+                    gql`
+                      fragment __ on Post {
+                        id
+                        liked
+                        likeCount
+                      }
+                    `,
+                    {
+                      id: entityId,
+                      liked: false,
+                      likeCount: post.likeCount - 1,
+                    }
+                  );
+                }
+
+                const comment = cache.readFragment(
                   gql`
-                    fragment __ on Post {
+                    fragment _ on Comment {
                       id
                       liked
                       likeCount
                     }
                   `,
-                  { id: entityId, liked: false, likeCount: post.likeCount - 1 }
+                  { id: entityId }
                 );
+
+                if (comment) {
+                  cache.writeFragment(
+                    gql`
+                      fragment __ on Comment {
+                        id
+                        liked
+                        likeCount
+                      }
+                    `,
+                    {
+                      id: entityId,
+                      liked: false,
+                      likeCount: comment.likeCount - 1,
+                    }
+                  );
+                }
               }
             },
           },
