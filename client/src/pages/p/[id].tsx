@@ -66,14 +66,14 @@ function Post() {
             </header>
             <section className="hidden h-full md:flex flex-col items-start justify-start p-4 leading-5 overflow-auto no-scrollbar">
               {data.post.caption && (
-                <span className="flex">
+                <span className="flex mb-2">
                   <img
                     src={
                       data.post.author.avatarUrl
                         ? data.post.author.avatarUrl
                         : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
                     }
-                    className="h-8 rounded-full mr-2"
+                    className="h-8 rounded-full mr-4"
                   />
                   <span>
                     <h3 className="font-semibold float-left mr-1">

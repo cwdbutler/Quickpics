@@ -1,6 +1,5 @@
 import { CommentInfoFragment } from "../../graphql/generated/graphql";
-import { timeSince } from "../../utis/timeSince";
-import { HeartIcon } from "../Icons";
+import { shortTimeSince } from "../../utis/shortTimeSince";
 import LikeButton from "../LikeButton";
 
 type Props = {
@@ -31,7 +30,7 @@ export default function Comment({ comment }: Props) {
           aria-label="comment information"
           className="flex text-gray-500 text-xs mt-2"
         >
-          <p>{timeSince(comment.createdAt, { short: true })}</p>
+          <p>{shortTimeSince(comment.createdAt)}</p>
           {comment.likeCount > 0 && (
             <p className="font-medium ml-4">
               {comment.likeCount} {`like${comment.likeCount > 1 ? "s" : ""}`}
