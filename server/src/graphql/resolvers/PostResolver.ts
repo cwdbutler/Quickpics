@@ -80,11 +80,13 @@ export class PostResolver {
   }
 
   @FieldResolver(() => [Comment])
-  async commentsPreview(
-    @Root() post: Post,
-    @Ctx() { prisma, req }: Context
-  ): Promise<Comment[]> {
+  async commentsPreview(@Root() post: Post): Promise<Comment[]> {
     return post.comments.slice(0, 2); // return the first 2 comments
+  }
+
+  @FieldResolver(() => Int)
+  async commentCount(@Root() post: Post): Promise<number> {
+    return post.comments.length;
   }
 
   @Query(() => Post, { nullable: true })

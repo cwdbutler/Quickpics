@@ -41,6 +41,7 @@ type Post {
   likeCount: Int!
   liked: Boolean!
   commentsPreview: [Comment!]!
+  commentCount: Int!
 }
 
 type Like {
