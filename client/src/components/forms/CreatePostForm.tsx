@@ -4,7 +4,7 @@ import { LeftArrowIcon } from "../Icons";
 import { Area } from "react-easy-crop/types";
 import { MAX_TEXT_LENGTH } from "../../utis/constants";
 import { useCreatePostMutation } from "../../graphql/generated/graphql";
-import router from "next/router";
+import { useRouter } from "next/router";
 import ImageUploader from "./ImageUploader";
 import ImageCropper from "./ImageCropper";
 
@@ -14,6 +14,8 @@ export interface ImageFile extends File {
 
 function CreatePostForm() {
   const [, createPost] = useCreatePostMutation();
+
+  const router = useRouter();
 
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState<ImageFile[]>([]);

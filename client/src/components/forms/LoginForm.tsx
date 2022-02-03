@@ -1,13 +1,9 @@
-import { withUrqlClient } from "next-urql";
-import { urqlClient } from "../../urqlClient";
-import { Formik, Field, Form, ErrorMessage } from "formik";
+import { Formik, Field, Form } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FieldError, useLoginMutation } from "../../graphql/generated/graphql";
 import { mapToFormErrors } from "../../utis/mapToFormErrors";
 import { useState } from "react";
-import * as Yup from "yup";
-import { TickCircleIcon, XCircleIcon } from "../Icons";
 
 export default function LoginForm() {
   const [, login] = useLoginMutation();
@@ -40,6 +36,9 @@ export default function LoginForm() {
               setErrors(mapToFormErrors(response.data.login.errors));
               setLoginErrors(response.data.login.errors);
             } else if (response.data?.login.user) {
+              if (router.query.from) {
+                router.push(router.query.from as string);
+              }
               router.push("/");
             }
           }}

@@ -1,4 +1,4 @@
-import { Formik, Field, Form, ErrorMessage } from "formik";
+import { Formik, Field, Form } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -63,6 +63,9 @@ export default function RegisterForm() {
               setErrors(mapToFormErrors(response.data.register.errors));
               setRegisterErrors(response.data.register.errors);
             } else if (response.data?.register.user) {
+              if (router.query.from) {
+                router.push(router.query.from as string);
+              }
               router.push("/");
             }
           }}

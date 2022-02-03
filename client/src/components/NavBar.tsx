@@ -5,13 +5,15 @@ import {
 } from "../graphql/generated/graphql";
 import { isServer } from "../utis/isServer";
 import { HomeIcon, HomeIconFilled, PlusIcon } from "./Icons";
-import router from "next/router";
+import { useRouter } from "next/router";
 
 export default function NavBar() {
   const [{ data, fetching }] = useCurrentUserQuery({
     pause: isServer(),
   });
   const [, logout] = useLogoutMutation();
+
+  const router = useRouter();
 
   return (
     <nav className="bg-white sticky top-0 z-10 border-b-[1px] border-gray-300">
@@ -65,16 +67,29 @@ export default function NavBar() {
               </div>
             ) : (
               <div className="flex space-x-4">
-                <Link href="/login">
-                  <button className="px-3 py-2 rounded-md text-sm font-medium">
-                    Log in
-                  </button>
-                </Link>
-                <Link href="/register">
-                  <button className="px-3 py-2 rounded-md text-sm font-medium">
-                    Sign up
-                  </button>
-                </Link>
+                <button
+                  onClick={() => {
+                    router.push({
+                      pathname: "/login",
+                      query: { from: router.asPath },
+                    });
+                  }}
+                  className="px-3 py-2 rounded-md text-sm font-medium"
+                >
+                  Log in
+                </button>
+
+                <button
+                  onClick={() => {
+                    router.push({
+                      pathname: "/register",
+                      query: { from: router.asPath },
+                    });
+                  }}
+                  className="px-3 py-2 rounded-md text-sm font-medium"
+                >
+                  Sign up
+                </button>
               </div>
             )}
           </div>
