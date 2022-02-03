@@ -4,12 +4,16 @@ import CommentForm from "./forms/CommentForm";
 import { DotsIcon } from "./Icons";
 import PostInteractionBar from "./post/PostInteractionBar";
 import Link from "next/link";
+import dayjs from "dayjs";
+import LocalizedFormat from "dayjs/plugin/localizedFormat";
 
 type Props = {
   post: FeedPostFragment;
 };
 
 export default function FeedPost({ post }: Props) {
+  dayjs.extend(LocalizedFormat);
+
   const styles = {
     icon: "h-12 stroke-1.5 p-2 flex-shrink-0",
   };
@@ -68,9 +72,13 @@ export default function FeedPost({ post }: Props) {
             </div>
           ))}
         </div>
-        <p className="text-gray-500 text-xxs mt-2">
+        <time
+          dateTime={post.createdAt}
+          title={dayjs(post.createdAt).format("ll")}
+          className="text-gray-500 text-xxs mt-2"
+        >
           {timeSince(post.createdAt).toUpperCase()}
-        </p>
+        </time>
       </section>
       <footer className="hidden md:flex sm:border-t-[1px] border-gray-300">
         <CommentForm post={post} iconStyles={styles.icon} />

@@ -10,9 +10,12 @@ import { usePostQuery } from "../../graphql/generated/graphql";
 import { urqlClient } from "../../urqlClient";
 import { timeSince } from "../../utis/timeSince";
 import ErrorPage from "../404";
+import dayjs from "dayjs";
+import LocalizedFormat from "dayjs/plugin/localizedFormat";
 
 function Post() {
   const [mounted, setMounted] = useState(false);
+  dayjs.extend(LocalizedFormat);
 
   useEffect(() => {
     setMounted(true);
@@ -105,9 +108,13 @@ function Post() {
                   </span>
                 )}
               </div>
-              <p className="text-gray-500 text-xxs flex items-center px-4 mb-4">
+              <time
+                dateTime={data.post.createdAt}
+                title={dayjs(data.post.createdAt).format("ll")}
+                className="text-gray-500 text-xxs flex items-center px-4 mb-4"
+              >
                 {timeSince(data.post.createdAt).toUpperCase()}
-              </p>
+              </time>
               <section className="border-t-[1px] border-gray-300 hidden md:flex">
                 <CommentForm post={data.post} iconStyles={styles.icon} />
               </section>

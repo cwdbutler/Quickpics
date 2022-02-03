@@ -1,12 +1,16 @@
 import { CommentInfoFragment } from "../../graphql/generated/graphql";
 import { shortTimeSince } from "../../utis/shortTimeSince";
 import LikeButton from "../LikeButton";
+import dayjs from "dayjs";
+import LocalizedFormat from "dayjs/plugin/localizedFormat";
 
 type Props = {
   comment: CommentInfoFragment;
 };
 
 export default function Comment({ comment }: Props) {
+  dayjs.extend(LocalizedFormat);
+
   return (
     <ul className="flex items-center justify-start my-3 w-full">
       <div className="flex flex-shrink-0 h-full mr-4 items-start justify-start">
@@ -30,7 +34,12 @@ export default function Comment({ comment }: Props) {
           aria-label="comment information"
           className="flex text-gray-500 text-xs mt-2"
         >
-          <p>{shortTimeSince(comment.createdAt)}</p>
+          <time
+            dateTime={comment.createdAt}
+            title={dayjs(comment.createdAt).format("ll")}
+          >
+            {shortTimeSince(comment.createdAt)}
+          </time>
           {comment.likeCount > 0 && (
             <p className="font-medium ml-4">
               {comment.likeCount} {`like${comment.likeCount > 1 ? "s" : ""}`}
