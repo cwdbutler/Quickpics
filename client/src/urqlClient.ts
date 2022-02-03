@@ -49,6 +49,14 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
               cache.invalidate("Query", "allPosts", {
                 take: 10,
               });
+
+              // invalidate all the post queries (to update the like icons)
+              cache
+                .inspectFields("Query")
+                .filter((field) => field.fieldName === "post")
+                .forEach((field) => {
+                  cache.invalidate("Query", field.fieldName, field.arguments);
+                });
             },
             register: (result, _args, cache, _info) => {
               cache.updateQuery({ query: CurrentUserDocument }, (data) => {
@@ -75,6 +83,13 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
               cache.invalidate("Query", "allPosts", {
                 take: 10,
               });
+
+              cache
+                .inspectFields("Query")
+                .filter((field) => field.fieldName === "post")
+                .forEach((field) => {
+                  cache.invalidate("Query", field.fieldName, field.arguments);
+                });
             },
             createPost: (result, args, cache, _info) => {
               cache.invalidate("Query", "allPosts", {

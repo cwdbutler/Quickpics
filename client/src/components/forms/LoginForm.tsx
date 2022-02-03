@@ -38,8 +38,9 @@ export default function LoginForm() {
             } else if (response.data?.login.user) {
               if (router.query.from) {
                 router.push(router.query.from as string);
+              } else {
+                router.push("/");
               }
-              router.push("/");
             }
           }}
         >
