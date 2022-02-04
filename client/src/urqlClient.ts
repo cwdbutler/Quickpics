@@ -332,6 +332,13 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
                 }
               }
             },
+            deleteComment: (result, args, cache, _info) => {
+              if (result.deleteComment.comment) {
+                cache.invalidate("Query", "allPosts", {
+                  take: 10,
+                });
+              }
+            },
           },
         },
       }),

@@ -46,7 +46,7 @@ function Post() {
   return mounted && data && data.post ? (
     <>
       <NavBar />
-      <PostActions open={open} setOpen={setOpen} />
+      <PostActions open={open} setOpen={setOpen} post={data.post} />
       <div className="flex w-full justify-center my-12">
         <article className="w-full md:w-[935px] md:h-[600px] border-[1px] flex flex-col md:flex-row text-m border-gray-300 bg-white">
           <img src={data.post.imageUrl} className="w-full" />
