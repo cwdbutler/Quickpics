@@ -10,6 +10,7 @@ import { HappyIcon } from "../Icons";
 import { Waypoint } from "react-waypoint";
 import "emoji-mart/css/emoji-mart.css";
 import { Picker } from "emoji-mart";
+import { useDetectClickOutside } from "react-detect-click-outside";
 
 type Props = {
   post: FeedPostFragment | PostQuery["post"];
@@ -20,9 +21,12 @@ export default function CommentForm({ post, iconStyles }: Props) {
   const [loading, setLoading] = useState(false);
   const [, createComment] = useCreateCommentMutation();
 
-  const inputRef = useRef<any>();
-
   const [showEmojiMenu, setShowEmojimenu] = useState(false);
+
+  const emojiRef = useDetectClickOutside({
+    onTriggered: () => setShowEmojimenu(false),
+  });
+  // hide the emoji menu if clicked outside
 
   return (
     <Formik
@@ -51,36 +55,40 @@ export default function CommentForm({ post, iconStyles }: Props) {
             </div>
           ) : (
             <>
-              <div className="relative">
-                <Waypoint
-                  topOffset={"300px"}
-                  onLeave={() => setShowEmojimenu(false)}
-                  onEnter={() => setShowEmojimenu(false)}
+              <div ref={emojiRef} className="flex">
+                <div className="relative">
+                  <Waypoint
+                    topOffset={"300px"}
+                    onLeave={() => setShowEmojimenu(false)}
+                    onEnter={() => setShowEmojimenu(false)}
 
-                  // workaround for hiding the menu when another post appears in the feed
-                />
-                {showEmojiMenu && (
-                  <Picker
-                    style={{
-                      position: "absolute",
-                      bottom: "24px",
-                    }}
-                    onSelect={(emoji: any) => {
-                      if (emoji.native) {
-                        setFieldValue("text", values.text + emoji.native);
-                      }
-                    }}
+                    // workaround for hiding the menu when another post appears in the feed
                   />
-                )}
+                  {showEmojiMenu && (
+                    <div>
+                      <Picker
+                        style={{
+                          position: "absolute",
+                          bottom: "48px",
+                        }}
+                        onSelect={(emoji: any) => {
+                          if (emoji.native) {
+                            setFieldValue("text", values.text + emoji.native);
+                            setShowEmojimenu(false);
+                          }
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowEmojimenu(!showEmojiMenu)}
+                >
+                  <HappyIcon className={iconStyles} />
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={() => setShowEmojimenu(!showEmojiMenu)}
-              >
-                <HappyIcon className={iconStyles} />
-              </button>
               <Field
-                innerRef={(el: any) => (inputRef.current = el)}
                 as="textarea"
                 type="text"
                 id="text"
