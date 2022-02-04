@@ -1,5 +1,5 @@
 import { Field, Form, Formik } from "formik";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   FeedPostFragment,
   PostQuery,
@@ -7,6 +7,9 @@ import {
 } from "../../graphql/generated/graphql";
 import { MAX_TEXT_LENGTH } from "../../utis/constants";
 import { HappyIcon } from "../Icons";
+import { Waypoint } from "react-waypoint";
+import "emoji-mart/css/emoji-mart.css";
+import { Picker } from "emoji-mart";
 
 type Props = {
   post: FeedPostFragment | PostQuery["post"];
@@ -18,6 +21,8 @@ export default function CommentForm({ post, iconStyles }: Props) {
   const [, createComment] = useCreateCommentMutation();
 
   const inputRef = useRef<any>();
+
+  const [showEmojiMenu, setShowEmojimenu] = useState(false);
 
   return (
     <Formik
@@ -33,11 +38,12 @@ export default function CommentForm({ post, iconStyles }: Props) {
         setLoading(false);
         if (response.data?.createComment.comment) {
           resetForm();
+          setShowEmojimenu(false);
         }
         // need to handle errors here, although there shouldn't be many
       }}
     >
-      {({ values }) => (
+      {({ values, setFieldValue }) => (
         <Form className="w-full flex items-center justify-center">
           {loading ? (
             <div className="h-12 flex items-center justify-center">
@@ -45,7 +51,34 @@ export default function CommentForm({ post, iconStyles }: Props) {
             </div>
           ) : (
             <>
-              <HappyIcon className={iconStyles} />
+              <div className="relative">
+                <Waypoint
+                  topOffset={"300px"}
+                  onLeave={() => setShowEmojimenu(false)}
+                  onEnter={() => setShowEmojimenu(false)}
+
+                  // workaround for hiding the menu when another post appears in the feed
+                />
+                {showEmojiMenu && (
+                  <Picker
+                    style={{
+                      position: "absolute",
+                      bottom: "24px",
+                    }}
+                    onSelect={(emoji: any) => {
+                      if (emoji.native) {
+                        setFieldValue("text", values.text + emoji.native);
+                      }
+                    }}
+                  />
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowEmojimenu(!showEmojiMenu)}
+              >
+                <HappyIcon className={iconStyles} />
+              </button>
               <Field
                 innerRef={(el: any) => (inputRef.current = el)}
                 as="textarea"
