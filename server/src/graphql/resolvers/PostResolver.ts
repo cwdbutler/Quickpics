@@ -357,8 +357,22 @@ export class PostResolver {
       },
     });
 
-    await deleteImage(post.id);
-    // delete from s3
+    await prisma.like.deleteMany({
+      where: {
+        entityId: id,
+      },
+    });
+
+    await prisma.activity.delete({
+      where: {
+        id: id,
+      },
+    });
+
+    if (post.id) {
+      await deleteImage(post.id);
+      // delete from s3
+    }
 
     return {
       post,

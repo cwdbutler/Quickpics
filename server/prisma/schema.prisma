@@ -34,7 +34,7 @@ model Post {
   updatedAt       DateTime    @updatedAt
   caption         String?     @db.VarChar(2200)
   imageUrl        String
-  author          User        @relation(fields: [authorId], references: [id])
+  author          User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId        Int
   comments        Comment[]
 }
@@ -44,9 +44,9 @@ model Comment {
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
   text            String      @db.VarChar(2200)
-  author          User        @relation(fields: [authorId], references: [id])
+  author          User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId        Int
-  post            Post        @relation(fields: [postId], references: [id])
+  post            Post        @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId          String
 }
 
