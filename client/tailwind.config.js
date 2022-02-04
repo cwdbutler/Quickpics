@@ -21,6 +21,7 @@ module.exports = {
         background: "#FAFAFA",
         lightblue: "#B2DFFC",
         blue: "#0095F6",
+        modal: "#1c1c1c",
       },
       transitionProperty: {
         width: "width",

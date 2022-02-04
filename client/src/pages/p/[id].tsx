@@ -12,6 +12,7 @@ import { timeSince } from "../../utis/timeSince";
 import ErrorPage from "../404";
 import dayjs from "dayjs";
 import LocalizedFormat from "dayjs/plugin/localizedFormat";
+import PostActions from "../../components/post/PostActions";
 
 function Post() {
   const [mounted, setMounted] = useState(false);
@@ -40,12 +41,13 @@ function Post() {
     return <ErrorPage />;
   }
 
-  const commentInputRef = useRef();
+  const [open, setOpen] = useState(false);
 
   return mounted && data && data.post ? (
     <>
       <NavBar />
-      <div className="flex w-full justify-center my-6">
+      <PostActions open={open} setOpen={setOpen} />
+      <div className="flex w-full justify-center my-12">
         <article className="w-full md:w-[935px] md:h-[600px] border-[1px] flex flex-col md:flex-row text-m border-gray-300 bg-white">
           <img src={data.post.imageUrl} className="w-full" />
           <div className="w-full flex flex-col justify-between">
@@ -63,7 +65,7 @@ function Post() {
                   {data.post.author.username}
                 </h3>
               </div>
-              <button>
+              <button onClick={() => setOpen(true)}>
                 <DotsIcon className={"h-6 stroke-1.5"} />
               </button>
             </header>

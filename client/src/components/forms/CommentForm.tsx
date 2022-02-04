@@ -28,6 +28,8 @@ export default function CommentForm({ post, iconStyles }: Props) {
   });
   // hide the emoji menu if clicked outside
 
+  const inputRef = useRef<any>();
+
   return (
     <Formik
       initialValues={{
@@ -83,12 +85,16 @@ export default function CommentForm({ post, iconStyles }: Props) {
                 </div>
                 <button
                   type="button"
-                  onClick={() => setShowEmojimenu(!showEmojiMenu)}
+                  onClick={() => {
+                    setShowEmojimenu(!showEmojiMenu);
+                    inputRef.current.focus();
+                  }}
                 >
                   <HappyIcon className={iconStyles} />
                 </button>
               </div>
               <Field
+                innerRef={(el: any) => (inputRef.current = el)}
                 as="textarea"
                 type="text"
                 id="text"
