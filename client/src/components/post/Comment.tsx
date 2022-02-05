@@ -7,7 +7,7 @@ import LikeButton from "../LikeButton";
 import dayjs from "dayjs";
 import LocalizedFormat from "dayjs/plugin/localizedFormat";
 import { DotsIcon } from "../Icons";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CommentActions from "./CommentActions";
 
 type Props = {
@@ -22,8 +22,13 @@ export default function Comment({ comment, user }: Props) {
 
   const [open, setOpen] = useState(false);
 
-  const commentTime = useMemo(() => shortTimeSince(comment.createdAt), []);
+  const [commentTime, setCommentTime] = useState("");
+
+  const t = useMemo(() => shortTimeSince(comment.createdAt), []);
   // stops date changing on each hover
+
+  useEffect(() => setCommentTime(t), []);
+  // prevent server mismatch
 
   return (
     <>

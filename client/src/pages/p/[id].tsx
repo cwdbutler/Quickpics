@@ -232,7 +232,6 @@ export async function getServerSideProps({ req, params }: any) {
 
   const res = await client?.query(PostDocument, params).toPromise();
 
-  // passing the whole post back so it's data can be server side rendered
   // if there is no post, the if statement catches it and returns an error page
 
   return {
@@ -245,5 +244,4 @@ export async function getServerSideProps({ req, params }: any) {
 
 export default withUrqlClient(urqlClient, {
   ssr: false,
-  neverSuspend: true,
 })(Post);
