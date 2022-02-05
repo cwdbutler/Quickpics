@@ -35,7 +35,7 @@ export default function FeedPost({ post }: Props) {
         post={post}
         user={data?.currentUser}
       />
-      <article className="w-full sm:w-[600px] text-m sm:border-[1px] bg-white border-gray-300 mb-3">
+      <article className="w-full sm:w-[600px] text-m sm:border-[1px] bg-white border-gray-300 mb-3 sm:mb-6">
         <header className="h-14 flex items-center justify-between p-3">
           <div className="flex items-center">
             <img

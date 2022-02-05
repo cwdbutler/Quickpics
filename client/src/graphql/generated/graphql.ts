@@ -168,6 +168,7 @@ export type Query = {
   currentUser?: Maybe<User>;
   feed: Array<Activity>;
   post?: Maybe<Post>;
+  postsByUserPreview: PostsResponse;
   user?: Maybe<User>;
 };
 
@@ -180,6 +181,11 @@ export type QueryAllPostsArgs = {
 
 export type QueryPostArgs = {
   id: Scalars['String'];
+};
+
+
+export type QueryPostsByUserPreviewArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -288,6 +294,13 @@ export type PostQueryVariables = Exact<{
 
 
 export type PostQuery = { __typename?: 'Query', post?: { __typename?: 'Post', id: string, createdAt: any, imageUrl: string, caption?: string | null | undefined, liked: boolean, likeCount: number, commentCount: number, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined }, likes: Array<{ __typename?: 'Like', likedAt: any, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined } }>, comments: Array<{ __typename?: 'Comment', id: string, text: string, liked: boolean, likeCount: number, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined } }> } | null | undefined };
+
+export type PostsByUserPreviewQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type PostsByUserPreviewQuery = { __typename?: 'Query', postsByUserPreview: { __typename?: 'PostsResponse', posts: Array<{ __typename?: 'Post', id: string, imageUrl: string, likeCount: number, commentCount: number }> } };
 
 export const UserInfoFragmentDoc = gql`
     fragment UserInfo on User {
@@ -518,6 +531,22 @@ ${CommentInfoFragmentDoc}`;
 export function usePostQuery(options: Omit<Urql.UseQueryArgs<PostQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<PostQuery>({ query: PostDocument, ...options });
 };
+export const PostsByUserPreviewDocument = gql`
+    query postsByUserPreview($id: Int!) {
+  postsByUserPreview(id: $id) {
+    posts {
+      id
+      imageUrl
+      likeCount
+      commentCount
+    }
+  }
+}
+    `;
+
+export function usePostsByUserPreviewQuery(options: Omit<Urql.UseQueryArgs<PostsByUserPreviewQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<PostsByUserPreviewQuery>({ query: PostsByUserPreviewDocument, ...options });
+};
 export type WithTypename<T extends { __typename?: any }> = { [K in Exclude<keyof T, '__typename'>]?: T[K] } & { __typename: NonNullable<T['__typename']> };
 
 export type GraphCacheKeysConfig = {
@@ -537,6 +566,7 @@ export type GraphCacheResolvers = {
     feed?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<Activity> | string>>,
     post?: GraphCacheResolver<WithTypename<Query>, QueryPostArgs, WithTypename<Post> | string>,
     allPosts?: GraphCacheResolver<WithTypename<Query>, QueryAllPostsArgs, WithTypename<PostsResponse> | string>,
+    postsByUserPreview?: GraphCacheResolver<WithTypename<Query>, QueryPostsByUserPreviewArgs, WithTypename<PostsResponse> | string>,
     currentUser?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<User> | string>,
     user?: GraphCacheResolver<WithTypename<Query>, QueryUserArgs, WithTypename<User> | string>
   },

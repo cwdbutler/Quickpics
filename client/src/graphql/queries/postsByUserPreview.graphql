@@ -1,0 +1,10 @@
+query postsByUserPreview($id: Int!) {
+  postsByUserPreview(id: $id) {
+    posts {
+      id
+      imageUrl
+      likeCount
+      commentCount
+    }
+  }
+}

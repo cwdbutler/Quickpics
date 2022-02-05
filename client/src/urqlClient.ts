@@ -8,6 +8,9 @@ import {
 } from "./graphql/generated/graphql";
 import { isServer } from "./utis/isServer";
 
+// creating the urql client and configuring the caching settings
+// in "updates" it describes what to do when each query happens
+
 export const urqlClient = (ssrExchange: any, ctx: any) => {
   let cookie; // telling the Next.js server to include the cookie sent from the client in the header
   if (isServer() && ctx) {
