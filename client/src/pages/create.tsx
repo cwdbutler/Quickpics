@@ -19,7 +19,7 @@ function create() {
   return (
     <div className="min-h-screen flex justify-center items-center">
       <Head>
-        <title>Register</title>
+        <title>Create</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 

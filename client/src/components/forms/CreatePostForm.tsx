@@ -1,12 +1,15 @@
 import { Formik, Form, Field } from "formik";
-import { useState } from "react";
-import { LeftArrowIcon } from "../Icons";
+import { useRef, useState } from "react";
+import { HappyIcon, LeftArrowIcon } from "../Icons";
 import { Area } from "react-easy-crop/types";
 import { MAX_TEXT_LENGTH } from "../../utis/constants";
 import { useCreatePostMutation } from "../../graphql/generated/graphql";
 import { useRouter } from "next/router";
 import ImageUploader from "./ImageUploader";
 import ImageCropper from "./ImageCropper";
+import "emoji-mart/css/emoji-mart.css";
+import { Picker } from "emoji-mart";
+import { useDetectClickOutside } from "react-detect-click-outside";
 
 export interface ImageFile extends File {
   preview?: string;
@@ -26,10 +29,18 @@ function CreatePostForm() {
   // storing the previous crop in case the user wants to ammend it
 
   const styles = {
-    form: "aspect-square bg-white transition-all duration-500 ease-in-out w-[350px] sm:w-3/5 xl:w-[900px] rounded-xl mx-auto shadow-lg p-0 border-2 border-gray-50",
+    form: "aspect-square bg-white transition-all duration-500 ease-in-out w-[350px] sm:w-3/5 xl:w-[900px] rounded-xl mx-auto border-[1px] p-0 border-gray-300",
     header:
-      "flex justify-between items-center text-md py-2 px-4 font-semibold text-gray-900 border-b-2 border-gray-300",
+      "flex justify-between items-center text-md py-2 px-4 font-semibold text-gray-900 border-b-[1px] border-gray-300",
   };
+
+  const [showEmojiMenu, setShowEmojimenu] = useState(false);
+
+  const emojiRef = useDetectClickOutside({
+    onTriggered: () => setShowEmojimenu(false),
+  });
+
+  const inputRef = useRef<any>();
 
   return (
     <div className={styles.form}>
@@ -87,7 +98,7 @@ function CreatePostForm() {
             }
           }}
         >
-          {({ values }) => (
+          {({ values, setFieldValue }) => (
             <Form>
               <section className={styles.header}>
                 <div className="w-14">
@@ -99,7 +110,7 @@ function CreatePostForm() {
                     <LeftArrowIcon className="h-6 stroke-2" />
                   </button>
                 </div>
-                <h2>Add a caption</h2>
+                <h2>Create new post</h2>
                 <button type="submit" className="font-semibold text-blue">
                   Share
                 </button>
@@ -110,6 +121,7 @@ function CreatePostForm() {
               </div>
               <section className="h-64 w-full p-2 flex flex-col justify-center">
                 <Field
+                  innerRef={(el: any) => (inputRef.current = el)}
                   as="textarea"
                   className="p-2 w-full h-full resize-none outline-none"
                   id="caption"
@@ -124,9 +136,44 @@ function CreatePostForm() {
                 />
                 <footer
                   aria-label="character count"
-                  className="text-xs text-gray-400 h-8 p-2"
+                  className="flex w-full items-center justify-between text-xs text-gray-400 h-8 px-1 pt-2 mb-1"
                 >
-                  {values.caption.length}/2200
+                  <div className="flex" ref={emojiRef}>
+                    <div className="relative">
+                      {showEmojiMenu && (
+                        <div>
+                          <Picker
+                            style={{
+                              position: "absolute",
+                              bottom: "257px",
+                            }}
+                            onSelect={(emoji: any) => {
+                              if (emoji.native) {
+                                setFieldValue(
+                                  "caption",
+                                  values.caption + emoji.native
+                                );
+                                setShowEmojimenu(false);
+                              }
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowEmojimenu(!showEmojiMenu);
+                        inputRef.current.focus();
+                      }}
+                    >
+                      <HappyIcon className="h-7" />
+                    </button>
+                  </div>
+
+                  <span aria-label="caption length">
+                    {values.caption.length}/2200
+                  </span>
                 </footer>
               </section>
             </Form>

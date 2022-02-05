@@ -22,7 +22,7 @@ export const fileValidator = (file: File): FileError | null => {
   if (file.size < MIN_FILE_SIZE) {
     return {
       code: "Files must be 5KB or more",
-      message: `is too small`,
+      message: `is too small. To continue, choose a file that's 5KB or more`,
     };
   }
 

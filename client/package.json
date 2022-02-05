@@ -7,6 +7,10 @@
     "gen": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
+    "@chakra-ui/react": "^1.8.3",
+    "@chakra-ui/slider": "^1.5.6",
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11",
     "@graphql-codegen/typescript-urql-graphcache": "^2.2.3",
     "@headlessui/react": "^1.4.3",
     "@urql/exchange-graphcache": "^4.3.6",
@@ -14,6 +18,7 @@
     "dayjs": "^1.10.7",
     "emoji-mart": "^3.0.1",
     "formik": "^2.2.9",
+    "framer-motion": "^5",
     "graphql": "^16.2.0",
     "isomorphic-unfetch": "^3.1.0",
     "next": "latest",

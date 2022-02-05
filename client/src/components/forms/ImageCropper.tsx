@@ -1,9 +1,15 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Cropper from "react-easy-crop";
 import { Point, Area } from "react-easy-crop/types";
 import getCroppedImg from "../../utis/cropImage";
-import { XIcon } from "../Icons";
+import { LeftArrowIcon, XIcon, ZoomIcon } from "../Icons";
 import { ImageFile } from "./CreatePostForm";
+import {
+  Slider,
+  SliderTrack,
+  SliderFilledTrack,
+  SliderThumb,
+} from "@chakra-ui/react";
 
 type Props = {
   files: ImageFile[];
@@ -92,10 +98,13 @@ export default function ImageCropper({
     }
   }, [croppedAreaPixels]);
 
+  const [zoomOpen, setZoomOpen] = useState(false);
+
+  const zoomRef = useRef(null);
+
   return loading ? (
     <>
       <section className={styles.header}>
-        <div />
         <h1>Loading</h1>
         <div />
       </section>
@@ -106,10 +115,12 @@ export default function ImageCropper({
   ) : (
     <>
       <section className={styles.header}>
-        <div className="w-10" />
-        <h2>Crop your image</h2>
+        <button type="button" onClick={() => setFiles([])}>
+          <LeftArrowIcon className="h-6 stroke-2" />
+        </button>
+        <h2>Crop</h2>
         <button
-          className="font-semibold text-indigo-700 w-10"
+          className="font-semibold text-blue w-10"
           onClick={showCroppedImage}
           // progresses to next stage in form
         >
@@ -117,7 +128,14 @@ export default function ImageCropper({
         </button>
       </section>
 
-      <div className="h-full flex flex-col items-center justify-center">
+      <div
+        onMouseDown={() => {
+          if (zoomOpen) {
+            setZoomOpen(false);
+          }
+        }}
+        className="h-full w-full p-0 flex flex-col items-center justify-center"
+      >
         <div className="w-full h-full relative p-0 z-0">
           <Cropper
             image={files[0].preview}
@@ -133,11 +151,37 @@ export default function ImageCropper({
               cropAreaClassName: "cursor-grab active:cursor-grabbing",
             }}
             initialCroppedAreaPixels={croppedAreaPixels}
+            zoomWithScroll={false}
           />
-          <div className="absolute pointer-events-none inset-4 flex justify-end items-end z-10">
-            <button className="bg-black rounded-full p-2" onClick={clearFiles}>
-              <XIcon className="stroke-white h-5 stroke-2 pointer-events-auto" />
+          <div className="absolute pointer-events-none inset-4 flex justify-start items-end z-10">
+            <button
+              type="button"
+              onClick={() => setZoomOpen(!zoomOpen)}
+              className="bg-black bg-opacity-50 rounded-full p-2 pointer-events-auto"
+            >
+              <ZoomIcon className="stroke-white h-5 stroke-2" />
             </button>
+            <div
+              ref={zoomRef}
+              className={`${
+                zoomOpen ? "visible" : "invisible"
+              } absolute bottom-12 bg-opacity-50 bg-black flex items-center py-2 px-4 rounded-m pointer-events-auto`}
+            >
+              <Slider
+                onChange={(value) => setZoom(value)}
+                min={1}
+                max={3}
+                step={0.1}
+                aria-label="zoom"
+                w={24}
+                focusThumbOnChange={false}
+              >
+                <SliderTrack bg="black" h={0.5}>
+                  <SliderFilledTrack bg="white" />
+                </SliderTrack>
+                <SliderThumb boxSize={4} />
+              </Slider>
+            </div>
           </div>
         </div>
       </div>

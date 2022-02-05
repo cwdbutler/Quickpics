@@ -31,12 +31,15 @@ export default function ImageUploader({ setFiles, styles }: Props) {
     });
   // users cannot click the dropzone or focus it with tab, they can only click the upload button and keyboard navigate to it
 
+  const buttonStyle =
+    "text-white bg-blue flex px-3 py-1 rounded-m text-sm font-medium";
+
   return fileRejections.length === 0 ? (
     // no image is selected (stage 1)
     <>
       <section className={styles.header}>
         <div />
-        <h1>Create a post</h1>
+        <h1>Create new post</h1>
         <div />
       </section>
 
@@ -47,15 +50,11 @@ export default function ImageUploader({ setFiles, styles }: Props) {
             isDragActive ? "bg-gray-100" : ""
           } h-full w-full flex flex-col items-center justify-center pb-12`}
         >
-          <ImageIcon className="h-28 stroke-0.5" />
-          <p className="mb-4 text-2xl">Drag a photo here</p>
+          <ImageIcon className="h-24 stroke-0.5" />
+          <p className="mb-5 text-2xl font-light">Drag a photo here</p>
           <input {...getInputProps()} />
-          <button
-            onClick={open}
-            className="text-white bg-indigo-700 flex px-3 py-2 rounded-md text-sm font-medium"
-          >
-            <UploadIcon className="h-5 mr-2 stroke-2" />
-            Click to upload
+          <button onClick={open} className={buttonStyle}>
+            Select From Computer
           </button>
         </div>
       </div>
@@ -65,7 +64,7 @@ export default function ImageUploader({ setFiles, styles }: Props) {
     <>
       <section className={styles.header}>
         <div />
-        <h1>Couldn't upload files</h1>
+        <h1>File couldn't be uploaded</h1>
         <div />
       </section>
 
@@ -79,12 +78,8 @@ export default function ImageUploader({ setFiles, styles }: Props) {
           <ExclamationIcon className="h-28 stroke-0.5" />
           <FileErrors fileRejections={fileRejections} />
           <input {...getInputProps()} />
-          <button
-            onClick={open}
-            className="text-white bg-indigo-700 flex px-3 py-2 rounded-md text-sm font-medium"
-          >
-            <UploadIcon className="h-5 mr-2 stroke-2" />
-            Upload another file
+          <button onClick={open} className={buttonStyle}>
+            Select Another File
           </button>
         </div>
       </div>
