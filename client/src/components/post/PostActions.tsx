@@ -6,18 +6,17 @@ import {
   PostQuery,
   useDeletePostMutation,
   FeedPostFragment,
-  useCurrentUserQuery,
+  CurrentUserQuery,
 } from "../../graphql/generated/graphql";
 
 type Props = {
   open: boolean;
   setOpen: (open: boolean) => void;
   post: PostQuery["post"] | FeedPostFragment;
+  user: CurrentUserQuery["currentUser"];
 };
 
-export default function PostActions({ open, setOpen, post }: Props) {
-  const [{ data, fetching }] = useCurrentUserQuery();
-
+export default function PostActions({ open, setOpen, post, user }: Props) {
   const [, deletePost] = useDeletePostMutation();
 
   const styles = {
@@ -124,9 +123,8 @@ export default function PostActions({ open, setOpen, post }: Props) {
                       const response = await deletePost({ id: post!.id });
                       if (response.data && !response.data.deletePost.errors) {
                         router.replace("/");
-                      } else {
-                        console.log(response);
                       }
+                      // need to handle this and display an error message
                     }}
                   >
                     Delete
@@ -182,7 +180,7 @@ export default function PostActions({ open, setOpen, post }: Props) {
           >
             <div className="inline-block overflow-hidden align-middle rounded-xl w-[260px] sm:w-[400px] bg-white text-left shadow-xl transform transition-all sm:my-8">
               <div className="bg-white divide-y divide-gray-300">
-                {!fetching && post?.author.id === data?.currentUser?.id && (
+                {post?.author.id === user?.id && (
                   <Dialog.Title as="h3" className={styles.option}>
                     <button
                       className="font-bold text-red-600"
@@ -196,7 +194,8 @@ export default function PostActions({ open, setOpen, post }: Props) {
                 )}
                 <Dialog.Title as="h3" className={styles.option}>
                   <CopyToClipboard
-                    text={window.location.href}
+                    // fix this
+                    text={`http://localhost:3000/p/${post!.id}`}
                     onCopy={() => {
                       setOpen(false);
                       setCopied(true);

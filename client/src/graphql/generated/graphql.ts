@@ -219,6 +219,13 @@ export type CreatePostMutationVariables = Exact<{
 
 export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'CreatePostResponse', post?: { __typename?: 'Post', id: string, caption?: string | null | undefined, imageUrl: string } | null | undefined } };
 
+export type DeleteCommentMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeleteCommentMutation = { __typename?: 'Mutation', deleteComment: { __typename?: 'CreateCommentResponse', comment?: { __typename?: 'Comment', id: string, postId: string } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
+
 export type DeletePostMutationVariables = Exact<{
   id: Scalars['String'];
 }>;
@@ -359,6 +366,24 @@ export const CreatePostDocument = gql`
 
 export function useCreatePostMutation() {
   return Urql.useMutation<CreatePostMutation, CreatePostMutationVariables>(CreatePostDocument);
+};
+export const DeleteCommentDocument = gql`
+    mutation deleteComment($id: String!) {
+  deleteComment(id: $id) {
+    comment {
+      id
+      postId
+    }
+    errors {
+      field
+      message
+    }
+  }
+}
+    `;
+
+export function useDeleteCommentMutation() {
+  return Urql.useMutation<DeleteCommentMutation, DeleteCommentMutationVariables>(DeleteCommentDocument);
 };
 export const DeletePostDocument = gql`
     mutation deletePost($id: String!) {

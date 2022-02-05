@@ -6,7 +6,10 @@ import { DotsIcon } from "../../components/Icons";
 import NavBar from "../../components/NavBar";
 import Comment from "../../components/post/Comment";
 import PostInteractionBar from "../../components/post/PostInteractionBar";
-import { usePostQuery } from "../../graphql/generated/graphql";
+import {
+  useCurrentUserQuery,
+  usePostQuery,
+} from "../../graphql/generated/graphql";
 import { urqlClient } from "../../urqlClient";
 import { timeSince } from "../../utis/timeSince";
 import ErrorPage from "../404";
@@ -24,6 +27,8 @@ function Post() {
   // prevent server side render conflicting with client
 
   const router = useRouter();
+
+  const [{ data: userData }] = useCurrentUserQuery();
 
   const [{ data, fetching }] = usePostQuery({
     pause: !(router.query.id as string).match(/^[a-zA-Z0-9]+$/),
@@ -46,7 +51,12 @@ function Post() {
   return mounted && data && data.post ? (
     <>
       <NavBar />
-      <PostActions open={open} setOpen={setOpen} post={data.post} />
+      <PostActions
+        open={open}
+        setOpen={setOpen}
+        post={data.post}
+        user={userData?.currentUser}
+      />
       <div className="flex w-full justify-center my-12">
         <article className="w-full md:w-[935px] md:h-[600px] border-[1px] flex flex-col md:flex-row text-m border-gray-300 bg-white">
           <img src={data.post.imageUrl} className="w-full" />
@@ -89,7 +99,11 @@ function Post() {
                 </span>
               )}
               {data.post.comments.map((comment) => (
-                <Comment key={comment.id} comment={comment} />
+                <Comment
+                  key={comment.id}
+                  comment={comment}
+                  user={userData?.currentUser}
+                />
               ))}
             </section>
             <footer className="border-t-[1px] border-gray-300 flex flex-col">

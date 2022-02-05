@@ -4,22 +4,23 @@ import updateLocale from "dayjs/plugin/updateLocale";
 
 export const shortTimeSince = (date: any) => {
   dayjs.extend(relativetime);
-
   dayjs.extend(updateLocale);
+
+  // this is inaccurate and doesn't work as intended. need to find a better library
   dayjs.updateLocale("en", {
     relativeTime: {
       future: "now",
       past: "now",
       s: "%d s",
-      m: "%d m",
+      m: "%d s",
       mm: "%d m",
-      h: "%d h",
+      h: "%d m",
       hh: "%d h",
       d: "%d h",
       dd: "%d d",
-      M: "%d m",
+      M: "%d d",
       MM: "%d m",
-      y: "%d y",
+      y: "%d m",
       yy: "%d y",
     },
   });
