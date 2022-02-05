@@ -1,6 +1,6 @@
 import { useDropzone } from "react-dropzone";
 import { fileValidator } from "../../utis/fileValidator";
-import { ImageIcon, UploadIcon, ExclamationIcon } from "../Icons";
+import { ImageIcon, ExclamationIcon } from "../Icons";
 import { ImageFile } from "./CreatePostForm";
 import FileErrors from "./FileErrors";
 
@@ -47,10 +47,12 @@ export default function ImageUploader({ setFiles, styles }: Props) {
         <div
           {...getRootProps()}
           className={`${
-            isDragActive ? "bg-gray-100" : ""
+            isDragActive ? "bg-gray-50 bg-opacity-70" : ""
           } h-full w-full flex flex-col items-center justify-center pb-12`}
         >
-          <ImageIcon className="h-24 stroke-0.5" />
+          <ImageIcon
+            className={`${isDragActive && "stroke-blue"} h-24 stroke-0.5`}
+          />
           <p className="mb-5 text-2xl font-light">Drag a photo here</p>
           <input {...getInputProps()} />
           <button onClick={open} className={buttonStyle}>
@@ -72,10 +74,12 @@ export default function ImageUploader({ setFiles, styles }: Props) {
         <div
           {...getRootProps()}
           className={`${
-            isDragActive ? "bg-gray-100" : ""
+            isDragActive ? "bg-gray-50 bg-opacity-70" : ""
           } h-full w-full flex flex-col items-center justify-center pb-12`}
         >
-          <ExclamationIcon className="h-28 stroke-0.5" />
+          <ExclamationIcon
+            className={`${isDragActive && "stroke-blue"} h-28 stroke-0.5`}
+          />
           <FileErrors fileRejections={fileRejections} />
           <input {...getInputProps()} />
           <button onClick={open} className={buttonStyle}>
