@@ -236,6 +236,18 @@ export class CommentResolver {
       },
     });
 
+    await prisma.like.deleteMany({
+      where: {
+        entityId: id,
+      },
+    });
+
+    await prisma.activity.delete({
+      where: {
+        id: id,
+      },
+    });
+
     return {
       comment,
     };

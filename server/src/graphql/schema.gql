@@ -80,6 +80,7 @@ type Query {
   feed: [Activity!]!
   post(id: String!): Post
   allPosts(cursor: String, take: Int!): PostsResponse!
+  postsByUserPreview(id: Int!): PostsResponse!
   currentUser: User
   user(id: Int!): User
 }

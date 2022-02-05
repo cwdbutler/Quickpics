@@ -378,4 +378,30 @@ export class PostResolver {
       post,
     };
   }
+
+  @Query(() => PostsResponse)
+  async postsByUserPreview(
+    @Ctx() { prisma }: Context,
+    @Arg("id", () => Int) id: number
+  ): Promise<PostsResponse> {
+    const posts = await prisma.post.findMany({
+      take: 7,
+      where: {
+        authorId: id,
+      },
+      include: {
+        author: true,
+        // necessary as the GraphQL scehema expects it, even though we know the author
+        comments: {
+          include: {
+            author: true,
+          },
+        },
+      },
+    });
+
+    return {
+      posts,
+    };
+  }
 }

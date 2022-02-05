@@ -7,5 +7,5 @@ export class PostsResponse {
   posts: Post[];
 
   @Field()
-  hasMore: boolean;
+  hasMore?: boolean;
 }
