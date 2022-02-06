@@ -192,6 +192,17 @@ export default function PostActions({ open, setOpen, post, user }: Props) {
                     </button>
                   </Dialog.Title>
                 )}
+                {router.pathname === "/" && (
+                  <Dialog.Title as="h3" className={styles.option}>
+                    <button
+                      onClick={() =>
+                        router.push(`http://localhost:3000/p/${post!.id}`)
+                      }
+                    >
+                      Go to post
+                    </button>
+                  </Dialog.Title>
+                )}
                 <Dialog.Title as="h3" className={styles.option}>
                   <CopyToClipboard
                     // fix this

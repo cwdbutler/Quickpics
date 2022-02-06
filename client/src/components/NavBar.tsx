@@ -67,7 +67,7 @@ export default function NavBar() {
                       ? data.currentUser.avatarUrl
                       : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
                   }
-                  className="h-7 rounded-full"
+                  className="h-7 rounded-full select-none"
                 />
               </div>
             ) : (

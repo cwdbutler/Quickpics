@@ -44,7 +44,7 @@ export default function FeedPost({ post }: Props) {
                   ? post.author.avatarUrl
                   : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
               }
-              className="h-8 rounded-full"
+              className="h-8 rounded-full select-none"
             />
             <h3 className="ml-3 font-semibold">{post.author.username}</h3>
           </div>
@@ -52,7 +52,7 @@ export default function FeedPost({ post }: Props) {
             <DotsIcon className={"h-6 stroke-1.5"} />
           </button>
         </header>
-        <img src={post.imageUrl} className="w-full" />
+        <img src={post.imageUrl} className="w-full select-none" />
         <PostInteractionBar
           className="h-12 flex items-center justify-between"
           post={post}

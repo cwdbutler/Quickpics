@@ -10,6 +10,8 @@ import ImageCropper from "./ImageCropper";
 import "emoji-mart/css/emoji-mart.css";
 import { Picker } from "emoji-mart";
 import { useDetectClickOutside } from "react-detect-click-outside";
+import ImageEditor from "./ImageEditor";
+import { Filter, filterConfig } from "../../utis/filterConfig";
 
 export interface ImageFile extends File {
   preview?: string;
@@ -27,6 +29,9 @@ function CreatePostForm() {
     Area | undefined
   >();
   // storing the previous crop in case the user wants to ammend it
+
+  const [filteredImage, setFilteredImage] = useState<string | null>(null);
+  const [filters, setFilters] = useState<Filter[]>(filterConfig);
 
   const styles = {
     form: "aspect-square bg-white transition-all duration-500 ease-in-out w-[350px] sm:w-3/5 xl:w-[900px] rounded-xl mx-auto border-[1px] p-0 border-gray-300",
@@ -68,6 +73,15 @@ function CreatePostForm() {
           croppedAreaPixels={croppedAreaPixels}
           setCroppedAreaPixels={setCroppedAreaPixels}
         />
+      ) : !filteredImage ? (
+        <ImageEditor
+          croppedImage={croppedImage}
+          setCroppedImage={setCroppedImage}
+          styles={styles}
+          setFilteredImage={setFilteredImage}
+          filters={filters}
+          setFilters={setFilters}
+        />
       ) : (
         // image cropped, adding caption (stage 3)
         <Formik
@@ -76,7 +90,7 @@ function CreatePostForm() {
           }}
           onSubmit={async (values) => {
             setLoading(true);
-            const res: Response = await fetch(croppedImage);
+            const res: Response = await fetch(filteredImage);
             const blob: Blob = await res.blob();
             const imageFile = new File(
               [blob],
@@ -104,8 +118,9 @@ function CreatePostForm() {
                 <div className="w-14">
                   <button
                     onClick={() => {
-                      setCroppedImage(null);
+                      setFilteredImage(null);
                     }}
+                    className="flex justify-center"
                   >
                     <LeftArrowIcon className="h-6 stroke-2" />
                   </button>
@@ -117,7 +132,11 @@ function CreatePostForm() {
               </section>
 
               <div className="h-full flex flex-col items-center justify-center">
-                <img src={croppedImage} className="h-full w-full" />
+                <img
+                  src={filteredImage}
+                  draggable={false}
+                  className="h-full w-full"
+                />
               </div>
               <section className="h-64 w-full p-2 flex flex-col justify-center">
                 <Field

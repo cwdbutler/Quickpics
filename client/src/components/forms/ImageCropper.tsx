@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Cropper from "react-easy-crop";
 import { Point, Area } from "react-easy-crop/types";
-import getCroppedImg from "../../utis/cropImage";
+import { getCroppedImg } from "../../utis/cropImage";
 import { LeftArrowIcon, XIcon, ZoomIcon } from "../Icons";
 import { ImageFile } from "./CreatePostForm";
 import {
@@ -94,7 +94,7 @@ export default function ImageCropper({
       );
       setCroppedImage(croppedImage as string);
     } catch (err) {
-      console.error(err);
+      // do something here
     }
   }, [croppedAreaPixels]);
 
@@ -115,7 +115,13 @@ export default function ImageCropper({
   ) : (
     <>
       <section className={styles.header}>
-        <button type="button" onClick={() => setFiles([])}>
+        <button
+          type="button"
+          onClick={() => {
+            setFiles([]);
+            setCroppedAreaPixels(undefined);
+          }}
+        >
           <LeftArrowIcon className="h-6 stroke-2" />
         </button>
         <h2>Crop</h2>
@@ -173,7 +179,7 @@ export default function ImageCropper({
                 max={3}
                 step={0.1}
                 aria-label="zoom"
-                w={24}
+                w={32}
                 focusThumbOnChange={false}
               >
                 <SliderTrack bg="black" h={0.5}>

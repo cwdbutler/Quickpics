@@ -14,7 +14,7 @@ export const createImage = (url: string) =>
     image.src = url;
   });
 
-export default async function getCroppedImg(imageSrc: string, pixelCrop: Area) {
+export async function getCroppedImg(imageSrc: string, pixelCrop: Area) {
   const image = (await createImage(imageSrc)) as any;
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
@@ -46,8 +46,32 @@ export default async function getCroppedImg(imageSrc: string, pixelCrop: Area) {
   // place image in the top left corner
   ctx.putImageData(data, 0, 0);
 
-  // As Base64 string
-  // return canvas.toDataURL("image/jpeg");
+  // As a blob
+  return new Promise((resolve, reject) => {
+    canvas.toBlob((file) => {
+      resolve(URL.createObjectURL(file!));
+    }, "image/jpeg");
+  });
+}
+
+export async function getFilteredImg(imageSrc: string, filters: string) {
+  const image = (await createImage(imageSrc)) as any;
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  if (!ctx) {
+    return null;
+  }
+
+  // set canvas size to match image
+  canvas.width = image.width;
+  canvas.height = image.height;
+
+  // apply filters
+  ctx.filter = filters;
+
+  // draw image
+  ctx.drawImage(image, 0, 0);
 
   // As a blob
   return new Promise((resolve, reject) => {

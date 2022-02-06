@@ -145,55 +145,58 @@ function Post({ serverPost }: Props) {
               </footer>
             </div>
           </article>
-          <div className="border-t-[1px] border-gray-300 mt-12 py-16">
-            <h5 className="text-sm text-gray-600 mb-4">
-              More posts from{" "}
-              <span className="font-semibold">{post.author.username}</span>
-            </h5>
-            {postsFetching ? (
-              <div>Loading...</div>
-            ) : (
-              <div className="grid grid-cols-3 gap-1 md:gap-7">
-                {postsData?.postsByUserPreview.posts
-                  .map((userPost) => {
-                    if (userPost.id !== post.id) {
-                      // don't show a duplicate of the current post
-                      return (
-                        <a
-                          key={userPost.id}
-                          className="relative"
-                          href={`/p/${userPost.id}`}
-                        >
-                          <div className="relative z-0 text-white">
-                            <img src={userPost.imageUrl}></img>
-                            <div className="group absolute flex hover:bg-black hover:bg-opacity-20 justify-center inset-0 items-center z-10">
-                              <div
-                                aria-label="post stats"
-                                className="invisible group-hover:visible flex space-x-6 items-center"
-                              >
-                                {userPost.likeCount > 0 && (
+          <div className="border-t-[1px] border-gray-300 mt-12 py-16 w-full">
+            {postsData && postsData.postsByUserPreview.posts.length > 1 && (
+              <>
+                <h5 className="text-sm text-gray-600 mb-4">
+                  More posts from{" "}
+                  <span className="font-semibold">{post.author.username}</span>
+                </h5>
+                <div className="grid grid-cols-3 gap-1 md:gap-7">
+                  {postsData?.postsByUserPreview.posts
+                    .map((userPost) => {
+                      if (userPost.id !== post.id) {
+                        // don't show a duplicate of the current post
+                        return (
+                          <a
+                            key={userPost.id}
+                            className="relative"
+                            href={`/p/${userPost.id}`}
+                          >
+                            <div className="relative z-0 text-white">
+                              <img
+                                className="select-none"
+                                src={userPost.imageUrl}
+                              ></img>
+                              <div className="group absolute flex hover:bg-black hover:bg-opacity-20 justify-center inset-0 items-center z-10">
+                                <div
+                                  aria-label="post stats"
+                                  className="invisible group-hover:visible flex space-x-6 items-center"
+                                >
+                                  {userPost.likeCount > 0 && (
+                                    <div className="flex items-center">
+                                      <HeartIcon className="fill-white h-6 !opacity-100 z-50" />
+                                      <span className="font-bold ml-1">
+                                        {userPost.likeCount}
+                                      </span>
+                                    </div>
+                                  )}
                                   <div className="flex items-center">
-                                    <HeartIcon className="fill-white h-6 !opacity-100 z-50" />
+                                    <CommentIconFilled className="fill-white h-6 !opacity-100 z-50" />
                                     <span className="font-bold ml-1">
-                                      {userPost.likeCount}
+                                      {userPost.commentCount}
                                     </span>
                                   </div>
-                                )}
-                                <div className="flex items-center">
-                                  <CommentIconFilled className="fill-white h-6 !opacity-100 z-50" />
-                                  <span className="font-bold ml-1">
-                                    {userPost.commentCount}
-                                  </span>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                        </a>
-                      );
-                    }
-                  })
-                  .slice(0, 6)}
-              </div>
+                          </a>
+                        );
+                      }
+                    })
+                    .slice(0, 6)}
+                </div>
+              </>
             )}
           </div>
         </div>
