@@ -3,6 +3,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import CreatePostForm from "../components/forms/CreatePostForm";
+import NavBar from "../components/NavBar";
 import { useCurrentUserQuery } from "../graphql/generated/graphql";
 import { urqlClient } from "../urqlClient";
 
@@ -17,14 +18,18 @@ function create() {
   }, [data, router, fetching]);
 
   return (
-    <div className="min-h-screen flex justify-center items-center">
+    <>
       <Head>
         <title>Create</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <CreatePostForm />
-    </div>
+      <div className="min-h-screen flex flex-col">
+        <NavBar />
+        <div className="flex-grow flex items-center justify-center">
+          <CreatePostForm />
+        </div>
+      </div>
+    </>
   );
 }
 

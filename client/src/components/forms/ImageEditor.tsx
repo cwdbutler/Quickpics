@@ -76,7 +76,7 @@ export default function ImageEditor({
       </section>
       <img
         src={croppedImage!}
-        className="h-full w-full"
+        className="h-full w-full select-none"
         style={getImageStyle(filters)}
         draggable={false}
       />
@@ -124,14 +124,15 @@ export default function ImageEditor({
                   >
                     <div
                       className={` ${
-                        selectedPreset === presetFilter.name &&
-                        "border-2 border-blue border-solid rounded-md overflow-clip"
-                      }`}
+                        selectedPreset === presetFilter.name
+                          ? "border-blue"
+                          : "border-transparent"
+                      } border-2 border-solid rounded-md overflow-clip`}
                     >
                       <img
                         draggable={false}
                         style={getImageStyle(presetFilter.filters)}
-                        className=" w-16 sm:w-32 rounded-s"
+                        className="select-none w-16 sm:w-32 rounded-s"
                         src="sunflower.jpg"
                       />
                     </div>
@@ -139,7 +140,7 @@ export default function ImageEditor({
                       className={`${
                         selectedPreset === presetFilter.name &&
                         "text-blue font-semibold"
-                      } pt-2`}
+                      } pt-2 flex-shrink-0 text-sm sm:text-mm`}
                     >
                       {presetFilter.name}
                     </div>

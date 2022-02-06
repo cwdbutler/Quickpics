@@ -4,7 +4,7 @@ import {
   useLogoutMutation,
 } from "../graphql/generated/graphql";
 import { isServer } from "../utis/isServer";
-import { HomeIcon, HomeIconFilled, PlusIcon } from "./Icons";
+import { HomeIcon, HomeIconFilled, PlusIcon, PlusIconFilled } from "./Icons";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -44,7 +44,11 @@ export default function NavBar() {
                 </Link>
                 <Link href="/create">
                   <button>
-                    <PlusIcon className="h-8 stroke-1.5" />
+                    {router.pathname === "/create" ? (
+                      <PlusIconFilled className="h-8" />
+                    ) : (
+                      <PlusIcon className="h-8 stroke-1.5" />
+                    )}
                   </button>
                 </Link>
                 <button
