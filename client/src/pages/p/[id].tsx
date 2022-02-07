@@ -10,7 +10,7 @@ import {
   PostQuery,
   useCurrentUserQuery,
   usePostQuery,
-  usePostsByUserPreviewQuery,
+  usePostsByUserQuery,
 } from "../../graphql/generated/graphql";
 import { urqlClient } from "../../urqlClient";
 import { timeSince } from "../../utis/timeSince";
@@ -18,6 +18,7 @@ import ErrorPage from "../404";
 import dayjs from "dayjs";
 import PostActions from "../../components/post/PostActions";
 import { ssrExchange, dedupExchange, cacheExchange, fetchExchange } from "urql";
+import PostPreview from "../../components/post/PostPreview";
 
 type Props = {
   serverPost: PostQuery["post"];
@@ -36,10 +37,9 @@ function Post({ serverPost }: Props) {
   const post = data?.post;
   // have to use the post data from the cache or we can't update it
 
-  const [{ data: postsData, fetching: postsFetching }] =
-    usePostsByUserPreviewQuery({
-      variables: { username: serverPost.author.username },
-    }); // using serverPost here as it is already defined
+  const [{ data: postsData, fetching: postsFetching }] = usePostsByUserQuery({
+    variables: { username: serverPost.author.username, take: 7 },
+  }); // using serverPost here as it is already defined
 
   const [{ data: userData }] = useCurrentUserQuery();
 
@@ -157,39 +157,7 @@ function Post({ serverPost }: Props) {
                       if (userPost.id !== post.id) {
                         // don't show a duplicate of the current post
                         return (
-                          <a
-                            key={userPost.id}
-                            className="relative"
-                            href={`/p/${userPost.id}`}
-                          >
-                            <div className="relative z-0 text-white">
-                              <img
-                                className="select-none"
-                                src={userPost.imageUrl}
-                              ></img>
-                              <div className="group absolute flex hover:bg-black hover:bg-opacity-20 justify-center inset-0 items-center z-10">
-                                <div
-                                  aria-label="post stats"
-                                  className="invisible group-hover:visible flex space-x-6 items-center"
-                                >
-                                  {userPost.likeCount > 0 && (
-                                    <div className="flex items-center">
-                                      <HeartIcon className="fill-white h-6 !opacity-100 z-50" />
-                                      <span className="font-bold ml-1">
-                                        {userPost.likeCount}
-                                      </span>
-                                    </div>
-                                  )}
-                                  <div className="flex items-center">
-                                    <CommentIconFilled className="fill-white h-6 !opacity-100 z-50" />
-                                    <span className="font-bold ml-1">
-                                      {userPost.commentCount}
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </a>
+                          <PostPreview key={userPost.id} post={userPost} />
                         );
                       }
                     })

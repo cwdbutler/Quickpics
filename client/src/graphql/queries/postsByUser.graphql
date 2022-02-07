@@ -1,0 +1,10 @@
+query postsByUser($take: Int!, $username: String!) {
+  posts(take: $take, username: $username) {
+    posts {
+      id
+      imageUrl
+      likeCount
+      commentCount
+    }
+  }
+}

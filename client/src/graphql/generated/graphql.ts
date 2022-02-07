@@ -296,12 +296,13 @@ export type PostQueryVariables = Exact<{
 
 export type PostQuery = { __typename?: 'Query', post?: { __typename?: 'Post', id: string, createdAt: any, imageUrl: string, caption?: string | null | undefined, liked: boolean, likeCount: number, commentCount: number, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined }, likes: Array<{ __typename?: 'Like', likedAt: any, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined } }>, comments: Array<{ __typename?: 'Comment', id: string, text: string, liked: boolean, likeCount: number, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined } }> } | null | undefined };
 
-export type PostsByUserPreviewQueryVariables = Exact<{
+export type PostsByUserQueryVariables = Exact<{
+  take: Scalars['Int'];
   username: Scalars['String'];
 }>;
 
 
-export type PostsByUserPreviewQuery = { __typename?: 'Query', posts: { __typename?: 'PostsResponse', posts: Array<{ __typename?: 'Post', id: string, imageUrl: string, likeCount: number, commentCount: number }> } };
+export type PostsByUserQuery = { __typename?: 'Query', posts: { __typename?: 'PostsResponse', posts: Array<{ __typename?: 'Post', id: string, imageUrl: string, likeCount: number, commentCount: number }> } };
 
 export const UserInfoFragmentDoc = gql`
     fragment UserInfo on User {
@@ -532,9 +533,9 @@ ${CommentInfoFragmentDoc}`;
 export function usePostQuery(options: Omit<Urql.UseQueryArgs<PostQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<PostQuery>({ query: PostDocument, ...options });
 };
-export const PostsByUserPreviewDocument = gql`
-    query postsByUserPreview($username: String!) {
-  posts(take: 7, username: $username) {
+export const PostsByUserDocument = gql`
+    query postsByUser($take: Int!, $username: String!) {
+  posts(take: $take, username: $username) {
     posts {
       id
       imageUrl
@@ -545,8 +546,8 @@ export const PostsByUserPreviewDocument = gql`
 }
     `;
 
-export function usePostsByUserPreviewQuery(options: Omit<Urql.UseQueryArgs<PostsByUserPreviewQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<PostsByUserPreviewQuery>({ query: PostsByUserPreviewDocument, ...options });
+export function usePostsByUserQuery(options: Omit<Urql.UseQueryArgs<PostsByUserQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<PostsByUserQuery>({ query: PostsByUserDocument, ...options });
 };
 export type WithTypename<T extends { __typename?: any }> = { [K in Exclude<keyof T, '__typename'>]?: T[K] } & { __typename: NonNullable<T['__typename']> };
 
