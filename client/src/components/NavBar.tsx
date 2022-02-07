@@ -1,18 +1,15 @@
 import Link from "next/link";
-import {
-  useCurrentUserQuery,
-  useLogoutMutation,
-} from "../graphql/generated/graphql";
+import { useCurrentUserQuery } from "../graphql/generated/graphql";
 import { isServer } from "../utis/isServer";
 import { HomeIcon, HomeIconFilled, PlusIcon, PlusIconFilled } from "./Icons";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import NavBarDropDown from "./NavBarDropDown";
 
 export default function NavBar() {
   const [{ data, fetching }] = useCurrentUserQuery({
     pause: isServer(),
   });
-  const [, logout] = useLogoutMutation();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
@@ -51,28 +48,7 @@ export default function NavBar() {
                     )}
                   </button>
                 </Link>
-                <button
-                  onClick={async () => {
-                    const response = await logout();
-                    if (response.data?.logout) {
-                      router.push("/");
-                    }
-                  }}
-                  className="px-3 py-2 rounded-md text-sm font-medium"
-                >
-                  Logout
-                </button>
-                <button className="px-3 py-2 rounded-md text-sm font-medium">
-                  {data.currentUser.username}
-                </button>
-                <img
-                  src={
-                    data.currentUser.avatarUrl
-                      ? data.currentUser.avatarUrl
-                      : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
-                  }
-                  className="h-7 rounded-full select-none"
-                />
+                <NavBarDropDown user={data.currentUser} />
               </div>
             ) : (
               <div className="flex space-x-4">

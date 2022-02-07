@@ -33,8 +33,7 @@ function Post({ serverPost }: Props) {
     variables: { id: serverPost.id },
   });
 
-  // we know there is a post because we fetched it on the server
-  const post = data!.post!;
+  const post = data?.post;
   // have to use the post data from the cache or we can't update it
 
   const [{ data: postsData, fetching: postsFetching }] =
@@ -57,7 +56,7 @@ function Post({ serverPost }: Props) {
   });
   // server wasn't matching client
 
-  return (
+  return !post ? null : (
     <>
       <NavBar />
       <PostActions

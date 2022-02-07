@@ -8,6 +8,7 @@ import {
   FeedPostFragment,
   CurrentUserQuery,
 } from "../../graphql/generated/graphql";
+import Link from "next/link";
 
 type Props = {
   open: boolean;
@@ -194,13 +195,9 @@ export default function PostActions({ open, setOpen, post, user }: Props) {
                 )}
                 {router.pathname === "/" && (
                   <Dialog.Title as="h3" className={styles.option}>
-                    <button
-                      onClick={() =>
-                        router.push(`http://localhost:3000/p/${post!.id}`)
-                      }
-                    >
-                      Go to post
-                    </button>
+                    <Link href="/p/[id]" as={`/p/${post!.id}`}>
+                      <a>Go to post</a>
+                    </Link>
                   </Dialog.Title>
                 )}
                 <Dialog.Title as="h3" className={styles.option}>

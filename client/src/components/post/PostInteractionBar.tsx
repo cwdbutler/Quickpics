@@ -21,9 +21,9 @@ export default function PostInteractionBar({ post, className }: Props) {
       <div className="flex">
         <LikeButton entity={post} className={styles.heart} />
         <Link href={`/p/${post.id}`}>
-          <button onClick={() => {}}>
+          <a>
             <CommentIcon className={styles.icon} />
-          </button>
+          </a>
         </Link>
       </div>
       <div>
