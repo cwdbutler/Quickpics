@@ -38,7 +38,7 @@ function Post({ serverPost }: Props) {
 
   const [{ data: postsData, fetching: postsFetching }] =
     usePostsByUserPreviewQuery({
-      variables: { id: parseInt(serverPost.author.id) },
+      variables: { username: serverPost.author.username },
     }); // using serverPost here as it is already defined
 
   const [{ data: userData }] = useCurrentUserQuery();
@@ -145,14 +145,14 @@ function Post({ serverPost }: Props) {
             </div>
           </article>
           <div className="border-t-[1px] border-gray-300 mt-12 py-16 w-full">
-            {postsData && postsData.postsByUserPreview.posts.length > 1 && (
+            {postsData?.posts && postsData.posts.posts.length > 1 && (
               <>
                 <h5 className="text-sm text-gray-600 mb-4">
                   More posts from{" "}
                   <span className="font-semibold">{post.author.username}</span>
                 </h5>
                 <div className="grid grid-cols-3 gap-1 md:gap-7">
-                  {postsData?.postsByUserPreview.posts
+                  {postsData?.posts.posts
                     .map((userPost) => {
                       if (userPost.id !== post.id) {
                         // don't show a duplicate of the current post

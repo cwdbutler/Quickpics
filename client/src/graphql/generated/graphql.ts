@@ -164,23 +164,24 @@ export type PostsResponse = {
 
 export type Query = {
   __typename?: 'Query';
-  allPosts: PostsResponse;
   currentUser?: Maybe<User>;
   feed: Array<Activity>;
   post?: Maybe<Post>;
+  posts: PostsResponse;
   postsByUserPreview: PostsResponse;
   user?: Maybe<User>;
 };
 
 
-export type QueryAllPostsArgs = {
-  cursor?: InputMaybe<Scalars['String']>;
-  take: Scalars['Int'];
+export type QueryPostArgs = {
+  id: Scalars['String'];
 };
 
 
-export type QueryPostArgs = {
-  id: Scalars['String'];
+export type QueryPostsArgs = {
+  cursor?: InputMaybe<Scalars['String']>;
+  take: Scalars['Int'];
+  username?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -281,7 +282,7 @@ export type AllPostsQueryVariables = Exact<{
 }>;
 
 
-export type AllPostsQuery = { __typename?: 'Query', allPosts: { __typename?: 'PostsResponse', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: string, createdAt: any, imageUrl: string, caption?: string | null | undefined, liked: boolean, likeCount: number, commentCount: number, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined }, commentsPreview: Array<{ __typename?: 'Comment', id: string, text: string, author: { __typename?: 'User', username: string } }> }> } };
+export type AllPostsQuery = { __typename?: 'Query', posts: { __typename?: 'PostsResponse', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: string, createdAt: any, imageUrl: string, caption?: string | null | undefined, liked: boolean, likeCount: number, commentCount: number, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined }, commentsPreview: Array<{ __typename?: 'Comment', id: string, text: string, author: { __typename?: 'User', username: string } }> }> } };
 
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -296,11 +297,11 @@ export type PostQueryVariables = Exact<{
 export type PostQuery = { __typename?: 'Query', post?: { __typename?: 'Post', id: string, createdAt: any, imageUrl: string, caption?: string | null | undefined, liked: boolean, likeCount: number, commentCount: number, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined }, likes: Array<{ __typename?: 'Like', likedAt: any, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined } }>, comments: Array<{ __typename?: 'Comment', id: string, text: string, liked: boolean, likeCount: number, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined } }> } | null | undefined };
 
 export type PostsByUserPreviewQueryVariables = Exact<{
-  id: Scalars['Int'];
+  username: Scalars['String'];
 }>;
 
 
-export type PostsByUserPreviewQuery = { __typename?: 'Query', postsByUserPreview: { __typename?: 'PostsResponse', posts: Array<{ __typename?: 'Post', id: string, imageUrl: string, likeCount: number, commentCount: number }> } };
+export type PostsByUserPreviewQuery = { __typename?: 'Query', posts: { __typename?: 'PostsResponse', posts: Array<{ __typename?: 'Post', id: string, imageUrl: string, likeCount: number, commentCount: number }> } };
 
 export const UserInfoFragmentDoc = gql`
     fragment UserInfo on User {
@@ -478,7 +479,7 @@ export function useRemoveLikeMutation() {
 };
 export const AllPostsDocument = gql`
     query allPosts($take: Int!, $cursor: String) {
-  allPosts(take: $take, cursor: $cursor) {
+  posts(take: $take, cursor: $cursor) {
     posts {
       ...FeedPost
     }
@@ -532,8 +533,8 @@ export function usePostQuery(options: Omit<Urql.UseQueryArgs<PostQueryVariables>
   return Urql.useQuery<PostQuery>({ query: PostDocument, ...options });
 };
 export const PostsByUserPreviewDocument = gql`
-    query postsByUserPreview($id: Int!) {
-  postsByUserPreview(id: $id) {
+    query postsByUserPreview($username: String!) {
+  posts(take: 7, username: $username) {
     posts {
       id
       imageUrl
@@ -565,7 +566,7 @@ export type GraphCacheResolvers = {
   Query?: {
     feed?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<Activity> | string>>,
     post?: GraphCacheResolver<WithTypename<Query>, QueryPostArgs, WithTypename<Post> | string>,
-    allPosts?: GraphCacheResolver<WithTypename<Query>, QueryAllPostsArgs, WithTypename<PostsResponse> | string>,
+    posts?: GraphCacheResolver<WithTypename<Query>, QueryPostsArgs, WithTypename<PostsResponse> | string>,
     postsByUserPreview?: GraphCacheResolver<WithTypename<Query>, QueryPostsByUserPreviewArgs, WithTypename<PostsResponse> | string>,
     currentUser?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<User> | string>,
     user?: GraphCacheResolver<WithTypename<Query>, QueryUserArgs, WithTypename<User> | string>

@@ -1,5 +1,5 @@
-query postsByUserPreview($id: Int!) {
-  postsByUserPreview(id: $id) {
+query postsByUserPreview($username: String!) {
+  posts(take: 7, username: $username) {
     posts {
       id
       imageUrl

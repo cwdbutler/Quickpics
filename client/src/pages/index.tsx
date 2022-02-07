@@ -27,17 +27,15 @@ function Page({ variables, isLastPage, loadMore }: Props) {
         <h3>Loading posts...</h3>
       ) : data ? (
         <>
-          {data.allPosts.posts.map((post) => (
+          {data.posts.posts.map((post) => (
             <FeedPost key={post.id} post={post} />
           ))}
-          {isLastPage && data.allPosts.hasMore && (
+          {isLastPage && data.posts.hasMore && (
             // when this becomes visible on the screen, it loads more posts
             <Waypoint
               onEnter={() => {
-                if (data.allPosts) {
-                  loadMore(
-                    data.allPosts.posts[data.allPosts.posts.length - 1].id
-                  );
+                if (data.posts) {
+                  loadMore(data.posts.posts[data.posts.posts.length - 1].id);
                 }
               }}
             />
@@ -55,13 +53,12 @@ const take = 10;
 function Home() {
   interface PageVariables {
     take: number;
-    cursor: string | null;
+    cursor?: string;
   }
 
   const [pageVariables, setPageVariables] = useState<PageVariables[]>([
     {
       take: take, // how many posts to fetch
-      cursor: null,
     },
   ]);
 

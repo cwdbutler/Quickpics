@@ -113,10 +113,11 @@ export class PostResolver {
   }
 
   @Query(() => PostsResponse)
-  async allPosts(
+  async posts(
     @Ctx() { prisma }: Context,
     @Arg("take", () => Int) take: number,
-    @Arg("cursor", { nullable: true }) cursor: string
+    @Arg("cursor", { nullable: true }) cursor: string,
+    @Arg("username", { nullable: true }) username: string
   ): Promise<PostsResponse> {
     const cappedTake = Math.min(take, MAX_TAKE);
     const takePlusOne = cappedTake + 1;
@@ -125,6 +126,11 @@ export class PostResolver {
     let posts: Post[];
     if (cursor) {
       posts = await prisma.post.findMany({
+        where: {
+          author: {
+            username: username || undefined, // optional
+          },
+        },
         orderBy: {
           createdAt: "desc",
         },
@@ -147,6 +153,11 @@ export class PostResolver {
       });
     } else {
       posts = await prisma.post.findMany({
+        where: {
+          author: {
+            username: username || undefined,
+          },
+        },
         orderBy: {
           createdAt: "desc",
         },

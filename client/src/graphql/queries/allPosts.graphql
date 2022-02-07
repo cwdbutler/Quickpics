@@ -1,5 +1,5 @@
 query allPosts($take: Int!, $cursor: String) {
-  allPosts(take: $take, cursor: $cursor) {
+  posts(take: $take, cursor: $cursor) {
     posts {
       ...FeedPost
     }
