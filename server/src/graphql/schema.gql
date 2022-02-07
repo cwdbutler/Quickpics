@@ -82,7 +82,7 @@ type Query {
   posts(username: String, cursor: String, take: Int!): PostsResponse!
   postsByUserPreview(id: Int!): PostsResponse!
   currentUser: User
-  user(id: Int!): User
+  user(username: String, id: Float): User
 }
 
 union Activity = Post

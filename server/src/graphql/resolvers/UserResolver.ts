@@ -52,12 +52,17 @@ export class UserResolver {
 
   @Query(() => User, { nullable: true })
   user(
-    @Arg("id", () => Int) id: number,
+    @Arg("id", { nullable: true }) id: number,
+    @Arg("username", { nullable: true }) username: string,
     @Ctx() { prisma }: Context
   ): Promise<User> {
+    if (!id && !username) {
+      throw new Error("You must specify an id or username.");
+    }
     return prisma.user.findUnique({
       where: {
-        id: id,
+        id: id || undefined,
+        username: username || undefined,
       },
     });
   }
