@@ -49,13 +49,14 @@ export class PostResolver {
     @Ctx() { prisma }: Context
   ): Promise<number> {
     // could have combined this with the like resolver but it was too cluttered (would have to do likes.likes)
-    const likes = await prisma.like.findMany({
+    const likeAggregation = await prisma.like.aggregate({
       where: {
         entityId: post.id,
       },
+      _count: true,
     });
 
-    return likes.length;
+    return likeAggregation._count;
   }
 
   @FieldResolver(() => Boolean)

@@ -36,6 +36,22 @@ export class UserResolver {
     return "";
   }
 
+  @FieldResolver(() => Int)
+  async postCount(
+    @Root() user: User,
+    @Ctx() { prisma }: Context
+  ): Promise<number> {
+    // could have combined this with the like resolver but it was too cluttered (would have to do likes.likes)
+    const postAggregation = await prisma.post.aggregate({
+      where: {
+        authorId: user.id,
+      },
+      _count: true,
+    });
+
+    return postAggregation._count;
+  }
+
   @Query(() => User, { nullable: true })
   async currentUser(@Ctx() { req, prisma }: Context) {
     if (!req.session.userId) {
@@ -52,7 +68,7 @@ export class UserResolver {
 
   @Query(() => User, { nullable: true })
   user(
-    @Arg("id", { nullable: true }) id: number,
+    @Arg("id", () => Int, { nullable: true }) id: number,
     @Arg("username", { nullable: true }) username: string,
     @Ctx() { prisma }: Context
   ): Promise<User> {

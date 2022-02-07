@@ -10,6 +10,7 @@ type User {
   email: String!
   username: String!
   avatarUrl: String
+  postCount: Int!
 }
 
 """
@@ -82,7 +83,7 @@ type Query {
   posts(username: String, cursor: String, take: Int!): PostsResponse!
   postsByUserPreview(id: Int!): PostsResponse!
   currentUser: User
-  user(username: String, id: Float): User
+  user(username: String, id: Int): User
 }
 
 union Activity = Post
