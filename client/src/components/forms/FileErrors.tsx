@@ -33,7 +33,7 @@ export default function FileErrors({ fileRejections }: FileErrorProps) {
           {errors[0].code}
         </h2>
         <div className="text-xs sm:text-s text-gray-500 text-center mb-5">
-          <h3 className="font-semibold float-left">{file.name}</h3>
+          <h3 className="font-semibold float-left mr-1">{file.name}</h3>
           {errors[0].message}
         </div>
       </div>

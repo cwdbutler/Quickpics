@@ -70,7 +70,7 @@ function Home() {
   // this creats a new Page component with the new variables (take and cursor), and extends the list
 
   return (
-    <>
+    <div className="w-full">
       <NavBar />
       <div className="flex flex-col items-center justify-center py-2">
         <Head>
@@ -93,7 +93,7 @@ function Home() {
           })}
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

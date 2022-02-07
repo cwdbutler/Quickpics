@@ -35,6 +35,8 @@ export default function ImageCropper({
     height: number;
   }
 
+  const [loading, setLoading] = useState(true);
+
   const [imageDimensions, setImageDimensions] =
     useState<ImageDimensions | null>();
   const [cropFit, setCropFit] = useState<
@@ -44,16 +46,7 @@ export default function ImageCropper({
   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
 
-  const [loading, setLoading] = useState(false);
-
-  const clearFiles = () => {
-    // prevent memory leak
-    URL.revokeObjectURL(files[0].preview as string);
-    setFiles([]);
-  };
-
   useEffect(() => {
-    setLoading(true);
     const img = new Image();
     img.src = files[0].preview as string;
 
@@ -102,26 +95,28 @@ export default function ImageCropper({
 
   const zoomRef = useRef(null);
 
+  const goBack = () => {
+    // prevent memory leak
+    URL.revokeObjectURL(files[0].preview!);
+    setFiles([]);
+    setCroppedAreaPixels(undefined);
+  };
+
   return loading ? (
     <>
       <section className={styles.header}>
+        <div />
         <h1>Loading</h1>
         <div />
       </section>
       <div className="flex w-full h-full items-center justify-center">
         Loading...
       </div>
-    </> // to be improved
+    </>
   ) : (
     <>
       <section className={styles.header}>
-        <button
-          type="button"
-          onClick={() => {
-            setFiles([]);
-            setCroppedAreaPixels(undefined);
-          }}
-        >
+        <button type="button" onClick={goBack}>
           <LeftArrowIcon className="h-6 stroke-2" />
         </button>
         <h2>Crop</h2>

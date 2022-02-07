@@ -22,14 +22,14 @@ export default function NavBar() {
 
   return !mounted ? null : (
     <nav className="bg-white sticky top-0 z-10 border-b-[1px] border-gray-300">
-      <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+      <div className="max-w-[990px] mx-auto px-6">
         <div className="relative flex items-center justify-between h-14">
           <Link href="/">
             <button className="px-3 py-2 rounded-md flex-shrink-0 flex">
               <h1 className="font-logo text-3xl">Quickpics</h1>
             </button>
           </Link>
-          <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-end">
+          <div className="flex-1 flex items-stretch justify-end mr-2">
             {fetching || isServer() ? null : data?.currentUser ? (
               // user is logged in
               <div className="flex items-center justify-center space-x-4">
@@ -47,7 +47,7 @@ export default function NavBar() {
                     {router.pathname === "/create" ? (
                       <PlusIconFilled className="h-8" />
                     ) : (
-                      <PlusIcon className="h-8 stroke-1.5" />
+                      <PlusIcon className="h-8" />
                     )}
                   </button>
                 </Link>

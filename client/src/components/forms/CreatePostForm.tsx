@@ -59,7 +59,7 @@ function CreatePostForm() {
           <div className="flex w-full h-full items-center justify-center">
             Loading...
           </div>
-        </> // to be improved
+        </>
       ) : files.length === 0 ? (
         // no image is selected (stage 1)
         <ImageUploader setFiles={setFiles} styles={styles} />
@@ -145,7 +145,7 @@ function CreatePostForm() {
                   className="p-2 w-full h-full resize-none outline-none"
                   id="caption"
                   name="caption"
-                  placeholder="Caption"
+                  placeholder="Add a caption..."
                   value={
                     values.caption.length >= MAX_TEXT_LENGTH
                       ? values.caption.substring(0, MAX_TEXT_LENGTH - 1)

@@ -1,5 +1,5 @@
 import { Tab } from "@headlessui/react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Slider,
   SliderTrack,
@@ -31,6 +31,8 @@ export default function ImageEditor({
   filters,
   setFilters,
 }: Props) {
+  const [selectedPreset, setSelectedPreset] = useState("");
+
   const getImageStyle = (filters: Filter[]) => {
     // turn the filter object into a valid css filter string
     const cssFilters = filters.map((filter) => {
@@ -52,18 +54,17 @@ export default function ImageEditor({
     }
   };
 
-  const [selectedPreset, setSelectedPreset] = useState("");
+  const goBack = () => {
+    // prevent memory leak
+    URL.revokeObjectURL(croppedImage!);
+    setCroppedImage(null);
+    setFilters(filterConfig);
+  };
 
   return (
     <>
       <section className={styles.header}>
-        <button
-          type="button"
-          onClick={() => {
-            setCroppedImage(null);
-            setFilters(filterConfig);
-          }}
-        >
+        <button type="button" onClick={goBack}>
           <LeftArrowIcon className="h-6 stroke-2" />
         </button>
         <h1>Edit</h1>

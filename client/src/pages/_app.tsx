@@ -6,7 +6,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     // just for the slider input :)
     <ChakraProvider>
-      <div className="bg-background h-full sm:min-h-screen">
+      <div className="bg-background h-full w-full sm:min-h-screen">
         <Component {...pageProps} />
       </div>
     </ChakraProvider>

@@ -34,6 +34,10 @@ export default function ImageUploader({ setFiles, styles }: Props) {
   const buttonStyle =
     "text-white bg-blue flex px-3 py-1 rounded-m text-sm font-medium";
 
+  const dropzoneStyle = `${
+    isDragActive && "bg-background"
+  } h-full w-full flex flex-col items-center justify-center pb-12`;
+
   return fileRejections.length === 0 ? (
     // no image is selected (stage 1)
     <>
@@ -44,12 +48,7 @@ export default function ImageUploader({ setFiles, styles }: Props) {
       </section>
 
       <div className="h-full flex flex-col items-center justify-center">
-        <div
-          {...getRootProps()}
-          className={`${
-            isDragActive ? "bg-gray-50 bg-opacity-70" : ""
-          } h-full w-full flex flex-col items-center justify-center pb-12`}
-        >
+        <div {...getRootProps()} className={dropzoneStyle}>
           <ImageIcon
             className={`${isDragActive && "stroke-blue"} h-24 stroke-0.5`}
           />
@@ -71,12 +70,7 @@ export default function ImageUploader({ setFiles, styles }: Props) {
       </section>
 
       <div className="h-full flex flex-col items-center justify-center">
-        <div
-          {...getRootProps()}
-          className={`${
-            isDragActive ? "bg-gray-50 bg-opacity-70" : ""
-          } h-full w-full flex flex-col items-center justify-center pb-12`}
-        >
+        <div {...getRootProps()} className={dropzoneStyle}>
           <ExclamationIcon
             className={`${isDragActive && "stroke-blue"} h-28 stroke-0.5`}
           />
