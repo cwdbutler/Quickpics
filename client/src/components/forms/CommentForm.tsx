@@ -4,6 +4,7 @@ import {
   FeedPostFragment,
   PostQuery,
   useCreateCommentMutation,
+  UserInfoFragment,
 } from "../../graphql/generated/graphql";
 import { MAX_TEXT_LENGTH } from "../../utis/constants";
 import { HappyIcon } from "../Icons";
@@ -11,13 +12,33 @@ import { Waypoint } from "react-waypoint";
 import "emoji-mart/css/emoji-mart.css";
 import { Picker } from "emoji-mart";
 import { useDetectClickOutside } from "react-detect-click-outside";
+import Link from "next/link";
 
 type Props = {
+  currentUser: UserInfoFragment | null | undefined;
   post: FeedPostFragment | PostQuery["post"];
   iconStyles: string;
 };
 
-export default function CommentForm({ post, iconStyles }: Props) {
+export default function CommentForm({ post, iconStyles, currentUser }: Props) {
+  if (!currentUser) {
+    return (
+      <div className="flex">
+        <HappyIcon className={iconStyles} />
+        <div className="h-12 flex items-center justify-center">
+          <p>
+            <Link href={"/login"}>
+              <a className="mr-1 text-blue hover:underline font-semibold">
+                Log in
+              </a>
+            </Link>
+          </p>
+          to comment
+        </div>
+      </div>
+    );
+  }
+
   const [loading, setLoading] = useState(false);
   const [, createComment] = useCreateCommentMutation();
 
@@ -52,8 +73,11 @@ export default function CommentForm({ post, iconStyles }: Props) {
       {({ values, setFieldValue }) => (
         <Form className="w-full flex items-center justify-center">
           {loading ? (
-            <div className="h-12 flex items-center justify-center">
-              Loading...
+            <div className="flex">
+              <HappyIcon className={iconStyles} />
+              <div className="h-12 flex items-center justify-center">
+                Loading...
+              </div>
             </div>
           ) : (
             <>

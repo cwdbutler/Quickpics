@@ -115,7 +115,11 @@ export default function FeedPost({ post }: Props) {
           </time>
         </section>
         <footer className="hidden md:flex sm:border-t-[1px] border-gray-300">
-          <CommentForm post={post} iconStyles={styles.icon} />
+          <CommentForm
+            currentUser={data?.currentUser}
+            post={post}
+            iconStyles={styles.icon}
+          />
         </footer>
       </article>
     </>

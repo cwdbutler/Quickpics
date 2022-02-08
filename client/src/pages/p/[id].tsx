@@ -165,7 +165,11 @@ function Post({ serverPost }: Props) {
                   {timeSince(post.createdAt).toUpperCase()}
                 </time>
                 <section className="border-t-[1px] border-gray-300 hidden md:flex">
-                  <CommentForm post={post} iconStyles={styles.icon} />
+                  <CommentForm
+                    currentUser={userData?.currentUser}
+                    post={post}
+                    iconStyles={styles.icon}
+                  />
                 </section>
               </footer>
             </div>
