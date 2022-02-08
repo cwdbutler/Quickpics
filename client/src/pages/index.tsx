@@ -104,7 +104,7 @@ function Home() {
                 {usersData?.suggestedUsers?.map((user) => (
                   <li className="flex items-center w-72">
                     <Link href={`/${user.username}`}>
-                      <a>
+                      <a className="mr-3 flex">
                         <Image
                           width={32}
                           height={32}
@@ -113,7 +113,7 @@ function Home() {
                               ? user.avatarUrl
                               : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
                           }
-                          className="rounded-full select-none mr-3 flex-none"
+                          className="rounded-full select-none flex-none"
                           draggable={false}
                         />
                       </a>

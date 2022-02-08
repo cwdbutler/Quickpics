@@ -94,7 +94,7 @@ function Post({ serverPost }: Props) {
                             ? post.author.avatarUrl
                             : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
                         }
-                        className="ounded-full"
+                        className="rounded-full"
                       />
                     </a>
                   </Link>
@@ -115,7 +115,7 @@ function Post({ serverPost }: Props) {
                   <div className="w-full flex mb-2">
                     <span className="flex flex-shrink-0">
                       <Link href={`/${post.author.username}`}>
-                        <a className="flex-shrink-0">
+                        <a className="flex-shrink-0 mr-3">
                           <Image
                             width={32}
                             height={32}
@@ -124,7 +124,7 @@ function Post({ serverPost }: Props) {
                                 ? post.author.avatarUrl
                                 : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
                             }
-                            className="rounded-full mr-3"
+                            className="rounded-full"
                           />
                         </a>
                       </Link>
