@@ -22,6 +22,16 @@ export const ALPHANUMERIC_USERNAME =
   "Usernames can only be letters and numbers.";
 export const NO_PERMISSION = "You don't have permission to do that.";
 export const TEXT_TOO_LONG = `The maximum length is ${MAX_TEXT_FIELD_LENGTH}`;
+export const FORBIDDEN_USERNAME = "That username is not allowed.";
+
+// names of routes on client
+export const FORBIDDEN_USERNAMES = [
+  "create",
+  "p",
+  "register",
+  "login",
+  "saved",
+];
 
 // post pagination
 export const MAX_TAKE = 50;

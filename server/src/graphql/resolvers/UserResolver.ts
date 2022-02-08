@@ -22,6 +22,8 @@ import {
   NOT_UNIQUE,
   USERNAME_TOO_LONG,
   TOO_SHORT,
+  FORBIDDEN_USERNAME,
+  FORBIDDEN_USERNAMES,
 } from "../../utils/constants";
 import { checkNotAuthenticated } from "../../middleware/checkNotAuhenticated";
 
@@ -107,6 +109,17 @@ export class UserResolver {
           {
             field: "username",
             message: ALPHANUMERIC_USERNAME,
+          },
+        ],
+      };
+    }
+
+    if (FORBIDDEN_USERNAMES.includes(username)) {
+      return {
+        errors: [
+          {
+            field: "username",
+            message: FORBIDDEN_USERNAME,
           },
         ],
       };

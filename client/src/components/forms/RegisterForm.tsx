@@ -33,6 +33,7 @@ export default function RegisterForm() {
     username: Yup.string()
       .max(MAX_USERNAME_LENGTH)
       .matches(/^[a-zA-Z0-9]+$/, "Usernames can only be alphanumeric")
+      .notOneOf(["create", "p", "register", "login", "saved"])
       .required(),
     password: Yup.string()
       .min(MIN_PASSWORD_LENGTH)
