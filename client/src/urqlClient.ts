@@ -1,4 +1,4 @@
-import { dedupExchange, gql } from "urql";
+import { dedupExchange, gql, errorExchange } from "urql";
 import { cacheExchange } from "@urql/exchange-graphcache";
 import { multipartFetchExchange } from "@urql/exchange-multipart-fetch";
 import {
@@ -7,6 +7,7 @@ import {
   Comment,
 } from "./graphql/generated/graphql";
 import { isServer } from "./utis/isServer";
+import Router from "next/router";
 
 // creating the urql client and configuring the caching settings
 // in "updates" it describes what to do when each query happens
@@ -24,6 +25,18 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
       headers: cookie ? { cookie } : undefined,
     } as const,
     exchanges: [
+      errorExchange({
+        onError(error) {
+          // listens to an error globally
+          if (error.message.includes("Not authenticated")) {
+            Router.push({
+              pathname: "/login",
+              query: { from: Router.asPath },
+              // use asPath as it is the literal url string
+            });
+          }
+        },
+      }),
       dedupExchange, // prevents duplication of queries
       cacheExchange<GraphCacheConfig>({
         keys: {
