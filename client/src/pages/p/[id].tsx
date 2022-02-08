@@ -21,6 +21,7 @@ import PostActions from "../../components/post/PostActions";
 import { ssrExchange, dedupExchange, cacheExchange, fetchExchange } from "urql";
 import PostPreview from "../../components/post/PostPreview";
 import Link from "next/link";
+import Image from "next/image";
 
 type Props = {
   serverPost: PostQuery["post"];
@@ -71,22 +72,29 @@ function Post({ serverPost }: Props) {
       <div className="flex w-full items-center justify-center pt-12">
         <div className="flex h-full bg-white md:bg-background flex-col items-center w-full md:w-[935px]">
           <article className="md:h-[600px] w-full border-t-[1px] md:border-[1px] flex flex-col md:flex-row text-m border-gray-300 bg-white">
-            <img
-              src={post.imageUrl}
-              className="w-full flex-shrink-0 md:w-[600px]"
-            />
+            <div className="w-full flex-shrink-0 md:w-[600px]">
+              <Image
+                src={post.imageUrl}
+                layout="responsive"
+                width={600}
+                height={600}
+                priority
+              />
+            </div>
             <div className="w-full md:w-[335px] flex flex-col justify-between">
               <header className="h-[60px] w-full hidden md:flex items-center justify-between p-4 border-b-[1px] border-gray-300">
                 <div className="flex items-center">
                   <Link href={`/${post.author.username}`}>
                     <a>
-                      <img
+                      <Image
+                        width={32}
+                        height={32}
                         src={
                           post.author.avatarUrl
                             ? post.author.avatarUrl
                             : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
                         }
-                        className="h-8 rounded-full"
+                        className="ounded-full"
                       />
                     </a>
                   </Link>
@@ -108,13 +116,15 @@ function Post({ serverPost }: Props) {
                     <span className="flex flex-shrink-0">
                       <Link href={`/${post.author.username}`}>
                         <a className="flex-shrink-0">
-                          <img
+                          <Image
+                            width={32}
+                            height={32}
                             src={
                               post.author.avatarUrl
                                 ? post.author.avatarUrl
                                 : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
                             }
-                            className="h-8 w-8 rounded-full mr-3"
+                            className="rounded-full mr-3"
                           />
                         </a>
                       </Link>

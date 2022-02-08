@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { PostsByUserQuery } from "../../graphql/generated/graphql";
@@ -12,9 +13,14 @@ export default function PostPreview({ post }: Props) {
     <Link key={post.id} href={`/p/${post.id}`}>
       <a className="max-w-sm flex">
         <div className="relative z-0 text-white object-cover">
-          <img className="select-none w-full h-full" src={post.imageUrl} />
+          <Image
+            width={300}
+            height={300}
+            className="select-none"
+            src={post.imageUrl}
+          />
 
-          <div className="group absolute flex hover:bg-black hover:bg-opacity-20 justify-center inset-0 items-center z-10">
+          <div className="aspect-square group absolute flex hover:bg-black hover:bg-opacity-20 justify-center inset-0 items-center z-10">
             <div
               aria-label="post stats"
               className="invisible group-hover:visible flex space-x-6 items-center"

@@ -1,4 +1,5 @@
 import { Menu, Transition, Popover } from "@headlessui/react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Fragment } from "react";
@@ -19,7 +20,9 @@ export default function NavBarDropDown({ user }: Props) {
   return (
     <Popover className="relative">
       <Popover.Button className="flex items-center justify-center w-full p-0.5">
-        <img
+        <Image
+          width={28}
+          height={28}
           src={
             user.avatarUrl
               ? user.avatarUrl
@@ -28,7 +31,7 @@ export default function NavBarDropDown({ user }: Props) {
           className={`${
             router.asPath.startsWith(`/${user.username}`) &&
             "border-solid border-[1px] border-black"
-          } h-7 rounded-full select-none`}
+          } rounded-full select-none`}
         />
       </Popover.Button>
       <Transition

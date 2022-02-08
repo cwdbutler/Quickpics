@@ -19,6 +19,7 @@ import { Fragment, useState } from "react";
 import { BookmarkIcon, GridIcon, PlusIcon } from "../../components/Icons";
 import Link from "next/link";
 import { Waypoint } from "react-waypoint";
+import Image from "next/image";
 
 interface PageProps {
   variables: PostsByUserQueryVariables;
@@ -99,15 +100,19 @@ function UserProfile({ serverUser, serverPosts }: Props) {
         <div className="my-12 flex flex-col items-center w-full flex-1">
           <div className="w-full min-h-screen lg:w-[935px] flex flex-col">
             <header className="flex">
-              <img
-                src={
-                  serverUser.avatarUrl
-                    ? serverUser.avatarUrl
-                    : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
-                }
-                draggable={false}
-                className="h-[150px] rounded-full mx-20"
-              />
+              <div className="mx-20">
+                <Image
+                  width={150}
+                  height={150}
+                  src={
+                    serverUser.avatarUrl
+                      ? serverUser.avatarUrl
+                      : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
+                  }
+                  draggable={false}
+                  className="rounded-full"
+                />
+              </div>
               <section aria-label="User information" className="flex-grow">
                 <div className="flex flex-col space-y-5">
                   <h2 className="text-3xl pt-1 font-light">

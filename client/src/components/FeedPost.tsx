@@ -11,6 +11,7 @@ import dayjs from "dayjs";
 import LocalizedFormat from "dayjs/plugin/localizedFormat";
 import { useState } from "react";
 import PostActions from "./post/PostActions";
+import Image from "next/image";
 
 type Props = {
   post: FeedPostFragment;
@@ -39,15 +40,17 @@ export default function FeedPost({ post }: Props) {
         <header className="h-14 flex items-center justify-between p-3">
           <div className="flex items-center">
             <Link href={`/${post.author.username}`}>
-              <a>
-                <img
+              <a className="flex">
+                <Image
                   src={
                     post.author.avatarUrl
                       ? post.author.avatarUrl
                       : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
                   }
-                  className="h-8 rounded-full select-none"
+                  className="rounded-full select-none"
                   draggable={false}
+                  width={32}
+                  height={32}
                 />
               </a>
             </Link>
@@ -62,7 +65,13 @@ export default function FeedPost({ post }: Props) {
             <DotsIcon className={"h-6 stroke-1.5"} />
           </button>
         </header>
-        <img src={post.imageUrl} className="w-full select-none" />
+        <Image
+          src={post.imageUrl}
+          draggable={false}
+          width={600}
+          height={600}
+          className="select-none"
+        />
         <PostInteractionBar
           className="h-12 flex items-center justify-between"
           post={post}

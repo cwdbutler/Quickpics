@@ -10,6 +10,7 @@ import { DotsIcon } from "../Icons";
 import { useEffect, useMemo, useState } from "react";
 import CommentActions from "./CommentActions";
 import Link from "next/link";
+import Image from "next/image";
 
 type Props = {
   comment: CommentInfoFragment;
@@ -28,13 +29,15 @@ export default function Comment({ comment, user }: Props) {
         <div className="flex flex-shrink-0  h-full mr-3 items-start justify-start">
           <Link href={`/${comment.author.username}`}>
             <a>
-              <img
+              <Image
+                width={32}
+                height={32}
                 src={
                   comment.author.avatarUrl
                     ? comment.author.avatarUrl
                     : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
                 }
-                className="h-8 rounded-full"
+                className="rounded-full"
               />
             </a>
           </Link>

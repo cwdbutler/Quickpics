@@ -11,6 +11,7 @@ import NavBar from "../components/NavBar";
 import { useState } from "react";
 import { Waypoint } from "react-waypoint";
 import Link from "next/link";
+import Image from "next/image";
 
 interface Props {
   variables: AllPostsQueryVariables;
@@ -104,13 +105,15 @@ function Home() {
                   <li className="flex items-center w-72">
                     <Link href={`/${user.username}`}>
                       <a>
-                        <img
+                        <Image
+                          width={32}
+                          height={32}
                           src={
                             user.avatarUrl
                               ? user.avatarUrl
                               : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
                           }
-                          className="h-8 rounded-full select-none mr-3 flex-none"
+                          className="rounded-full select-none mr-3 flex-none"
                           draggable={false}
                         />
                       </a>
