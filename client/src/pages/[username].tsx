@@ -4,6 +4,7 @@ import { ssrExchange, dedupExchange, cacheExchange, fetchExchange } from "urql";
 import {
   PostsByUserDocument,
   PostsByUserQuery,
+  useCurrentUserQuery,
   usePostsByUserQuery,
   UserDocument,
   UserQuery,
@@ -14,14 +15,17 @@ import ErrorPage from "./404";
 import { useRouter } from "next/router";
 import NavBar from "../components/NavBar";
 import Head from "next/head";
+import { Tab } from "@headlessui/react";
+import { Fragment } from "react";
+import { BookmarkIcon, GridIcon } from "../components/Icons";
 
 type Props = {
-  user: UserQuery["user"];
-  posts: PostsByUserQuery;
+  serverUser: UserQuery["user"];
+  serverPosts: PostsByUserQuery;
 };
 
-function UserProfile({ posts, user }: Props) {
-  if (!user) {
+function UserProfile({ serverUser, serverPosts }: Props) {
+  if (!serverUser) {
     return <ErrorPage />;
   }
 
@@ -29,28 +33,33 @@ function UserProfile({ posts, user }: Props) {
 
   const [{ data: userData }] = useUserQuery({
     variables: {
-      username: user.username,
+      username: serverUser.username,
     },
   });
 
   const [{ data: postsData }] = usePostsByUserQuery({
     variables: {
       take: 6,
-      username: user.username,
+      username: serverUser.username,
     },
   });
+
+  const [{ data: currentUserData }] = useCurrentUserQuery();
+
+  const user = userData?.user!;
+  const posts = postsData?.posts.posts!;
 
   return (
     <>
       <NavBar />
       <div className="flex flex-col items-center justify-center py-2">
         <Head>
-          <title>{userData?.user?.username}</title>
+          <title>{user?.username}</title>
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
         <div className="my-12 flex flex-col items-center w-full flex-1">
-          <div className="w-[935px] flex flex-col">
+          <div className="w-full min-h-screen lg:w-[935px] flex flex-col">
             <header className="flex">
               <img
                 src={
@@ -62,23 +71,66 @@ function UserProfile({ posts, user }: Props) {
                 className="h-[150px] rounded-full mx-20"
               />
               <section aria-label="User information" className="flex-grow">
-                <h2 className="text-3xl pt-1 font-light">{user.username}</h2>
-                <div>{user.postCount} posts</div>
+                <div className="flex flex-col space-y-5">
+                  <h2 className="text-3xl pt-1 font-light">{user.username}</h2>
+                  <span>
+                    <span className="font-semibold mr-1">{user.postCount}</span>
+                    {`post${user.postCount > 1 ? "s" : ""}`}
+                  </span>
+                </div>
               </section>
             </header>
-            <section className="w-full mt-24 border-gray-300 border-t-[1px]">
-              <div className="w-full flex items-center justify-center">
-                posts / saved
-              </div>
-              <div className="grid grid-cols-3 gap-6">
-                {postsData?.posts.posts && postsData.posts.posts.length > 0 ? (
-                  postsData?.posts.posts.map((post) => (
-                    <PostPreview key={post.id} post={post} />
-                  ))
-                ) : (
-                  <div>no posts</div>
-                )}
-              </div>
+            <section className="w-full mt-10 border-gray-300 border-t-[1px]">
+              <Tab.Group>
+                <Tab.List className="flex text-xs items-center justify-center w-full">
+                  <Tab as={Fragment}>
+                    {({ selected }) => (
+                      <button
+                        className={`${
+                          selected
+                            ? "font-semibold border-t-[1px] border-gray-500"
+                            : "text-gray-300 font-semibold"
+                        } p-4 -m-[1px] tracking-wider flex items-center justify-center`}
+                      >
+                        <GridIcon className="mr-1 h-4 stroke-1.5" />
+                        POSTS
+                      </button>
+                    )}
+                  </Tab>
+                  {currentUserData?.currentUser?.username ===
+                    userData?.user?.username && (
+                    // if this is their profile, show the SAVED tab
+                    <Tab as={Fragment}>
+                      {({ selected }) => (
+                        <button
+                          className={`${
+                            selected
+                              ? "font-semibold border-t-[1px] border-gray-500"
+                              : "text-gray-300 font-semibold"
+                          } p-4 -m-[1px] tracking-wider flex items-center justify-center`}
+                        >
+                          <BookmarkIcon className="mr-1 h-4 stroke-1.5" />
+                          SAVED
+                        </button>
+                      )}
+                    </Tab>
+                  )}
+                </Tab.List>
+                <Tab.Panels>
+                  <Tab.Panel className="">
+                    <div className="grid grid-cols-3 gap-1 md:gap-6">
+                      {posts && posts.length > 0 ? (
+                        posts.map((post) => (
+                          <PostPreview key={post.id} post={post} />
+                        ))
+                      ) : (
+                        <div>no posts</div>
+                      )}
+                    </div>
+                  </Tab.Panel>
+                  <Tab.Panel className="">saved posts</Tab.Panel>
+                </Tab.Panels>
+              </Tab.Group>
             </section>
           </div>
         </div>
@@ -139,8 +191,8 @@ export async function getServerSideProps({ req, params }: any) {
   return {
     props: {
       urqlState: ssrCache.extractData(),
-      posts: postsRes?.data.posts.posts,
-      user: userRes?.data.user,
+      serverPosts: postsRes?.data.posts.posts,
+      serverUser: userRes?.data.user,
     },
   };
 }
