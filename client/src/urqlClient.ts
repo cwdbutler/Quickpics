@@ -48,8 +48,8 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
                   };
                 }
               });
-              // refetches allPosts
-              cache.invalidate("Query", "allPosts", {
+              // refetches posts
+              cache.invalidate("Query", "posts", {
                 take: 10,
               });
 
@@ -83,7 +83,7 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
                 }
                 return data;
               });
-              cache.invalidate("Query", "allPosts", {
+              cache.invalidate("Query", "posts", {
                 take: 10,
               });
 
@@ -95,7 +95,7 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
                 });
             },
             createPost: (result, args, cache, _info) => {
-              cache.invalidate("Query", "allPosts", {
+              cache.invalidate("Query", "posts", {
                 take: 10,
               });
             },
@@ -337,7 +337,7 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
             },
             deletePost: (result, args, cache, _info) => {
               if (result.deletePost.post) {
-                cache.invalidate("Query", "allPosts", {
+                cache.invalidate("Query", "posts", {
                   take: 10,
                 });
               }
@@ -350,7 +350,7 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
               }
 
               if (result.deleteComment.comment) {
-                cache.invalidate("Query", "allPosts", {
+                cache.invalidate("Query", "posts", {
                   take: 10,
                 });
               }
