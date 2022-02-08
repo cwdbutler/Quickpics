@@ -1,7 +1,7 @@
 import { initUrqlClient, withUrqlClient } from "next-urql";
 import { useEffect, useState } from "react";
 import CommentForm from "../../components/forms/CommentForm";
-import { CommentIconFilled, DotsIcon, HeartIcon } from "../../components/Icons";
+import { DotsIcon } from "../../components/Icons";
 import NavBar from "../../components/NavBar";
 import Comment from "../../components/post/Comment";
 import PostInteractionBar from "../../components/post/PostInteractionBar";
@@ -180,7 +180,7 @@ export async function getServerSideProps({ req, params }: any) {
   if (!params.id.match(/^[a-zA-Z0-9]+$/)) {
     return {
       props: {
-        post: null,
+        serverPost: null,
       },
     };
   }
@@ -200,7 +200,7 @@ export async function getServerSideProps({ req, params }: any) {
     false
   );
 
-  const res = await client?.query(PostDocument, params).toPromise();
+  const res = await client?.query(PostDocument, { id: params.id }).toPromise();
 
   // if there is no post, the if statement catches it and returns an error page
 

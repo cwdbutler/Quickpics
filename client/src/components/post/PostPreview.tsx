@@ -8,9 +8,9 @@ type Props = {
 
 export default function PostPreview({ post }: Props) {
   return (
-    <a key={post.id} className="relative" href={`/p/${post.id}`}>
+    <a key={post.id} className="max-w-sm flex" href={`/p/${post.id}`}>
       <div className="relative z-0 text-white">
-        <img className="select-none" src={post.imageUrl}></img>
+        <img className="select-none w-full" src={post.imageUrl}></img>
         <div className="group absolute flex hover:bg-black hover:bg-opacity-20 justify-center inset-0 items-center z-10">
           <div
             aria-label="post stats"

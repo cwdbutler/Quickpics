@@ -17,15 +17,14 @@ interface Props {
 }
 
 function Page({ variables, isLastPage, loadMore }: Props) {
-  const [{ data, fetching }] = useAllPostsQuery({
+  const [{ data }] = useAllPostsQuery({
     variables,
   });
+  // don't check for fetching because it is already fetched server side
 
   return (
     <main>
-      {fetching ? (
-        <h3>Loading posts...</h3>
-      ) : data ? (
+      {data ? (
         <>
           {data.posts.posts.map((post) => (
             <FeedPost key={post.id} post={post} />
@@ -75,11 +74,11 @@ function Home() {
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        <div className="my-12 flex flex-col items-center w-full flex-1 text-center">
+        <div className="my-12 flex flex-col items-center w-full flex-1">
           {pageVariables.map((variables, index) => {
             return (
               <Page
-                key={variables.cursor}
+                key={variables.cursor || "key"} // cursor is null for first page
                 variables={variables}
                 isLastPage={index === pageVariables.length - 1}
                 loadMore={(cursor) =>

@@ -191,7 +191,8 @@ export type QueryPostsByUserPreviewArgs = {
 
 
 export type QueryUserArgs = {
-  id: Scalars['Int'];
+  id?: InputMaybe<Scalars['Int']>;
+  username?: InputMaybe<Scalars['String']>;
 };
 
 export type User = {
@@ -200,6 +201,7 @@ export type User = {
   createdAt: Scalars['DateTime'];
   email: Scalars['String'];
   id: Scalars['ID'];
+  postCount: Scalars['Int'];
   updatedAt: Scalars['DateTime'];
   username: Scalars['String'];
 };
@@ -303,6 +305,14 @@ export type PostsByUserQueryVariables = Exact<{
 
 
 export type PostsByUserQuery = { __typename?: 'Query', posts: { __typename?: 'PostsResponse', posts: Array<{ __typename?: 'Post', id: string, imageUrl: string, likeCount: number, commentCount: number }> } };
+
+export type UserQueryVariables = Exact<{
+  id?: InputMaybe<Scalars['Int']>;
+  username?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type UserQuery = { __typename?: 'Query', user?: { __typename?: 'User', postCount: number, id: string, username: string, avatarUrl?: string | null | undefined } | null | undefined };
 
 export const UserInfoFragmentDoc = gql`
     fragment UserInfo on User {
@@ -549,6 +559,18 @@ export const PostsByUserDocument = gql`
 export function usePostsByUserQuery(options: Omit<Urql.UseQueryArgs<PostsByUserQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<PostsByUserQuery>({ query: PostsByUserDocument, ...options });
 };
+export const UserDocument = gql`
+    query user($id: Int, $username: String) {
+  user(id: $id, username: $username) {
+    ...UserInfo
+    postCount
+  }
+}
+    ${UserInfoFragmentDoc}`;
+
+export function useUserQuery(options: Omit<Urql.UseQueryArgs<UserQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<UserQuery>({ query: UserDocument, ...options });
+};
 export type WithTypename<T extends { __typename?: any }> = { [K in Exclude<keyof T, '__typename'>]?: T[K] } & { __typename: NonNullable<T['__typename']> };
 
 export type GraphCacheKeysConfig = {
@@ -629,7 +651,8 @@ export type GraphCacheResolvers = {
     updatedAt?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['DateTime'] | string>,
     email?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
     username?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
-    avatarUrl?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>
+    avatarUrl?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
+    postCount?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['Int'] | string>
   }
 };
 
