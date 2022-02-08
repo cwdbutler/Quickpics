@@ -95,10 +95,10 @@ function SavedPosts({ serverUser, serverSavedPosts }: Props) {
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        <div className="my-12 flex flex-col items-center w-full flex-1">
+        <div className="my-6 flex flex-col items-center w-full flex-1">
           <div className="w-full min-h-screen lg:w-[935px] flex flex-col">
             <header className="flex">
-              <div className="mx-20">
+              <div className="mx-20 select-none">
                 <Image
                   width={150}
                   height={150}
@@ -107,7 +107,6 @@ function SavedPosts({ serverUser, serverSavedPosts }: Props) {
                       ? serverUser.avatarUrl
                       : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
                   }
-                  draggable={false}
                   className="rounded-full"
                 />
               </div>
