@@ -80,6 +80,27 @@ export class PostResolver {
     return liked ? true : false;
   }
 
+  @FieldResolver(() => Boolean)
+  async saved(
+    @Root() post: Post,
+    @Ctx() { prisma, req }: Context
+  ): Promise<boolean> {
+    if (!req.session.userId) {
+      return false;
+    }
+
+    const [saved] = await prisma.usersOnPosts.findMany({
+      where: {
+        AND: [
+          { postId: { equals: post.id } },
+          { userId: { equals: req.session.userId } },
+        ],
+      },
+    });
+
+    return saved ? true : false;
+  }
+
   @FieldResolver(() => [Comment])
   async commentsPreview(@Root() post: Post): Promise<Comment[]> {
     return post.comments.slice(0, 2); // return the first 2 comments
@@ -415,5 +436,89 @@ export class PostResolver {
     return {
       posts,
     };
+  }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(checkAuthenticated)
+  async savePost(
+    @Arg("id", () => String) id: string,
+    @Ctx() { prisma, req }: Context
+  ): Promise<boolean> {
+    const foundPost = await prisma.post.findUnique({
+      where: {
+        id: id,
+      },
+      include: {
+        author: true,
+      },
+    });
+
+    if (!foundPost) {
+      return false;
+    }
+
+    // check if saved by this user already
+    const [alreadySaved] = await prisma.usersOnPosts.findMany({
+      where: {
+        postId: id,
+        userId: req.session.userId,
+      },
+    });
+
+    if (alreadySaved) {
+      return false;
+    }
+
+    // create a like in Like table
+    const savedPost = await prisma.usersOnPosts.create({
+      data: {
+        postId: id,
+        userId: req.session.userId,
+      },
+    });
+
+    return savedPost ? true : false;
+  }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(checkAuthenticated)
+  async removeSavedPost(
+    @Arg("id", () => String) id: string,
+    @Ctx() { prisma, req }: Context
+  ): Promise<boolean> {
+    const foundPost = await prisma.post.findUnique({
+      where: {
+        id: id,
+      },
+      include: {
+        author: true,
+      },
+    });
+
+    if (!foundPost) {
+      return false;
+    }
+
+    // check if saved by this user already
+    const [alreadySaved] = await prisma.usersOnPosts.findMany({
+      where: {
+        postId: id,
+        userId: req.session.userId,
+      },
+    });
+
+    if (!alreadySaved) {
+      return false;
+    }
+
+    // create a like in Like table
+    const deletedSavedPost = await prisma.usersOnPosts.deleteMany({
+      where: {
+        postId: id,
+        userId: req.session.userId,
+      },
+    });
+
+    return deletedSavedPost.count === 1 ? true : false;
   }
 }

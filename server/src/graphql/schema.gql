@@ -41,6 +41,7 @@ type Post {
   likes: [Like!]!
   likeCount: Int!
   liked: Boolean!
+  saved: Boolean!
   commentsPreview: [Comment!]!
   commentCount: Int!
 }
@@ -97,6 +98,8 @@ type Mutation {
   createPost(caption: String!, file: Upload!): CreatePostResponse!
   updatePost(caption: String!, id: String!): CreatePostResponse!
   deletePost(id: String!): CreatePostResponse!
+  savePost(id: String!): Boolean!
+  removeSavedPost(id: String!): Boolean!
   register(password: String!, username: String!, email: String!): CreateUserResponse!
   login(password: String!, emailOrUsername: String!): CreateUserResponse!
   logout: Boolean!

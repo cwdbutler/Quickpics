@@ -78,6 +78,7 @@ export class PostResolver {
       },
     });
 
+    // if they haven't liked this post, they can't remove the like on it
     if (!alreadyLiked) {
       return false;
     }

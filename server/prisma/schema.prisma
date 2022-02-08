@@ -18,6 +18,7 @@ model User {
   posts           Post[]
   comments        Comment[]
   likes           Like[]
+  savedPosts      UsersOnPosts[]
 }
 
 model Activity {
@@ -37,6 +38,7 @@ model Post {
   author          User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId        Int
   comments        Comment[]
+  userSaves       UsersOnPosts[]
 }
 
 model Comment {
@@ -57,4 +59,14 @@ model Like {
   entityId        String      
   author          User        @relation(fields: [authorId], references: [id])
   authorId        Int
+}
+
+model UsersOnPosts {
+  post            Post        @relation(fields: [postId], references: [id])
+  postId          String
+  user            User        @relation(fields: [userId], references: [id])
+  userId          Int
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  @@id([postId, userId])
 }
