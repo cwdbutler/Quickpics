@@ -1,5 +1,5 @@
 import { initUrqlClient, withUrqlClient } from "next-urql";
-import { urqlClient } from "../urqlClient";
+import { urqlClient } from "../../urqlClient";
 import { ssrExchange, dedupExchange, cacheExchange, fetchExchange } from "urql";
 import {
   PostsByUserDocument,
@@ -9,15 +9,15 @@ import {
   UserDocument,
   UserQuery,
   useUserQuery,
-} from "../graphql/generated/graphql";
-import PostPreview from "../components/post/PostPreview";
-import ErrorPage from "./404";
+} from "../../graphql/generated/graphql";
+import PostPreview from "../../components/post/PostPreview";
+import ErrorPage from "../404";
 import { useRouter } from "next/router";
-import NavBar from "../components/NavBar";
+import NavBar from "../../components/NavBar";
 import Head from "next/head";
 import { Tab } from "@headlessui/react";
-import { Fragment } from "react";
-import { BookmarkIcon, GridIcon } from "../components/Icons";
+import { Fragment, useEffect, useState } from "react";
+import { BookmarkIcon, GridIcon } from "../../components/Icons";
 
 type Props = {
   serverUser: UserQuery["user"];
@@ -25,6 +25,7 @@ type Props = {
 };
 
 function UserProfile({ serverUser, serverPosts }: Props) {
+  console.log("/[username]");
   if (!serverUser) {
     return <ErrorPage />;
   }
@@ -48,6 +49,9 @@ function UserProfile({ serverUser, serverPosts }: Props) {
 
   const user = userData?.user!;
   const posts = postsData?.posts.posts!;
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   return (
     <>
@@ -81,25 +85,14 @@ function UserProfile({ serverUser, serverPosts }: Props) {
               </section>
             </header>
             <section className="w-full mt-10 border-gray-300 border-t-[1px]">
-              <Tab.Group>
-                <Tab.List className="flex text-xs items-center justify-center w-full">
-                  <Tab as={Fragment}>
-                    {({ selected }) => (
-                      <button
-                        className={`${
-                          selected
-                            ? "font-semibold border-t-[1px] border-gray-500"
-                            : "text-gray-300 font-semibold"
-                        } p-4 -m-[1px] tracking-wider flex items-center justify-center`}
-                      >
-                        <GridIcon className="mr-1 h-4 stroke-1.5" />
-                        POSTS
-                      </button>
-                    )}
-                  </Tab>
-                  {currentUserData?.currentUser?.username ===
-                    userData?.user?.username && (
-                    // if this is their profile, show the SAVED tab
+              <Tab.Group
+                defaultIndex={0}
+                onChange={(_index) => {
+                  router.push(`/${user.username}/saved`);
+                }}
+              >
+                {currentUserData && (
+                  <Tab.List className="flex text-xs items-center justify-center w-full">
                     <Tab as={Fragment}>
                       {({ selected }) => (
                         <button
@@ -109,15 +102,33 @@ function UserProfile({ serverUser, serverPosts }: Props) {
                               : "text-gray-300 font-semibold"
                           } p-4 -m-[1px] tracking-wider flex items-center justify-center`}
                         >
-                          <BookmarkIcon className="mr-1 h-4 stroke-1.5" />
-                          SAVED
+                          <GridIcon className="mr-1 h-4 stroke-1.5" />
+                          POSTS
                         </button>
                       )}
                     </Tab>
-                  )}
-                </Tab.List>
+                    {currentUserData?.currentUser?.username ===
+                      userData?.user?.username && (
+                      // if this is their profile, show the SAVED tab
+                      <Tab as={Fragment}>
+                        {({ selected }) => (
+                          <button
+                            className={`${
+                              selected
+                                ? "font-semibold border-t-[1px] border-gray-500"
+                                : "text-gray-300 font-semibold"
+                            } p-4 -m-[1px] tracking-wider flex items-center justify-center`}
+                          >
+                            <BookmarkIcon className="mr-1 h-4 stroke-1.5" />
+                            SAVED
+                          </button>
+                        )}
+                      </Tab>
+                    )}
+                  </Tab.List>
+                )}
                 <Tab.Panels>
-                  <Tab.Panel className="">
+                  <Tab.Panel>
                     <div className="grid grid-cols-3 gap-1 md:gap-6">
                       {posts && posts.length > 0 ? (
                         posts.map((post) => (
@@ -128,7 +139,6 @@ function UserProfile({ serverUser, serverPosts }: Props) {
                       )}
                     </div>
                   </Tab.Panel>
-                  <Tab.Panel className="">saved posts</Tab.Panel>
                 </Tab.Panels>
               </Tab.Group>
             </section>
@@ -142,6 +152,8 @@ function UserProfile({ serverUser, serverPosts }: Props) {
 export async function getServerSideProps({ req, params }: any) {
   // fetching the user and their posts on the server side
   // the posts by user query needs a username from the params
+
+  console.log("username params", params);
 
   // if the url params don't match the username format, just return instantly
   if (!params.username.match(/^[a-zA-Z0-9]+$/)) {
