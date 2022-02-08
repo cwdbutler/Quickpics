@@ -8,6 +8,7 @@ import PostInteractionBar from "../../components/post/PostInteractionBar";
 import {
   PostDocument,
   PostQuery,
+  PostsByUserDocument,
   useCurrentUserQuery,
   usePostQuery,
   usePostsByUserQuery,
@@ -40,6 +41,7 @@ function Post({ serverPost }: Props) {
   const [{ data: postsData, fetching: postsFetching }] = usePostsByUserQuery({
     variables: { username: serverPost.author.username, take: 7 },
   }); // using serverPost here as it is already defined
+  // again, this query doesn't run as urql realises the date is already cached
 
   const [{ data: userData }] = useCurrentUserQuery();
 
@@ -200,14 +202,29 @@ export async function getServerSideProps({ req, params }: any) {
     false
   );
 
-  const res = await client?.query(PostDocument, { id: params.id }).toPromise();
+  const postRes = await client
+    ?.query(PostDocument, { id: params.id })
+    .toPromise();
 
-  // if there is no post, the if statement catches it and returns an error page
+  if (!postRes?.data.post) {
+    return {
+      props: {
+        serverPost: null,
+      },
+    };
+  } else {
+    await client
+      ?.query(PostsByUserDocument, {
+        take: 7,
+        username: postRes?.data.post.author.username,
+      })
+      .toPromise();
+  }
 
   return {
     props: {
-      urqlState: ssrCache.extractData(),
-      serverPost: res?.data.post,
+      urqlState: ssrCache.extractData(), // passes the data to the urql client in the browser
+      serverPost: postRes?.data.post,
     },
   };
 }
