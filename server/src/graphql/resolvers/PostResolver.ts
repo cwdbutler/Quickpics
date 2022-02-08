@@ -412,33 +412,6 @@ export class PostResolver {
     };
   }
 
-  @Query(() => PostsResponse)
-  async postsByUserPreview(
-    @Ctx() { prisma }: Context,
-    @Arg("id", () => Int) id: number
-  ): Promise<PostsResponse> {
-    const posts = await prisma.post.findMany({
-      take: 7,
-      where: {
-        authorId: id,
-      },
-      include: {
-        author: true,
-        // necessary as the GraphQL scehema expects it, even though we know the author
-        // should improve this as it is very inefficient, maybe a new resolver
-        comments: {
-          include: {
-            author: true,
-          },
-        },
-      },
-    });
-
-    return {
-      posts,
-    };
-  }
-
   @Mutation(() => Boolean)
   @UseMiddleware(checkAuthenticated)
   async savePost(
@@ -525,32 +498,67 @@ export class PostResolver {
 
   @Query(() => PostsResponse)
   @UseMiddleware(checkAuthenticated)
-  async savedPosts(@Ctx() { prisma, req }: Context): Promise<PostsResponse> {
-    // very bad query, should improve this
-    const data = await prisma.usersOnPosts.findMany({
-      where: {
-        userId: req.session.userId,
-      },
-      select: {
-        post: {
-          include: {
-            author: true,
-            comments: {
-              include: {
-                author: true,
+  async savedPosts(
+    @Arg("take", () => Int) take: number,
+    @Arg("cursor", { nullable: true }) cursor: string,
+    @Ctx() { prisma, req }: Context
+  ): Promise<PostsResponse> {
+    const cappedTake = Math.min(take, MAX_TAKE);
+    const takePlusOne = cappedTake + 1;
+
+    // inefficient query
+    let data;
+    if (cursor) {
+      data = await prisma.usersOnPosts.findMany({
+        cursor: {
+          postId_userId: {
+            postId: cursor,
+            userId: req.session.userId,
+          },
+        },
+        take: takePlusOne,
+        skip: 1, // skips the cursor
+        select: {
+          post: {
+            include: {
+              author: true,
+              comments: {
+                include: {
+                  author: true,
+                },
               },
             },
           },
         },
-      },
-      orderBy: { createdAt: "desc" },
-    });
+        orderBy: { createdAt: "desc" },
+      });
+    } else {
+      data = await prisma.usersOnPosts.findMany({
+        take: takePlusOne,
+        skip: 1, // skips the cursor
+        select: {
+          post: {
+            include: {
+              author: true,
+              comments: {
+                include: {
+                  author: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+    }
 
-    // necessary to make types line up
     const savedPosts = data.map((data) => data.post);
 
     return {
-      posts: savedPosts,
+      posts: savedPosts.slice(0, cappedTake),
+      // return the original requested amount
+      hasMore: savedPosts.length === takePlusOne,
+      // check if there is still one more post
     };
   }
 }
