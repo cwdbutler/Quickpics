@@ -1,0 +1,3 @@
+mutation removeSavedPost($id: String!) {
+  removeSavedPost(id: $id)
+}

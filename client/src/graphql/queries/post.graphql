@@ -7,6 +7,7 @@ query post($id: String!) {
     author {
       ...UserInfo
     }
+    saved
     liked
     likeCount
     likes {

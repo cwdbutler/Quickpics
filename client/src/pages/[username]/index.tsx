@@ -25,7 +25,6 @@ type Props = {
 };
 
 function UserProfile({ serverUser, serverPosts }: Props) {
-  console.log("/[username]");
   if (!serverUser) {
     return <ErrorPage />;
   }
@@ -153,15 +152,10 @@ export async function getServerSideProps({ req, params }: any) {
   // fetching the user and their posts on the server side
   // the posts by user query needs a username from the params
 
-  console.log("username params", params);
-
   // if the url params don't match the username format, just return instantly
   if (!params.username.match(/^[a-zA-Z0-9]+$/)) {
     return {
-      props: {
-        user: null,
-        posts: null,
-      },
+      props: {},
     };
   }
 
@@ -189,10 +183,7 @@ export async function getServerSideProps({ req, params }: any) {
   if (!userRes?.data.user) {
     // if that user doesn't exist, don't try and fetch their posts
     return {
-      props: {
-        user: null,
-        posts: null,
-      },
+      props: {},
     };
   } else {
     postsRes = await client

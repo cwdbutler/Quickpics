@@ -22,12 +22,10 @@ import { BookmarkIcon, GridIcon } from "../../components/Icons";
 
 type Props = {
   serverUser: UserQuery["user"];
-  serverPosts: PostsByUserQuery;
   serverSavedPosts: any;
 };
 
-function SavedPosts({ serverUser, serverPosts, serverSavedPosts }: Props) {
-  console.log("/[username]/[saved]");
+function SavedPosts({ serverUser, serverSavedPosts }: Props) {
   if (!serverUser || !serverSavedPosts) {
     return <ErrorPage />;
   }
@@ -40,17 +38,9 @@ function SavedPosts({ serverUser, serverPosts, serverSavedPosts }: Props) {
     },
   });
 
-  const [{ data: postsData }] = usePostsByUserQuery({
-    variables: {
-      take: 6,
-      username: serverUser.username,
-    },
-  });
-
   const [{ data: currentUserData }] = useCurrentUserQuery();
 
   const user = userData?.user!;
-  const posts = postsData?.posts.posts!;
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -171,7 +161,6 @@ export async function getServerSideProps({ req, params }: any) {
     ?.query(UserDocument, { username: params.username })
     .toPromise();
 
-  let posts;
   let savedPosts = null;
   if (!userRes?.data.user) {
     // if that user doesn't exist, don't try and fetch their posts
@@ -179,14 +168,7 @@ export async function getServerSideProps({ req, params }: any) {
       props: {},
     };
   } else {
-    const postsRes = await client
-      ?.query(PostsByUserDocument, { take: 6, username: params.username })
-      .toPromise();
-
-    posts = postsRes?.data.posts.posts;
-
     const currentUserRes = await client?.query(CurrentUserDocument).toPromise();
-
     // if this is the currentUsers profile
     // fetch their saved posts
     if (currentUserRes?.data.currentUser.username === params.username) {
@@ -197,7 +179,6 @@ export async function getServerSideProps({ req, params }: any) {
   return {
     props: {
       urqlState: ssrCache.extractData(),
-      serverPosts: posts,
       serverUser: userRes?.data.user,
       serverSavedPosts: savedPosts,
     },

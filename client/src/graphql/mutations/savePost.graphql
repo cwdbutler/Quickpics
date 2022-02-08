@@ -1,0 +1,3 @@
+mutation savePost($id: String!) {
+  savePost(id: $id)
+}

@@ -1,11 +1,13 @@
 import { CommentIcon, BookmarkIcon } from "../Icons";
 import Link from "next/link";
 import LikeButton from "../LikeButton";
+import SaveButton from "../SaveButton";
 
 type Props = {
   post: {
     id: string;
     liked: boolean;
+    saved: boolean;
   };
   className?: string;
 };
@@ -13,13 +15,13 @@ type Props = {
 export default function PostInteractionBar({ post, className }: Props) {
   const styles = {
     icon: "h-12 stroke-1.5 p-2 flex-shrink-0 hover:stroke-gray-400",
-    heart: "h-12 stroke-1.5 p-2 flex-shrink-0",
+    dynamicIcon: "h-12 stroke-1.5 p-2 flex-shrink-0",
   };
 
   return (
     <section className={className}>
       <div className="flex">
-        <LikeButton entity={post} className={styles.heart} />
+        <LikeButton entity={post} iconStyle={styles.dynamicIcon} />
         <Link href={`/p/${post.id}`}>
           <a>
             <CommentIcon className={styles.icon} />
@@ -27,7 +29,7 @@ export default function PostInteractionBar({ post, className }: Props) {
         </Link>
       </div>
       <div>
-        <BookmarkIcon className={styles.icon} />
+        <SaveButton post={post} iconStyle={styles.dynamicIcon} />
       </div>
     </section>
   );

@@ -6,6 +6,7 @@ fragment FeedPost on Post {
   author {
     ...UserInfo
   }
+  saved
   liked
   likeCount
   commentsPreview {

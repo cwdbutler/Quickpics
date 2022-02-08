@@ -335,6 +335,39 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
                 }
               }
             },
+            savePost: (result, args, cache, _info) => {
+              // same logic as likes, but you can only save posts so we don't check for a post/comment here
+              if (result.savePost) {
+                // if like was successful
+                const { id } = args;
+
+                cache.writeFragment(
+                  gql`
+                    fragment __ on Post {
+                      id
+                      saved
+                    }
+                  `,
+                  { id: id, saved: true }
+                );
+              }
+            },
+            removeSavedPost: (result, args, cache, _info) => {
+              if (result.removeSavedPost) {
+                // if like was successful
+                const { id } = args;
+
+                cache.writeFragment(
+                  gql`
+                    fragment __ on Post {
+                      id
+                      saved
+                    }
+                  `,
+                  { id: id, saved: false }
+                );
+              }
+            },
             deletePost: (result, args, cache, _info) => {
               if (result.deletePost.post) {
                 cache.invalidate("Query", "posts", {
