@@ -4,6 +4,7 @@ import { ssrExchange, dedupExchange, cacheExchange, fetchExchange } from "urql";
 import {
   PostsByUserDocument,
   PostsByUserQuery,
+  PostsByUserQueryVariables,
   useCurrentUserQuery,
   usePostsByUserQuery,
   UserDocument,
@@ -19,42 +20,84 @@ import { Tab } from "@headlessui/react";
 import { Fragment, useEffect, useState } from "react";
 import { BookmarkIcon, GridIcon, PlusIcon } from "../../components/Icons";
 import Link from "next/link";
+import { Waypoint } from "react-waypoint";
+
+interface PageProps {
+  variables: PostsByUserQueryVariables;
+  isLastPage: boolean;
+  loadMore: (cursor: string) => void;
+  isCurrentUser: boolean;
+}
+
+function Page({ variables, isLastPage, loadMore }: PageProps) {
+  const [{ data }] = usePostsByUserQuery({
+    variables,
+  });
+
+  const posts = data?.posts.posts;
+  const hasMore = data?.posts.hasMore;
+
+  return (
+    <div className="grid grid-cols-3 gap-1 md:gap-6 mt-1 md:mt-6">
+      {posts!.map((post) => (
+        <PostPreview key={post.id} post={post} />
+      ))}
+      {isLastPage && hasMore && (
+        // when this becomes visible on the screen, it loads more posts
+        <Waypoint
+          onEnter={() => {
+            if (posts) {
+              loadMore(data.posts.posts[data.posts.posts.length - 1].id);
+            }
+          }}
+        />
+      )}
+    </div>
+  );
+}
 
 type Props = {
   serverUser: UserQuery["user"];
-  serverPosts: PostsByUserQuery;
+  serverPosts: any;
 };
+
+interface PageVariables {
+  take: number;
+  cursor?: string;
+  username: string;
+}
+const take = 12;
 
 function UserProfile({ serverUser, serverPosts }: Props) {
   if (!serverUser) {
     return <ErrorPage />;
   }
+  const username = serverUser.username;
 
   const router = useRouter();
 
   const [{ data: userData }] = useUserQuery({
     variables: {
-      username: serverUser.username,
-    },
-  });
-
-  const [{ data: postsData }] = usePostsByUserQuery({
-    variables: {
-      take: 6,
-      username: serverUser.username,
+      username: username,
     },
   });
 
   const [{ data: currentUserData }] = useCurrentUserQuery();
 
   const user = userData?.user!;
-  const posts = postsData?.posts.posts!;
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
   const isCurrentUser = () =>
     currentUserData?.currentUser?.username === userData?.user?.username;
+
+  const [pageVariables, setPageVariables] = useState<PageVariables[]>([
+    {
+      take: take,
+      username: user.username,
+    },
+  ]);
 
   return (
     <>
@@ -132,12 +175,23 @@ function UserProfile({ serverUser, serverPosts }: Props) {
                 )}
                 <Tab.Panels>
                   <Tab.Panel>
-                    {posts && posts.length > 0 ? (
-                      <div className="grid grid-cols-3 gap-1 md:gap-6">
-                        {posts.map((post) => (
-                          <PostPreview key={post.id} post={post} />
-                        ))}
-                      </div>
+                    {serverPosts && serverPosts.length > 0 ? (
+                      pageVariables.map((variables, index) => {
+                        return (
+                          <Page
+                            key={"key" + variables.cursor} // cursor is null for first page
+                            variables={variables}
+                            isLastPage={index === pageVariables.length - 1}
+                            loadMore={(cursor) =>
+                              setPageVariables([
+                                ...pageVariables,
+                                { take, cursor, username },
+                              ])
+                            }
+                            isCurrentUser={isCurrentUser()}
+                          />
+                        );
+                      })
                     ) : isCurrentUser() ? (
                       <div className="w-full mt-24 flex items-center justify-center">
                         <div className="h-20 w-96 text-center flex flex-col items-center justify-center space-y-3">
@@ -207,7 +261,10 @@ export async function getServerSideProps({ req, params }: any) {
     };
   } else {
     postsRes = await client
-      ?.query(PostsByUserDocument, { take: 6, username: params.username })
+      ?.query(PostsByUserDocument, {
+        take: take,
+        username: params.username,
+      })
       .toPromise();
   }
 

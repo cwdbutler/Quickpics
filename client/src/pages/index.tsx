@@ -99,9 +99,9 @@ function Home() {
               <h3 className="mb-4 text-m font-semibold text-gray-400">
                 Suggested profiles
               </h3>
-              <ul className="space-y-4 px-2">
+              <ul className="space-y-4 pl-2">
                 {usersData?.suggestedUsers?.map((user) => (
-                  <li className="flex items-center">
+                  <li className="flex items-center w-72">
                     <Link href={`/${user.username}`}>
                       <a>
                         <img
@@ -110,16 +110,21 @@ function Home() {
                               ? user.avatarUrl
                               : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
                           }
-                          className="h-8 rounded-full select-none mr-3"
+                          className="h-8 rounded-full select-none mr-3 flex-none"
                           draggable={false}
                         />
                       </a>
                     </Link>
                     <Link href={`/${user.username}`}>
                       <a>
-                        <h3 className="hover:underline font-semibold text-m">
+                        <h3 className="hover:underline w-full font-semibold text-m flex-initial">
                           {user.username}
                         </h3>
+                      </a>
+                    </Link>
+                    <Link href={`/${user.username}`}>
+                      <a className="text-blue text-xs font-semibold pr-2 ml-auto">
+                        View
                       </a>
                     </Link>
                   </li>

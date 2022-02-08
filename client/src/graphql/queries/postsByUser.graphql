@@ -1,10 +1,11 @@
-query postsByUser($take: Int!, $username: String!) {
-  posts(take: $take, username: $username) {
+query postsByUser($take: Int!, $cursor: String, $username: String!) {
+  posts(take: $take, cursor: $cursor, username: $username) {
     posts {
       id
       imageUrl
       likeCount
       commentCount
     }
+    hasMore
   }
 }
