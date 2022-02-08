@@ -75,7 +75,7 @@ function Post({ serverPost }: Props) {
               src={post.imageUrl}
               className="w-full flex-shrink-0 md:w-[600px]"
             />
-            <div className="w-full flex flex-col justify-between">
+            <div className="w-[335px] flex flex-col justify-between">
               <header className="h-[60px] w-full hidden md:flex items-center justify-between p-4 border-b-[1px] border-gray-300">
                 <div className="flex items-center">
                   <Link href={`/${post.author.username}`}>
@@ -102,7 +102,7 @@ function Post({ serverPost }: Props) {
                   <DotsIcon className={"h-6 stroke-1.5"} />
                 </button>
               </header>
-              <section className="hidden h-full md:flex flex-col items-start justify-start p-4 leading-5 overflow-auto no-scrollbar">
+              <section className="hidden w-full h-full md:flex flex-col items-start justify-start p-4 leading-text overflow-auto no-scrollbar">
                 {post.caption && (
                   <div className="w-full flex mb-2">
                     <span className="flex flex-shrink-0">

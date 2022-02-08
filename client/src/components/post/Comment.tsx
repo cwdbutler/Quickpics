@@ -22,10 +22,10 @@ export default function Comment({ comment, user }: Props) {
   const [open, setOpen] = useState(false);
 
   return (
-    <>
+    <ul className="w-full flex">
       <CommentActions open={open} setOpen={setOpen} commentId={comment.id} />
-      <ul className="group flex items-center justify-start my-3 w-full">
-        <div className="flex flex-shrink-0 h-full mr-3 items-start justify-start">
+      <div className="group flex items-center justify-start my-3 w-full">
+        <div className="flex flex-shrink-0  h-full mr-3 items-start justify-start">
           <Link href={`/${comment.author.username}`}>
             <a>
               <img
@@ -39,8 +39,8 @@ export default function Comment({ comment, user }: Props) {
             </a>
           </Link>
         </div>
-        <div className="w-full">
-          <span>
+        <div className=" w-[230px] flex-none">
+          <span className="w-full flex flex-wrap">
             <Link href={`/${comment.author.username}`}>
               <a>
                 <h3 className="font-semibold float-left mr-1">
@@ -48,7 +48,7 @@ export default function Comment({ comment, user }: Props) {
                 </h3>
               </a>
             </Link>
-            <p>{comment.text}</p>
+            <p className="max-w-full pr-1">{comment.text}</p>
           </span>
           <section
             aria-label="comment information"
@@ -79,7 +79,7 @@ export default function Comment({ comment, user }: Props) {
           entity={comment}
           iconStyle="h-8 stroke-1.5 p-2 flex-shrink-0 mb-2"
         />
-      </ul>
-    </>
+      </div>
+    </ul>
   );
 }

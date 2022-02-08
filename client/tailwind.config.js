@@ -9,6 +9,9 @@ module.exports = {
       fontFamily: {
         logo: ["Logo"],
       },
+      lineHeight: {
+        text: "18px",
+      },
       fontSize: {
         xxs: "10px",
         m: "14px",

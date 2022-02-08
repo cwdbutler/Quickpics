@@ -67,7 +67,7 @@ export default function FeedPost({ post }: Props) {
           className="h-12 flex items-center justify-between"
           post={post}
         />
-        <section className="flex flex-col items-start px-3 pb-3">
+        <section className="flex flex-col items-start px-3 pb-3 leading-text space-y-1">
           {post.likeCount > 0 && (
             <h3 className="font-semibold mb-1">
               {post.likeCount} {`like${post.likeCount > 1 ? "s" : ""}`}
@@ -92,12 +92,12 @@ export default function FeedPost({ post }: Props) {
               </a>
             </Link>
           )}
-          <div>
+          <div className="space-y-1 w-full">
             {post.commentsPreview.map((comment) => (
-              <div key={comment.id} className="flex">
+              <div key={comment.id} className="w-full">
                 <Link href={`/${post.author.username}`}>
                   <a>
-                    <h3 className="font-semibold float-left mr-1 hover:underline">
+                    <h3 className="float-left font-semibold mr-1 hover:underline">
                       {comment.author.username}
                     </h3>
                   </a>
