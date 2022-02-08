@@ -85,6 +85,7 @@ function UserProfile({ serverUser, serverPosts }: Props) {
             </header>
             <section className="w-full mt-10 border-gray-300 border-t-[1px]">
               <Tab.Group
+                manual
                 defaultIndex={0}
                 onChange={(_index) => {
                   router.push(`/${user.username}/saved`);
@@ -128,15 +129,17 @@ function UserProfile({ serverUser, serverPosts }: Props) {
                 )}
                 <Tab.Panels>
                   <Tab.Panel>
-                    <div className="grid grid-cols-3 gap-1 md:gap-6">
-                      {posts && posts.length > 0 ? (
-                        posts.map((post) => (
+                    {posts && posts.length > 0 ? (
+                      <div className="grid grid-cols-3 gap-1 md:gap-6">
+                        {posts.map((post) => (
                           <PostPreview key={post.id} post={post} />
-                        ))
-                      ) : (
-                        <div>no posts</div>
-                      )}
-                    </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="w-full flex items-center justify-center">
+                        No posts yet...
+                      </div>
+                    )}
                   </Tab.Panel>
                 </Tab.Panels>
               </Tab.Group>

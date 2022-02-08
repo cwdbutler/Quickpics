@@ -1,0 +1,10 @@
+query savedPosts {
+  savedPosts {
+    posts {
+      id
+      imageUrl
+      likeCount
+      commentCount
+    }
+  }
+}

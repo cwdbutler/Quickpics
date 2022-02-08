@@ -182,6 +182,7 @@ export type Query = {
   post?: Maybe<Post>;
   posts: PostsResponse;
   postsByUserPreview: PostsResponse;
+  savedPosts: PostsResponse;
   user?: Maybe<User>;
 };
 
@@ -332,6 +333,11 @@ export type PostsByUserQueryVariables = Exact<{
 
 
 export type PostsByUserQuery = { __typename?: 'Query', posts: { __typename?: 'PostsResponse', posts: Array<{ __typename?: 'Post', id: string, imageUrl: string, likeCount: number, commentCount: number }> } };
+
+export type SavedPostsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SavedPostsQuery = { __typename?: 'Query', savedPosts: { __typename?: 'PostsResponse', posts: Array<{ __typename?: 'Post', id: string, imageUrl: string, likeCount: number, commentCount: number }> } };
 
 export type UserQueryVariables = Exact<{
   id?: InputMaybe<Scalars['Int']>;
@@ -606,6 +612,22 @@ export const PostsByUserDocument = gql`
 export function usePostsByUserQuery(options: Omit<Urql.UseQueryArgs<PostsByUserQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<PostsByUserQuery>({ query: PostsByUserDocument, ...options });
 };
+export const SavedPostsDocument = gql`
+    query savedPosts {
+  savedPosts {
+    posts {
+      id
+      imageUrl
+      likeCount
+      commentCount
+    }
+  }
+}
+    `;
+
+export function useSavedPostsQuery(options: Omit<Urql.UseQueryArgs<SavedPostsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SavedPostsQuery>({ query: SavedPostsDocument, ...options });
+};
 export const UserDocument = gql`
     query user($id: Int, $username: String) {
   user(id: $id, username: $username) {
@@ -638,6 +660,7 @@ export type GraphCacheResolvers = {
     post?: GraphCacheResolver<WithTypename<Query>, QueryPostArgs, WithTypename<Post> | string>,
     posts?: GraphCacheResolver<WithTypename<Query>, QueryPostsArgs, WithTypename<PostsResponse> | string>,
     postsByUserPreview?: GraphCacheResolver<WithTypename<Query>, QueryPostsByUserPreviewArgs, WithTypename<PostsResponse> | string>,
+    savedPosts?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<PostsResponse> | string>,
     currentUser?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<User> | string>,
     user?: GraphCacheResolver<WithTypename<Query>, QueryUserArgs, WithTypename<User> | string>
   },

@@ -5,6 +5,8 @@ import {
   CurrentUserDocument,
   PostsByUserDocument,
   PostsByUserQuery,
+  SavedPostsDocument,
+  SavedPostsQuery,
   useCurrentUserQuery,
   usePostsByUserQuery,
   UserDocument,
@@ -22,7 +24,7 @@ import { BookmarkIcon, GridIcon } from "../../components/Icons";
 
 type Props = {
   serverUser: UserQuery["user"];
-  serverSavedPosts: any;
+  serverSavedPosts: SavedPostsQuery["savedPosts"]["posts"];
 };
 
 function SavedPosts({ serverUser, serverSavedPosts }: Props) {
@@ -78,6 +80,7 @@ function SavedPosts({ serverUser, serverSavedPosts }: Props) {
             </header>
             <section className="w-full mt-10 border-gray-300 border-t-[1px]">
               <Tab.Group
+                manual
                 defaultIndex={1}
                 onChange={(_index) => {
                   router.push(`/${user.username}`);
@@ -123,7 +126,33 @@ function SavedPosts({ serverUser, serverSavedPosts }: Props) {
                   <Tab.Panel>
                     {/* this tab doesn't get used, it's just for the order */}
                   </Tab.Panel>
-                  <Tab.Panel className="">saved posts</Tab.Panel>
+                  <Tab.Panel>
+                    <div className="flex w-full mt-8 mb-4">
+                      <h4 className="text-xs px-4 lg:px-0 text-gray-500">
+                        Only you can see what you've saved
+                      </h4>
+                    </div>
+                    {serverSavedPosts && serverSavedPosts.length > 0 ? (
+                      <div className="grid grid-cols-3 gap-1 md:gap-6">
+                        {serverSavedPosts.map((post) => (
+                          <PostPreview key={post.id} post={post} />
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="w-full mt-24 flex items-center justify-center">
+                        <div className="h-20 w-96 text-center flex flex-col items-center justify-center space-y-3">
+                          <div className="border-2 border-gray-600 rounded-full p-3">
+                            <BookmarkIcon className="h-8" />
+                          </div>
+                          <h2 className="text-3xl font-light">Save</h2>
+                          <p className="text-m">
+                            Save posts that you want to see again. Only you can
+                            see what you've saved.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </Tab.Panel>
                 </Tab.Panels>
               </Tab.Group>
             </section>
@@ -172,7 +201,8 @@ export async function getServerSideProps({ req, params }: any) {
     // if this is the currentUsers profile
     // fetch their saved posts
     if (currentUserRes?.data.currentUser.username === params.username) {
-      savedPosts = [];
+      const savedPostsRes = await client?.query(SavedPostsDocument).toPromise();
+      savedPosts = savedPostsRes?.data.savedPosts.posts;
     }
   }
 
