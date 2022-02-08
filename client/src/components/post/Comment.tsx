@@ -9,6 +9,7 @@ import LocalizedFormat from "dayjs/plugin/localizedFormat";
 import { DotsIcon } from "../Icons";
 import { useEffect, useMemo, useState } from "react";
 import CommentActions from "./CommentActions";
+import Link from "next/link";
 
 type Props = {
   comment: CommentInfoFragment;
@@ -38,21 +39,29 @@ export default function Comment({ comment, user }: Props) {
         onMouseLeave={() => setShowCommentMenu(false)}
         className="flex items-center justify-start my-3 w-full"
       >
-        <div className="flex flex-shrink-0 h-full mr-4 items-start justify-start">
-          <img
-            src={
-              comment.author.avatarUrl
-                ? comment.author.avatarUrl
-                : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
-            }
-            className="h-8 rounded-full"
-          />
+        <div className="flex flex-shrink-0 h-full mr-3 items-start justify-start">
+          <Link href={`/${comment.author.username}`}>
+            <a>
+              <img
+                src={
+                  comment.author.avatarUrl
+                    ? comment.author.avatarUrl
+                    : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
+                }
+                className="h-8 rounded-full"
+              />
+            </a>
+          </Link>
         </div>
         <div className="leading-4 w-full">
           <span className="leading-4">
-            <h3 className="font-semibold float-left mr-1">
-              {comment.author.username}
-            </h3>
+            <Link href={`/${comment.author.username}`}>
+              <a>
+                <h3 className="font-semibold float-left mr-1">
+                  {comment.author.username}
+                </h3>
+              </a>
+            </Link>
             <p>{comment.text}</p>
           </span>
           <section

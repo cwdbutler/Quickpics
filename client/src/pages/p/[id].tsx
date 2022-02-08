@@ -20,6 +20,7 @@ import dayjs from "dayjs";
 import PostActions from "../../components/post/PostActions";
 import { ssrExchange, dedupExchange, cacheExchange, fetchExchange } from "urql";
 import PostPreview from "../../components/post/PostPreview";
+import Link from "next/link";
 
 type Props = {
   serverPost: PostQuery["post"];
@@ -74,15 +75,25 @@ function Post({ serverPost }: Props) {
             <div className="w-full flex flex-col justify-between">
               <header className="h-[60px] w-full hidden md:flex items-center justify-between p-4 border-b-[1px] border-gray-300">
                 <div className="flex items-center">
-                  <img
-                    src={
-                      post.author.avatarUrl
-                        ? post.author.avatarUrl
-                        : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
-                    }
-                    className="h-8 rounded-full"
-                  />
-                  <h3 className="ml-3 font-semibold">{post.author.username}</h3>
+                  <Link href={`/${post.author.username}`}>
+                    <a>
+                      <img
+                        src={
+                          post.author.avatarUrl
+                            ? post.author.avatarUrl
+                            : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
+                        }
+                        className="h-8 rounded-full"
+                      />
+                    </a>
+                  </Link>
+                  <Link href={`/${post.author.username}`}>
+                    <a>
+                      <h3 className="ml-3 font-semibold">
+                        {post.author.username}
+                      </h3>
+                    </a>
+                  </Link>
                 </div>
                 <button onClick={() => setOpen(true)}>
                   <DotsIcon className={"h-6 stroke-1.5"} />
@@ -91,18 +102,26 @@ function Post({ serverPost }: Props) {
               <section className="hidden h-full md:flex flex-col items-start justify-start p-4 leading-5 overflow-auto no-scrollbar">
                 {post.caption && (
                   <span className="flex mb-2">
-                    <img
-                      src={
-                        post.author.avatarUrl
-                          ? post.author.avatarUrl
-                          : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
-                      }
-                      className="h-8 rounded-full mr-4"
-                    />
+                    <Link href={`/${post.author.username}`}>
+                      <a className="flex-shrink-0">
+                        <img
+                          src={
+                            post.author.avatarUrl
+                              ? post.author.avatarUrl
+                              : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
+                          }
+                          className="h-8 w-8 rounded-full mr-3"
+                        />
+                      </a>
+                    </Link>
                     <span>
-                      <h3 className="font-semibold float-left mr-1">
-                        {post.author.username}
-                      </h3>
+                      <Link href={`/${post.author.username}`}>
+                        <a>
+                          <h3 className="font-semibold float-left mr-1">
+                            {post.author.username}
+                          </h3>
+                        </a>
+                      </Link>
                       <p>{post.caption}</p>
                     </span>
                   </span>
@@ -151,7 +170,9 @@ function Post({ serverPost }: Props) {
               <>
                 <h5 className="text-sm text-gray-600 mb-4">
                   More posts from{" "}
-                  <span className="font-semibold">{post.author.username}</span>
+                  <Link href={`/${post.author.username}`}>
+                    <a className="font-semibold">{post.author.username}</a>
+                  </Link>
                 </h5>
                 <div className="grid grid-cols-3 gap-1 md:gap-7">
                   {postsData?.posts.posts

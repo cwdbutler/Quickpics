@@ -38,15 +38,25 @@ export default function FeedPost({ post }: Props) {
       <article className="w-full sm:w-[600px] text-m sm:border-[1px] bg-white border-gray-300 mb-3 sm:mb-6">
         <header className="h-14 flex items-center justify-between p-3">
           <div className="flex items-center">
-            <img
-              src={
-                post.author.avatarUrl
-                  ? post.author.avatarUrl
-                  : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
-              }
-              className="h-8 rounded-full select-none"
-            />
-            <h3 className="ml-3 font-semibold">{post.author.username}</h3>
+            <Link href={`/${post.author.username}`}>
+              <a>
+                <img
+                  src={
+                    post.author.avatarUrl
+                      ? post.author.avatarUrl
+                      : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
+                  }
+                  className="h-8 rounded-full select-none"
+                  draggable={false}
+                />
+              </a>
+            </Link>
+
+            <Link href={`/${post.author.username}`}>
+              <a>
+                <h3 className="ml-3 font-semibold">{post.author.username}</h3>
+              </a>
+            </Link>
           </div>
           <button onClick={() => setOpen(true)}>
             <DotsIcon className={"h-6 stroke-1.5"} />
@@ -65,9 +75,13 @@ export default function FeedPost({ post }: Props) {
           )}
           {post.caption && (
             <span className="w-full text-left">
-              <h3 className="font-semibold float-left mr-1">
-                {post.author.username}
-              </h3>
+              <Link href={`/${post.author.username}`}>
+                <a>
+                  <h3 className="font-semibold float-left mr-1 hover:underline">
+                    {post.author.username}
+                  </h3>
+                </a>
+              </Link>
               <p>{post.caption}</p>
             </span>
           )}
@@ -81,9 +95,13 @@ export default function FeedPost({ post }: Props) {
           <div>
             {post.commentsPreview.map((comment) => (
               <div key={comment.id} className="flex">
-                <h3 className="font-semibold float-left mr-1">
-                  {comment.author.username}
-                </h3>
+                <Link href={`/${post.author.username}`}>
+                  <a>
+                    <h3 className="font-semibold float-left mr-1 hover:underline">
+                      {comment.author.username}
+                    </h3>
+                  </a>
+                </Link>
                 <p>{comment.text}</p>
               </div>
             ))}
