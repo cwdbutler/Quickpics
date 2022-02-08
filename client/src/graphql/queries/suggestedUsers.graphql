@@ -1,0 +1,5 @@
+query suggestedUsers {
+  suggestedUsers {
+    ...UserInfo
+  }
+}

@@ -75,7 +75,7 @@ function Post({ serverPost }: Props) {
               src={post.imageUrl}
               className="w-full flex-shrink-0 md:w-[600px]"
             />
-            <div className="w-[335px] flex flex-col justify-between">
+            <div className="w-full md:w-[335px] flex flex-col justify-between">
               <header className="h-[60px] w-full hidden md:flex items-center justify-between p-4 border-b-[1px] border-gray-300">
                 <div className="flex items-center">
                   <Link href={`/${post.author.username}`}>
@@ -131,14 +131,16 @@ function Post({ serverPost }: Props) {
                     </span>
                   </div>
                 )}
-                {/* don't wait for fetching on this because it updates when the user is fetched anyway */}
-                {post.comments.map((comment) => (
-                  <Comment
-                    key={comment.id}
-                    comment={comment}
-                    user={userData?.currentUser}
-                  />
-                ))}
+                <ul>
+                  {/* don't wait for fetching on this because it updates when the user is fetched anyway */}
+                  {post.comments.map((comment) => (
+                    <Comment
+                      key={comment.id}
+                      comment={comment}
+                      user={userData?.currentUser}
+                    />
+                  ))}
+                </ul>
               </section>
               <footer className="border-t-[1px] border-gray-300 flex flex-col">
                 <PostInteractionBar

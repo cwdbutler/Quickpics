@@ -22,7 +22,7 @@ export default function Comment({ comment, user }: Props) {
   const [open, setOpen] = useState(false);
 
   return (
-    <ul className="w-full flex">
+    <li className="w-full flex">
       <CommentActions open={open} setOpen={setOpen} commentId={comment.id} />
       <div className="group flex items-center justify-start my-3 w-full">
         <div className="flex flex-shrink-0  h-full mr-3 items-start justify-start">
@@ -80,6 +80,6 @@ export default function Comment({ comment, user }: Props) {
           iconStyle="h-8 stroke-1.5 p-2 flex-shrink-0 mb-2"
         />
       </div>
-    </ul>
+    </li>
   );
 }

@@ -183,6 +183,7 @@ export type Query = {
   posts: PostsResponse;
   postsByUserPreview: PostsResponse;
   savedPosts: PostsResponse;
+  suggestedUsers?: Maybe<Array<User>>;
   user?: Maybe<User>;
 };
 
@@ -338,6 +339,11 @@ export type SavedPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type SavedPostsQuery = { __typename?: 'Query', savedPosts: { __typename?: 'PostsResponse', posts: Array<{ __typename?: 'Post', id: string, imageUrl: string, likeCount: number, commentCount: number }> } };
+
+export type SuggestedUsersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SuggestedUsersQuery = { __typename?: 'Query', suggestedUsers?: Array<{ __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined }> | null | undefined };
 
 export type UserQueryVariables = Exact<{
   id?: InputMaybe<Scalars['Int']>;
@@ -628,6 +634,17 @@ export const SavedPostsDocument = gql`
 export function useSavedPostsQuery(options: Omit<Urql.UseQueryArgs<SavedPostsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<SavedPostsQuery>({ query: SavedPostsDocument, ...options });
 };
+export const SuggestedUsersDocument = gql`
+    query suggestedUsers {
+  suggestedUsers {
+    ...UserInfo
+  }
+}
+    ${UserInfoFragmentDoc}`;
+
+export function useSuggestedUsersQuery(options: Omit<Urql.UseQueryArgs<SuggestedUsersQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SuggestedUsersQuery>({ query: SuggestedUsersDocument, ...options });
+};
 export const UserDocument = gql`
     query user($id: Int, $username: String) {
   user(id: $id, username: $username) {
@@ -662,7 +679,8 @@ export type GraphCacheResolvers = {
     postsByUserPreview?: GraphCacheResolver<WithTypename<Query>, QueryPostsByUserPreviewArgs, WithTypename<PostsResponse> | string>,
     savedPosts?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<PostsResponse> | string>,
     currentUser?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<User> | string>,
-    user?: GraphCacheResolver<WithTypename<Query>, QueryUserArgs, WithTypename<User> | string>
+    user?: GraphCacheResolver<WithTypename<Query>, QueryUserArgs, WithTypename<User> | string>,
+    suggestedUsers?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<User> | string>>
   },
   Comment?: {
     id?: GraphCacheResolver<WithTypename<Comment>, Record<string, never>, Scalars['ID'] | string>,
