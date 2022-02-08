@@ -17,7 +17,8 @@ import NavBar from "../../components/NavBar";
 import Head from "next/head";
 import { Tab } from "@headlessui/react";
 import { Fragment, useEffect, useState } from "react";
-import { BookmarkIcon, GridIcon } from "../../components/Icons";
+import { BookmarkIcon, GridIcon, PlusIcon } from "../../components/Icons";
+import Link from "next/link";
 
 type Props = {
   serverUser: UserQuery["user"];
@@ -52,6 +53,9 @@ function UserProfile({ serverUser, serverPosts }: Props) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
+  const isCurrentUser = () =>
+    currentUserData?.currentUser?.username === userData?.user?.username;
+
   return (
     <>
       <NavBar />
@@ -78,7 +82,7 @@ function UserProfile({ serverUser, serverPosts }: Props) {
                   <h2 className="text-3xl pt-1 font-light">{user.username}</h2>
                   <span>
                     <span className="font-semibold mr-1">{user.postCount}</span>
-                    {`post${user.postCount > 1 ? "s" : ""}`}
+                    {`post${user.postCount === 1 ? "" : "s"}`}
                   </span>
                 </div>
               </section>
@@ -107,8 +111,7 @@ function UserProfile({ serverUser, serverPosts }: Props) {
                         </button>
                       )}
                     </Tab>
-                    {currentUserData?.currentUser?.username ===
-                      userData?.user?.username && (
+                    {isCurrentUser() && (
                       // if this is their profile, show the SAVED tab
                       <Tab as={Fragment}>
                         {({ selected }) => (
@@ -135,9 +138,23 @@ function UserProfile({ serverUser, serverPosts }: Props) {
                           <PostPreview key={post.id} post={post} />
                         ))}
                       </div>
+                    ) : isCurrentUser() ? (
+                      <div className="w-full mt-24 flex items-center justify-center">
+                        <div className="h-20 w-96 text-center flex flex-col items-center justify-center space-y-3">
+                          <Link href="/create">
+                            <a>
+                              <PlusIcon className="h-16 stroke-gray-600" />
+                            </a>
+                          </Link>
+                          <h2 className="text-3xl font-light">Create a post</h2>
+                          <p className="text-m">
+                            Looks like you haven't created any posts yet.
+                          </p>
+                        </div>
+                      </div>
                     ) : (
-                      <div className="w-full flex items-center justify-center">
-                        No posts yet...
+                      <div className="w-full mt-24 flex items-center justify-center">
+                        This user doesn't have any posts.
                       </div>
                     )}
                   </Tab.Panel>
