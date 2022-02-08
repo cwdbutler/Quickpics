@@ -425,6 +425,7 @@ export class PostResolver {
       include: {
         author: true,
         // necessary as the GraphQL scehema expects it, even though we know the author
+        // should improve this as it is very inefficient, maybe a new resolver
         comments: {
           include: {
             author: true,
@@ -520,5 +521,36 @@ export class PostResolver {
     });
 
     return deletedSavedPost.count === 1 ? true : false;
+  }
+
+  @Query(() => PostsResponse)
+  @UseMiddleware(checkAuthenticated)
+  async savedPosts(@Ctx() { prisma, req }: Context): Promise<PostsResponse> {
+    // very bad query, should improve this
+    const data = await prisma.usersOnPosts.findMany({
+      where: {
+        userId: req.session.userId,
+      },
+      select: {
+        post: {
+          include: {
+            author: true,
+            comments: {
+              include: {
+                author: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    // necessary to make types line up
+    const savedPosts = data.map((data) => data.post);
+
+    return {
+      posts: savedPosts,
+    };
   }
 }

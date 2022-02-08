@@ -83,6 +83,7 @@ type Query {
   post(id: String!): Post
   posts(username: String, cursor: String, take: Int!): PostsResponse!
   postsByUserPreview(id: Int!): PostsResponse!
+  savedPosts: PostsResponse!
   currentUser: User
   user(username: String, id: Int): User
 }
