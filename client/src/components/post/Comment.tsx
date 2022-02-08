@@ -19,26 +19,12 @@ type Props = {
 export default function Comment({ comment, user }: Props) {
   dayjs.extend(LocalizedFormat);
 
-  const [showCommentMenu, setShowCommentMenu] = useState(false);
-
   const [open, setOpen] = useState(false);
-
-  const [commentTime, setCommentTime] = useState("");
-
-  const t = useMemo(() => shortTimeSince(comment.createdAt), []);
-  // stops date changing on each hover
-
-  useEffect(() => setCommentTime(t), []);
-  // prevent server mismatch
 
   return (
     <>
       <CommentActions open={open} setOpen={setOpen} commentId={comment.id} />
-      <ul
-        onMouseEnter={() => setShowCommentMenu(true)}
-        onMouseLeave={() => setShowCommentMenu(false)}
-        className="flex items-center justify-start my-3 w-full"
-      >
+      <ul className="group flex items-center justify-start my-3 w-full">
         <div className="flex flex-shrink-0 h-full mr-3 items-start justify-start">
           <Link href={`/${comment.author.username}`}>
             <a>
@@ -72,7 +58,7 @@ export default function Comment({ comment, user }: Props) {
               dateTime={comment.createdAt}
               title={dayjs(comment.createdAt).format("ll")}
             >
-              {commentTime}
+              {shortTimeSince(comment.createdAt)}
             </time>
             {comment.likeCount > 0 && (
               <p className="font-medium">
@@ -82,7 +68,7 @@ export default function Comment({ comment, user }: Props) {
             {user?.id === comment.author.id && (
               <button
                 onClick={() => setOpen(true)}
-                className={showCommentMenu ? "visible" : "invisible"}
+                className="invisible group-hover:visible"
               >
                 <DotsIcon className="h-5" />
               </button>
