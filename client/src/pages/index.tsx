@@ -102,7 +102,7 @@ function Home() {
               </h3>
               <ul className="space-y-4 pl-2">
                 {usersData?.suggestedUsers?.map((user) => (
-                  <li className="flex items-center w-72">
+                  <li key={user.username} className="flex items-center w-72">
                     <Link href={`/${user.username}`}>
                       <a className="mr-3 flex">
                         <Image
