@@ -71,7 +71,10 @@ function Post({ serverPost }: Props) {
       <div className="flex w-full items-center justify-center pt-12">
         <div className="flex h-full bg-white md:bg-background flex-col items-center w-full md:w-[935px]">
           <article className="md:h-[600px] w-full border-t-[1px] md:border-[1px] flex flex-col md:flex-row text-m border-gray-300 bg-white">
-            <img src={post.imageUrl} className="w-full md:w-[600px]" />
+            <img
+              src={post.imageUrl}
+              className="w-full flex-shrink-0 md:w-[600px]"
+            />
             <div className="w-full flex flex-col justify-between">
               <header className="h-[60px] w-full hidden md:flex items-center justify-between p-4 border-b-[1px] border-gray-300">
                 <div className="flex items-center">
@@ -101,20 +104,22 @@ function Post({ serverPost }: Props) {
               </header>
               <section className="hidden h-full md:flex flex-col items-start justify-start p-4 leading-5 overflow-auto no-scrollbar">
                 {post.caption && (
-                  <span className="flex mb-2">
-                    <Link href={`/${post.author.username}`}>
-                      <a className="flex-shrink-0">
-                        <img
-                          src={
-                            post.author.avatarUrl
-                              ? post.author.avatarUrl
-                              : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
-                          }
-                          className="h-8 w-8 rounded-full mr-3"
-                        />
-                      </a>
-                    </Link>
-                    <span>
+                  <div className="w-full flex mb-2">
+                    <span className="flex flex-shrink-0">
+                      <Link href={`/${post.author.username}`}>
+                        <a className="flex-shrink-0">
+                          <img
+                            src={
+                              post.author.avatarUrl
+                                ? post.author.avatarUrl
+                                : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
+                            }
+                            className="h-8 w-8 rounded-full mr-3"
+                          />
+                        </a>
+                      </Link>
+                    </span>
+                    <span className="w-full">
                       <Link href={`/${post.author.username}`}>
                         <a>
                           <h3 className="font-semibold float-left mr-1">
@@ -122,9 +127,9 @@ function Post({ serverPost }: Props) {
                           </h3>
                         </a>
                       </Link>
-                      <p>{post.caption}</p>
+                      <p aria-label="Post caption">{post.caption}</p>
                     </span>
-                  </span>
+                  </div>
                 )}
                 {/* don't wait for fetching on this because it updates when the user is fetched anyway */}
                 {post.comments.map((comment) => (

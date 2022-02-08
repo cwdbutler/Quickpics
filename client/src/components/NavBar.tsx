@@ -22,31 +22,31 @@ export default function NavBar() {
       <div className="max-w-[990px] mx-auto px-6">
         <div className="relative flex items-center justify-between h-14">
           <Link href="/">
-            <button className="px-3 py-2 rounded-md flex-shrink-0 flex">
+            <a className="p-2 flex-shrink-0">
               <h1 className="font-logo text-3xl">Quickpics</h1>
-            </button>
+            </a>
           </Link>
           <div className="flex-1 flex items-stretch justify-end mr-2">
             {fetching || isServer() ? null : data?.currentUser ? (
               // user is logged in
               <div className="flex items-center justify-center space-x-4">
                 <Link href="/">
-                  <button>
+                  <a>
                     {router.pathname === "/" ? (
                       <HomeIconFilled className="h-8" />
                     ) : (
                       <HomeIcon className="h-8 stroke-1.5" />
                     )}
-                  </button>
+                  </a>
                 </Link>
                 <Link href="/create">
-                  <button>
+                  <a>
                     {router.pathname === "/create" ? (
                       <PlusIconFilled className="h-8" />
                     ) : (
                       <PlusIcon className="h-8" />
                     )}
-                  </button>
+                  </a>
                 </Link>
                 <NavBarDropDown user={data.currentUser} />
               </div>

@@ -39,8 +39,8 @@ export default function Comment({ comment, user }: Props) {
             </a>
           </Link>
         </div>
-        <div className="leading-4 w-full">
-          <span className="leading-4">
+        <div className="w-full">
+          <span>
             <Link href={`/${comment.author.username}`}>
               <a>
                 <h3 className="font-semibold float-left mr-1">
@@ -77,7 +77,7 @@ export default function Comment({ comment, user }: Props) {
         </div>
         <LikeButton
           entity={comment}
-          className="h-8 stroke-1.5 p-2 flex-shrink-0 mb-2"
+          iconStyle="h-8 stroke-1.5 p-2 flex-shrink-0 mb-2"
         />
       </ul>
     </>
