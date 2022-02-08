@@ -86,6 +86,7 @@ type Query {
   savedPosts: PostsResponse!
   currentUser: User
   user(username: String, id: Int): User
+  suggestedUsers: [User!]
 }
 
 union Activity = Post

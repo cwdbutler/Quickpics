@@ -85,6 +85,28 @@ export class UserResolver {
     });
   }
 
+  @Query(() => [User], { nullable: true })
+  async suggestedUsers(@Ctx() { prisma }: Context): Promise<User[]> {
+    // returns the 5 users with the most posts
+    const usersWithCount = await prisma.user.findMany({
+      include: {
+        _count: {
+          select: {
+            posts: true,
+          },
+        },
+      },
+      orderBy: {
+        posts: {
+          _count: "desc",
+        },
+      },
+      take: 5,
+    });
+
+    return usersWithCount;
+  }
+
   @Mutation(() => CreateUserResponse)
   async register(
     @Arg("email") email: string,
