@@ -1,10 +1,11 @@
-query savedPosts {
-  savedPosts {
+query savedPosts($take: Int!, $cursor: String) {
+  savedPosts(take: $take, cursor: $cursor) {
     posts {
       id
       imageUrl
       likeCount
       commentCount
     }
+    hasMore
   }
 }

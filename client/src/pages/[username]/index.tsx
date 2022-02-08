@@ -3,13 +3,11 @@ import { urqlClient } from "../../urqlClient";
 import { ssrExchange, dedupExchange, cacheExchange, fetchExchange } from "urql";
 import {
   PostsByUserDocument,
-  PostsByUserQuery,
   PostsByUserQueryVariables,
   useCurrentUserQuery,
   usePostsByUserQuery,
   UserDocument,
   UserQuery,
-  useUserQuery,
 } from "../../graphql/generated/graphql";
 import PostPreview from "../../components/post/PostPreview";
 import ErrorPage from "../404";
@@ -17,7 +15,7 @@ import { useRouter } from "next/router";
 import NavBar from "../../components/NavBar";
 import Head from "next/head";
 import { Tab } from "@headlessui/react";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 import { BookmarkIcon, GridIcon, PlusIcon } from "../../components/Icons";
 import Link from "next/link";
 import { Waypoint } from "react-waypoint";
@@ -26,20 +24,21 @@ interface PageProps {
   variables: PostsByUserQueryVariables;
   isLastPage: boolean;
   loadMore: (cursor: string) => void;
-  isCurrentUser: boolean;
 }
 
 function Page({ variables, isLastPage, loadMore }: PageProps) {
-  const [{ data }] = usePostsByUserQuery({
+  const [{ data, fetching }] = usePostsByUserQuery({
     variables,
   });
 
   const posts = data?.posts.posts;
   const hasMore = data?.posts.hasMore;
 
-  return (
+  return fetching ? (
+    <div>loading</div>
+  ) : (
     <div className="grid grid-cols-3 gap-1 md:gap-6 mt-1 md:mt-6">
-      {posts!.map((post) => (
+      {posts?.map((post) => (
         <PostPreview key={post.id} post={post} />
       ))}
       {isLastPage && hasMore && (
@@ -76,26 +75,15 @@ function UserProfile({ serverUser, serverPosts }: Props) {
 
   const router = useRouter();
 
-  const [{ data: userData }] = useUserQuery({
-    variables: {
-      username: username,
-    },
-  });
-
   const [{ data: currentUserData }] = useCurrentUserQuery();
 
-  const user = userData?.user!;
-
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-
-  const isCurrentUser = () =>
-    currentUserData?.currentUser?.username === userData?.user?.username;
+  const isCurrentUser =
+    currentUserData?.currentUser?.username === serverUser.username;
 
   const [pageVariables, setPageVariables] = useState<PageVariables[]>([
     {
       take: take,
-      username: user.username,
+      username: serverUser.username,
     },
   ]);
 
@@ -104,7 +92,7 @@ function UserProfile({ serverUser, serverPosts }: Props) {
       <NavBar />
       <div className="flex flex-col items-center justify-center py-2">
         <Head>
-          <title>{user?.username}</title>
+          <title>{serverUser.username}</title>
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
@@ -113,8 +101,8 @@ function UserProfile({ serverUser, serverPosts }: Props) {
             <header className="flex">
               <img
                 src={
-                  user.avatarUrl
-                    ? user.avatarUrl
+                  serverUser.avatarUrl
+                    ? serverUser.avatarUrl
                     : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
                 }
                 draggable={false}
@@ -122,10 +110,14 @@ function UserProfile({ serverUser, serverPosts }: Props) {
               />
               <section aria-label="User information" className="flex-grow">
                 <div className="flex flex-col space-y-5">
-                  <h2 className="text-3xl pt-1 font-light">{user.username}</h2>
+                  <h2 className="text-3xl pt-1 font-light">
+                    {serverUser.username}
+                  </h2>
                   <span>
-                    <span className="font-semibold mr-1">{user.postCount}</span>
-                    {`post${user.postCount === 1 ? "" : "s"}`}
+                    <span className="font-semibold mr-1">
+                      {serverUser.postCount}
+                    </span>
+                    {`post${serverUser.postCount === 1 ? "" : "s"}`}
                   </span>
                 </div>
               </section>
@@ -135,7 +127,7 @@ function UserProfile({ serverUser, serverPosts }: Props) {
                 manual
                 defaultIndex={0}
                 onChange={(_index) => {
-                  router.push(`/${user.username}/saved`);
+                  router.push(`/${serverUser.username}/saved`);
                 }}
               >
                 {currentUserData && (
@@ -154,7 +146,7 @@ function UserProfile({ serverUser, serverPosts }: Props) {
                         </button>
                       )}
                     </Tab>
-                    {isCurrentUser() && (
+                    {isCurrentUser && (
                       // if this is their profile, show the SAVED tab
                       <Tab as={Fragment}>
                         {({ selected }) => (
@@ -188,11 +180,10 @@ function UserProfile({ serverUser, serverPosts }: Props) {
                                 { take, cursor, username },
                               ])
                             }
-                            isCurrentUser={isCurrentUser()}
                           />
                         );
                       })
-                    ) : isCurrentUser() ? (
+                    ) : isCurrentUser ? (
                       <div className="w-full mt-24 flex items-center justify-center">
                         <div className="h-20 w-96 text-center flex flex-col items-center justify-center space-y-3">
                           <Link href="/create">

@@ -199,6 +199,12 @@ export type QueryPostsArgs = {
 };
 
 
+export type QuerySavedPostsArgs = {
+  cursor?: InputMaybe<Scalars['String']>;
+  take: Scalars['Int'];
+};
+
+
 export type QueryUserArgs = {
   id?: InputMaybe<Scalars['Int']>;
   username?: InputMaybe<Scalars['String']>;
@@ -330,10 +336,13 @@ export type PostsByUserQueryVariables = Exact<{
 
 export type PostsByUserQuery = { __typename?: 'Query', posts: { __typename?: 'PostsResponse', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: string, imageUrl: string, likeCount: number, commentCount: number }> } };
 
-export type SavedPostsQueryVariables = Exact<{ [key: string]: never; }>;
+export type SavedPostsQueryVariables = Exact<{
+  take: Scalars['Int'];
+  cursor?: InputMaybe<Scalars['String']>;
+}>;
 
 
-export type SavedPostsQuery = { __typename?: 'Query', savedPosts: { __typename?: 'PostsResponse', posts: Array<{ __typename?: 'Post', id: string, imageUrl: string, likeCount: number, commentCount: number }> } };
+export type SavedPostsQuery = { __typename?: 'Query', savedPosts: { __typename?: 'PostsResponse', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: string, imageUrl: string, likeCount: number, commentCount: number }> } };
 
 export type SuggestedUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -615,14 +624,15 @@ export function usePostsByUserQuery(options: Omit<Urql.UseQueryArgs<PostsByUserQ
   return Urql.useQuery<PostsByUserQuery>({ query: PostsByUserDocument, ...options });
 };
 export const SavedPostsDocument = gql`
-    query savedPosts {
-  savedPosts {
+    query savedPosts($take: Int!, $cursor: String) {
+  savedPosts(take: $take, cursor: $cursor) {
     posts {
       id
       imageUrl
       likeCount
       commentCount
     }
+    hasMore
   }
 }
     `;
@@ -672,7 +682,7 @@ export type GraphCacheResolvers = {
     feed?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<Activity> | string>>,
     post?: GraphCacheResolver<WithTypename<Query>, QueryPostArgs, WithTypename<Post> | string>,
     posts?: GraphCacheResolver<WithTypename<Query>, QueryPostsArgs, WithTypename<PostsResponse> | string>,
-    savedPosts?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<PostsResponse> | string>,
+    savedPosts?: GraphCacheResolver<WithTypename<Query>, QuerySavedPostsArgs, WithTypename<PostsResponse> | string>,
     currentUser?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<User> | string>,
     user?: GraphCacheResolver<WithTypename<Query>, QueryUserArgs, WithTypename<User> | string>,
     suggestedUsers?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<User> | string>>

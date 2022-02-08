@@ -3,14 +3,13 @@ import { urqlClient } from "../../urqlClient";
 import { ssrExchange, dedupExchange, cacheExchange, fetchExchange } from "urql";
 import {
   CurrentUserDocument,
-  PostsByUserDocument,
-  PostsByUserQuery,
   SavedPostsDocument,
   SavedPostsQuery,
+  SavedPostsQueryVariables,
   useCurrentUserQuery,
-  usePostsByUserQuery,
   UserDocument,
   UserQuery,
+  useSavedPostsQuery,
   useUserQuery,
 } from "../../graphql/generated/graphql";
 import PostPreview from "../../components/post/PostPreview";
@@ -19,13 +18,57 @@ import { useRouter } from "next/router";
 import NavBar from "../../components/NavBar";
 import Head from "next/head";
 import { Tab } from "@headlessui/react";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 import { BookmarkIcon, GridIcon } from "../../components/Icons";
+import { Waypoint } from "react-waypoint";
+
+interface PageProps {
+  variables: SavedPostsQueryVariables;
+  isLastPage: boolean;
+  loadMore: (cursor: string) => void;
+}
+
+function Page({ variables, isLastPage, loadMore }: PageProps) {
+  const [{ data, fetching }] = useSavedPostsQuery({
+    variables,
+  });
+
+  const posts = data?.savedPosts.posts;
+  const hasMore = data?.savedPosts.hasMore;
+
+  return fetching ? (
+    <div>loading</div>
+  ) : (
+    <div className="grid grid-cols-3 gap-1 md:gap-6 mt-1 md:mt-6">
+      {posts?.map((post) => (
+        <PostPreview key={post.id} post={post} />
+      ))}
+      {isLastPage && hasMore && (
+        // when this becomes visible on the screen, it loads more posts
+        <Waypoint
+          onEnter={() => {
+            if (posts) {
+              loadMore(
+                data.savedPosts.posts[data.savedPosts.posts.length - 1].id
+              );
+            }
+          }}
+        />
+      )}
+    </div>
+  );
+}
 
 type Props = {
   serverUser: UserQuery["user"];
   serverSavedPosts: SavedPostsQuery["savedPosts"]["posts"];
 };
+
+interface PageVariables {
+  take: number;
+  cursor?: string;
+}
+const take = 12;
 
 function SavedPosts({ serverUser, serverSavedPosts }: Props) {
   if (!serverUser || !serverSavedPosts) {
@@ -34,25 +77,20 @@ function SavedPosts({ serverUser, serverSavedPosts }: Props) {
 
   const router = useRouter();
 
-  const [{ data: userData }] = useUserQuery({
-    variables: {
-      username: serverUser.username,
-    },
-  });
-
   const [{ data: currentUserData }] = useCurrentUserQuery();
 
-  const user = userData?.user!;
-
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const [pageVariables, setPageVariables] = useState<PageVariables[]>([
+    {
+      take: take,
+    },
+  ]);
 
   return (
     <>
       <NavBar />
       <div className="flex flex-col items-center justify-center py-2">
         <Head>
-          <title>{user?.username}</title>
+          <title>{serverUser.username}</title>
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
@@ -61,8 +99,8 @@ function SavedPosts({ serverUser, serverSavedPosts }: Props) {
             <header className="flex">
               <img
                 src={
-                  user.avatarUrl
-                    ? user.avatarUrl
+                  serverUser.avatarUrl
+                    ? serverUser.avatarUrl
                     : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
                 }
                 draggable={false}
@@ -70,10 +108,14 @@ function SavedPosts({ serverUser, serverSavedPosts }: Props) {
               />
               <section aria-label="User information" className="flex-grow">
                 <div className="flex flex-col space-y-5">
-                  <h2 className="text-3xl pt-1 font-light">{user.username}</h2>
+                  <h2 className="text-3xl pt-1 font-light">
+                    {serverUser.username}
+                  </h2>
                   <span>
-                    <span className="font-semibold mr-1">{user.postCount}</span>
-                    {`post${user.postCount > 1 ? "s" : ""}`}
+                    <span className="font-semibold mr-1">
+                      {serverUser.postCount}
+                    </span>
+                    {`post${serverUser.postCount > 1 ? "s" : ""}`}
                   </span>
                 </div>
               </section>
@@ -83,7 +125,7 @@ function SavedPosts({ serverUser, serverSavedPosts }: Props) {
                 manual
                 defaultIndex={1}
                 onChange={(_index) => {
-                  router.push(`/${user.username}`);
+                  router.push(`/${serverUser.username}`);
                 }}
               >
                 {currentUserData && (
@@ -103,7 +145,7 @@ function SavedPosts({ serverUser, serverSavedPosts }: Props) {
                       )}
                     </Tab>
                     {currentUserData?.currentUser?.username ===
-                      userData?.user?.username && (
+                      serverUser.username && (
                       // if this is their profile, show the SAVED tab
                       <Tab as={Fragment}>
                         {({ selected }) => (
@@ -133,11 +175,21 @@ function SavedPosts({ serverUser, serverSavedPosts }: Props) {
                       </h4>
                     </div>
                     {serverSavedPosts && serverSavedPosts.length > 0 ? (
-                      <div className="grid grid-cols-3 gap-1 md:gap-6">
-                        {serverSavedPosts.map((post) => (
-                          <PostPreview key={post.id} post={post} />
-                        ))}
-                      </div>
+                      pageVariables.map((variables, index) => {
+                        return (
+                          <Page
+                            key={"key" + variables.cursor} // cursor is null for first page
+                            variables={variables}
+                            isLastPage={index === pageVariables.length - 1}
+                            loadMore={(cursor) =>
+                              setPageVariables([
+                                ...pageVariables,
+                                { take, cursor },
+                              ])
+                            }
+                          />
+                        );
+                      })
                     ) : (
                       <div className="w-full mt-24 flex items-center justify-center">
                         <div className="h-20 w-96 text-center flex flex-col items-center justify-center space-y-3">
@@ -201,7 +253,9 @@ export async function getServerSideProps({ req, params }: any) {
     // if this is the currentUsers profile
     // fetch their saved posts
     if (currentUserRes?.data.currentUser.username === params.username) {
-      const savedPostsRes = await client?.query(SavedPostsDocument).toPromise();
+      const savedPostsRes = await client
+        ?.query(SavedPostsDocument, { take: take })
+        .toPromise();
       savedPosts = savedPostsRes?.data.savedPosts.posts;
     }
   }
