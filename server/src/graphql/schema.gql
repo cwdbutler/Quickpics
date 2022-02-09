@@ -80,6 +80,7 @@ type CreateUserResponse {
 
 type Query {
   feed: [Activity!]!
+  comment(id: String!): Comment
   post(id: String!): Post
   posts(username: String, cursor: String, take: Int!): PostsResponse!
   savedPosts(cursor: String, take: Int!): PostsResponse!

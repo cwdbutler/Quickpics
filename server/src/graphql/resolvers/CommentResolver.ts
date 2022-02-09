@@ -4,6 +4,7 @@ import {
   FieldResolver,
   Int,
   Mutation,
+  Query,
   Resolver,
   Root,
   UseMiddleware,
@@ -73,6 +74,21 @@ export class CommentResolver {
     });
 
     return liked ? true : false;
+  }
+
+  @Query(() => Comment, { nullable: true })
+  comment(
+    @Arg("id", () => String) id: string,
+    @Ctx() { prisma }: Context
+  ): Promise<Comment> {
+    return prisma.comment.findUnique({
+      where: {
+        id: id,
+      },
+      include: {
+        author: true,
+      },
+    });
   }
 
   @Mutation(() => CreateCommentResponse)
