@@ -22,6 +22,7 @@ import { Fragment, useState } from "react";
 import { BookmarkIcon, GridIcon } from "../../components/Icons";
 import { Waypoint } from "react-waypoint";
 import Image from "next/image";
+import ProfilePicForm from "../../components/forms/ProfilePicForm";
 
 interface PageProps {
   variables: SavedPostsQueryVariables;
@@ -74,9 +75,15 @@ const take = 12;
 function SavedPosts({ serverUser, serverSavedPosts }: Props) {
   if (!serverUser || !serverSavedPosts) {
     return <ErrorPage />;
-  }
+  } // this isn't the current user's profile so they cannot access this
 
   const router = useRouter();
+
+  const [{ data }] = useUserQuery({
+    variables: {
+      username: serverUser.username,
+    },
+  });
 
   const [{ data: currentUserData }] = useCurrentUserQuery();
 
@@ -98,15 +105,8 @@ function SavedPosts({ serverUser, serverSavedPosts }: Props) {
         <div className="my-6 flex flex-col items-center w-full flex-1">
           <div className="w-full min-h-screen lg:w-[935px] flex flex-col">
             <header className="flex">
-              <div className="mx-20 select-none">
-                <Image
-                  width={150}
-                  height={150}
-                  src={
-                    serverUser.avatarUrl ? serverUser.avatarUrl : "/default.jpg"
-                  }
-                  className="rounded-full"
-                />
+              <div className="mx-20 select-none flex flex-col items-center relative">
+                <ProfilePicForm user={data?.user} />
               </div>
               <section aria-label="User information" className="flex-grow">
                 <div className="flex flex-col space-y-5">

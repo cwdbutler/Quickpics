@@ -133,11 +133,6 @@ export type MutationRemoveLikeArgs = {
 };
 
 
-export type MutationRemoveProfilePicArgs = {
-  file: Scalars['Upload'];
-};
-
-
 export type MutationRemoveSavedPostArgs = {
   id: Scalars['String'];
 };
@@ -304,6 +299,11 @@ export type RemoveLikeMutationVariables = Exact<{
 
 
 export type RemoveLikeMutation = { __typename?: 'Mutation', removeLike: boolean };
+
+export type RemoveProfilePicMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type RemoveProfilePicMutation = { __typename?: 'Mutation', removeProfilePic: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined } };
 
 export type RemoveSavedPostMutationVariables = Exact<{
   id: Scalars['String'];
@@ -551,6 +551,17 @@ export const RemoveLikeDocument = gql`
 export function useRemoveLikeMutation() {
   return Urql.useMutation<RemoveLikeMutation, RemoveLikeMutationVariables>(RemoveLikeDocument);
 };
+export const RemoveProfilePicDocument = gql`
+    mutation removeProfilePic {
+  removeProfilePic {
+    ...UserInfo
+  }
+}
+    ${UserInfoFragmentDoc}`;
+
+export function useRemoveProfilePicMutation() {
+  return Urql.useMutation<RemoveProfilePicMutation, RemoveProfilePicMutationVariables>(RemoveProfilePicDocument);
+};
 export const RemoveSavedPostDocument = gql`
     mutation removeSavedPost($id: String!) {
   removeSavedPost(id: $id)
@@ -795,7 +806,7 @@ export type GraphCacheOptimisticUpdaters = {
   login?: GraphCacheOptimisticMutationResolver<MutationLoginArgs, WithTypename<CreateUserResponse>>,
   logout?: GraphCacheOptimisticMutationResolver<Record<string, never>, Scalars['Boolean']>,
   updateProfilePic?: GraphCacheOptimisticMutationResolver<MutationUpdateProfilePicArgs, WithTypename<User>>,
-  removeProfilePic?: GraphCacheOptimisticMutationResolver<MutationRemoveProfilePicArgs, WithTypename<User>>
+  removeProfilePic?: GraphCacheOptimisticMutationResolver<Record<string, never>, WithTypename<User>>
 };
 
 export type GraphCacheUpdaters = {
@@ -814,7 +825,7 @@ export type GraphCacheUpdaters = {
     login?: GraphCacheUpdateResolver<{ login: WithTypename<CreateUserResponse> }, MutationLoginArgs>,
     logout?: GraphCacheUpdateResolver<{ logout: Scalars['Boolean'] }, Record<string, never>>,
     updateProfilePic?: GraphCacheUpdateResolver<{ updateProfilePic: WithTypename<User> }, MutationUpdateProfilePicArgs>,
-    removeProfilePic?: GraphCacheUpdateResolver<{ removeProfilePic: WithTypename<User> }, MutationRemoveProfilePicArgs>
+    removeProfilePic?: GraphCacheUpdateResolver<{ removeProfilePic: WithTypename<User> }, Record<string, never>>
   },
   Subscription?: {},
 };

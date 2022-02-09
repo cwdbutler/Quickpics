@@ -86,7 +86,7 @@ function UserProfile({ serverUser, serverPosts }: Props) {
 
   const [{ data: currentUserData }] = useCurrentUserQuery();
 
-  const isCurrentUser =
+  const isMyProfile =
     currentUserData?.currentUser?.username === serverUser.username;
 
   const [pageVariables, setPageVariables] = useState<PageVariables[]>([
@@ -108,7 +108,27 @@ function UserProfile({ serverUser, serverPosts }: Props) {
         <div className="my-6 flex flex-col items-center w-full flex-1">
           <div className="w-full min-h-screen lg:w-[935px] flex flex-col">
             <header className="flex">
-              <ProfilePicForm user={data?.user} />
+              <div className="mx-20 select-none flex flex-col items-center relative">
+                {isMyProfile ? (
+                  // i'm not sure which specific query makes the cache update but it works at the moment
+                  // i pass it the user query here as i think it updates everywhere it sees that User object
+                  <ProfilePicForm user={data?.user} />
+                ) : (
+                  <Image
+                    objectFit="cover"
+                    aria-label="Profile picture upload"
+                    width={150}
+                    height={150}
+                    priority
+                    src={
+                      serverUser.avatarUrl
+                        ? serverUser.avatarUrl
+                        : "/default.jpg"
+                    }
+                    className="rounded-full"
+                  />
+                )}
+              </div>
               <section aria-label="User information" className="flex-grow">
                 <div className="flex flex-col space-y-5">
                   <h2 className="text-3xl pt-1 font-light">
@@ -147,7 +167,7 @@ function UserProfile({ serverUser, serverPosts }: Props) {
                         </button>
                       )}
                     </Tab>
-                    {isCurrentUser && (
+                    {isMyProfile && (
                       // if this is their profile, show the SAVED tab
                       <Tab as={Fragment}>
                         {({ selected }) => (
@@ -184,7 +204,7 @@ function UserProfile({ serverUser, serverPosts }: Props) {
                           />
                         );
                       })
-                    ) : isCurrentUser ? (
+                    ) : isMyProfile ? (
                       <div className="w-full mt-24 flex items-center justify-center">
                         <div className="h-20 w-96 text-center flex flex-col items-center justify-center space-y-3">
                           <Link href="/create">
