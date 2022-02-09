@@ -510,6 +510,9 @@ export class PostResolver {
     let data;
     if (cursor) {
       data = await prisma.usersOnPosts.findMany({
+        where: {
+          userId: req.session.userId,
+        },
         cursor: {
           postId_userId: {
             postId: cursor,
@@ -518,7 +521,7 @@ export class PostResolver {
         },
         take: takePlusOne,
         skip: 1, // skips the cursor
-        select: {
+        include: {
           post: {
             include: {
               author: true,
@@ -534,9 +537,11 @@ export class PostResolver {
       });
     } else {
       data = await prisma.usersOnPosts.findMany({
+        where: {
+          userId: req.session.userId,
+        },
         take: takePlusOne,
-        skip: 1, // skips the cursor
-        select: {
+        include: {
           post: {
             include: {
               author: true,

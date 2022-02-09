@@ -363,6 +363,10 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
                   `,
                   { id: id, saved: true }
                 );
+
+                cache.invalidate("Query", "savedPosts", {
+                  take: 12,
+                });
               }
             },
             removeSavedPost: (result, args, cache, _info) => {
@@ -379,6 +383,10 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
                   `,
                   { id: id, saved: false }
                 );
+
+                cache.invalidate("Query", "savedPosts", {
+                  take: 12,
+                });
               }
             },
             deletePost: (result, args, cache, _info) => {
