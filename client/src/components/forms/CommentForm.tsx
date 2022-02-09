@@ -1,5 +1,5 @@
 import { Field, Form, Formik } from "formik";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   FeedPostFragment,
   PostQuery,
@@ -18,9 +18,15 @@ type Props = {
   currentUser: UserInfoFragment | null | undefined;
   post: FeedPostFragment | PostQuery["post"];
   iconStyles: string;
+  focusForm: number;
 };
 
-export default function CommentForm({ post, iconStyles, currentUser }: Props) {
+export default function CommentForm({
+  post,
+  iconStyles,
+  currentUser,
+  focusForm,
+}: Props) {
   if (!currentUser) {
     return (
       <div className="flex">
@@ -50,6 +56,12 @@ export default function CommentForm({ post, iconStyles, currentUser }: Props) {
   // hide the emoji menu if clicked outside
 
   const inputRef = useRef<any>();
+
+  useEffect(() => {
+    if (focusForm > 0) {
+      inputRef.current.focus();
+    }
+  }, [focusForm]);
 
   return (
     <Formik

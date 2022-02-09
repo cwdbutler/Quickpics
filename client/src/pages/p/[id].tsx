@@ -56,6 +56,8 @@ function Post({ serverPost }: Props) {
 
   const [likesOpen, setLikesOpen] = useState(false);
 
+  const [focusForm, setFocusForm] = useState(0);
+
   return !post ? null : (
     <>
       <NavBar />
@@ -152,6 +154,8 @@ function Post({ serverPost }: Props) {
                 <PostInteractionBar
                   post={post}
                   className="w-full flex px-1 pt-1 justify-between"
+                  focusForm={focusForm}
+                  setFocusForm={setFocusForm}
                 />
                 <div className="flex h-7 px-4">
                   {post.likeCount > 0 ? (
@@ -183,11 +187,12 @@ function Post({ serverPost }: Props) {
                 >
                   {timeSince(post.createdAt).toUpperCase()}
                 </time>
-                <section className="border-t-[1px] border-gray-300 hidden md:flex">
+                <section className="border-t-[1px] border-gray-300 flex border-b-[1px] md:border-b-0">
                   <CommentForm
                     currentUser={userData?.currentUser}
                     post={post}
                     iconStyles={styles.icon}
+                    focusForm={focusForm}
                   />
                 </section>
               </footer>
