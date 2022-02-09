@@ -300,6 +300,23 @@ export class UserResolver {
     @Arg("file", () => GraphQLUpload) file: FileUpload,
     @Ctx() { req, prisma }: Context
   ): Promise<User> {
+    const { avatarUrl } = await prisma.user.findUnique({
+      where: {
+        id: req.session.userId,
+      },
+      select: {
+        avatarUrl: true,
+      },
+    });
+
+    // delete the old image from s3
+    if (avatarUrl) {
+      const [key] = avatarUrl.match(/([^\/]+)(?=\.\w+$)/);
+      // gets the key from the S3 url
+      await deleteImage(key);
+      // delete from s3
+    }
+
     const result = await uploadFile(file, createId());
     // unique key each time for easier updates in front end
 
@@ -329,10 +346,7 @@ export class UserResolver {
 
     if (user.avatarUrl) {
       const [key] = user.avatarUrl.match(/([^\/]+)(?=\.\w+$)/);
-      // gets the key from the S3 url
-
       await deleteImage(key);
-      // delete from s3
     }
 
     return user;
