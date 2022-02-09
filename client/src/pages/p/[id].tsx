@@ -92,7 +92,7 @@ function Post({ serverPost }: Props) {
                         src={
                           post.author.avatarUrl
                             ? post.author.avatarUrl
-                            : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
+                            : "/default.jpg"
                         }
                         className="rounded-full"
                       />
@@ -122,7 +122,7 @@ function Post({ serverPost }: Props) {
                             src={
                               post.author.avatarUrl
                                 ? post.author.avatarUrl
-                                : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
+                                : "/default.jpg"
                             }
                             className="rounded-full"
                           />

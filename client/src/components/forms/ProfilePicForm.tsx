@@ -54,11 +54,7 @@ export default function ProfilePicForm({ user }: Props) {
         width={150}
         height={150}
         priority
-        src={
-          user?.avatarUrl
-            ? user.avatarUrl
-            : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
-        }
+        src={user?.avatarUrl ? user.avatarUrl : "/default.jpg"}
         className="rounded-full hover:cursor-pointer"
       />
       <h3 className="absolute text-center w-64 text-red-500 -bottom-8">

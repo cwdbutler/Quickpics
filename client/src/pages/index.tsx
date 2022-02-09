@@ -108,11 +108,7 @@ function Home() {
                         <Image
                           width={32}
                           height={32}
-                          src={
-                            user.avatarUrl
-                              ? user.avatarUrl
-                              : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
-                          }
+                          src={user.avatarUrl ? user.avatarUrl : "/default.jpg"}
                           className="rounded-full select-none flex-none"
                           draggable={false}
                         />

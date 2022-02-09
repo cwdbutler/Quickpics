@@ -36,7 +36,7 @@ export default function Comment({ comment, user }: Props) {
                 src={
                   comment.author.avatarUrl
                     ? comment.author.avatarUrl
-                    : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
+                    : "/default.jpg"
                 }
                 className="rounded-full"
               />

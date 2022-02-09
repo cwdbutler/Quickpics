@@ -103,9 +103,7 @@ function SavedPosts({ serverUser, serverSavedPosts }: Props) {
                   width={150}
                   height={150}
                   src={
-                    serverUser.avatarUrl
-                      ? serverUser.avatarUrl
-                      : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
+                    serverUser.avatarUrl ? serverUser.avatarUrl : "/default.jpg"
                   }
                   className="rounded-full"
                 />

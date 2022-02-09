@@ -24,11 +24,7 @@ export default function NavBarDropDown({ user }: Props) {
           objectFit="cover"
           width={28}
           height={28}
-          src={
-            user.avatarUrl
-              ? user.avatarUrl
-              : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
-          }
+          src={user.avatarUrl ? user.avatarUrl : "/default.jpg"}
           className={`${
             router.asPath.startsWith(`/${user.username}`) &&
             "border-solid border-[1px] border-black"

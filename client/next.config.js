@@ -4,9 +4,8 @@ module.exports = {
   images: {
     domains: [
       "quickpics-images.s3.eu-west-2.amazonaws.com",
-      "randomuser.me",
-      "upload.wikimedia.org",
-      "picsum.photos",
+      "randomuser.me", // seed data
+      "picsum.photos", // remove these in prod
     ],
   },
 };
