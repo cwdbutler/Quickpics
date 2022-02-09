@@ -22,6 +22,7 @@ import { ssrExchange, dedupExchange, cacheExchange, fetchExchange } from "urql";
 import PostPreview from "../../components/post/PostPreview";
 import Link from "next/link";
 import Image from "next/image";
+import LikesModal from "../../components/post/LikesModal";
 
 type Props = {
   serverPost: PostQuery["post"];
@@ -54,6 +55,8 @@ function Post({ serverPost }: Props) {
   const [open, setOpen] = useState(false);
 
   const [postTime, setPostTime] = useState("");
+
+  const [likesOpen, setLikesOpen] = useState(false);
 
   useEffect(() => {
     setPostTime(dayjs(serverPost.createdAt).format("ll"));
@@ -159,9 +162,20 @@ function Post({ serverPost }: Props) {
                 />
                 <div className="flex h-7 px-4">
                   {post.likeCount > 0 ? (
-                    <p className="font-semibold">
-                      {post.likeCount} {`like${post.likeCount > 1 ? "s" : ""}`}
-                    </p>
+                    <>
+                      <LikesModal
+                        entityId={post.id}
+                        likesOpen={likesOpen}
+                        setLikesOpen={setLikesOpen}
+                        type="post"
+                      />
+                      <button type="button" onClick={() => setLikesOpen(true)}>
+                        <h3 className="font-semibold">
+                          {post.likeCount}{" "}
+                          {`like${post.likeCount > 1 ? "s" : ""}`}
+                        </h3>
+                      </button>
+                    </>
                   ) : (
                     <span className="flex">
                       Be the first to

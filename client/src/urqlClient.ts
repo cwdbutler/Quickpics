@@ -284,13 +284,17 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
                     }
                   );
                 }
+                // invalidate the likes field (for the modal)
+                const key = {
+                  __typename: "Post",
+                  id: entityId,
+                };
 
-                // also invalide the post for the likes modal
                 cache
-                  .inspectFields("Query")
-                  .filter((field) => field.fieldName === "post")
+                  .inspectFields(key)
+                  .filter((field) => field.fieldName === "likes")
                   .forEach((field) => {
-                    cache.invalidate("Query", field.fieldName, field.arguments);
+                    cache.invalidate(key, field.fieldName, field.arguments);
                   });
               }
             },
@@ -355,11 +359,17 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
                   );
                 }
 
+                const key = {
+                  __typename: "Post",
+                  id: entityId,
+                };
+
                 cache
-                  .inspectFields("Query")
-                  .filter((field) => field.fieldName === "post")
+                  .inspectFields(key)
+                  .filter((field) => field.fieldName === "likes")
                   .forEach((field) => {
-                    cache.invalidate("Query", field.fieldName, field.arguments);
+                    console.log(field);
+                    cache.invalidate(key, field.fieldName, field.arguments);
                   });
               }
             },

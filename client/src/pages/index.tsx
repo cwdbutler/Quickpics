@@ -21,10 +21,9 @@ interface Props {
 }
 
 function Page({ variables, isLastPage, loadMore }: Props) {
-  const [{ data }] = useAllPostsQuery({
+  const [{ data, fetching }] = useAllPostsQuery({
     variables,
   });
-  // don't check for fetching because it is already fetched server side
 
   return (
     <main>
@@ -44,6 +43,8 @@ function Page({ variables, isLastPage, loadMore }: Props) {
             />
           )}
         </>
+      ) : fetching ? (
+        <div>Loading...</div>
       ) : (
         <div>no posts</div>
       )}

@@ -18,7 +18,7 @@ export default function NavBar() {
   const router = useRouter();
 
   return !mounted ? null : (
-    <nav className="bg-white sticky top-0 z-10 border-b-[1px] border-gray-300">
+    <nav className="bg-white sticky top-0 z-50 border-b-[1px] border-gray-300">
       <div className="max-w-[990px] mx-auto px-6">
         <div className="relative flex items-center justify-between h-14">
           <Link href="/">

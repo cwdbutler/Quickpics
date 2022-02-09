@@ -21,7 +21,9 @@ export default function PostInteractionBar({ post, className }: Props) {
   return (
     <section className={className}>
       <div className="flex">
-        <LikeButton entity={post} iconStyle={styles.dynamicIcon} />
+        <div>
+          <LikeButton entity={post} iconStyle={styles.dynamicIcon} />
+        </div>
         <Link href={`/p/${post.id}`}>
           <a>
             <CommentIcon className={styles.icon} />

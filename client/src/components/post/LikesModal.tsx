@@ -78,7 +78,10 @@ export default function LikesModal({
                     </div>
                   ) : (
                     data?.post?.likes.map((like) => (
-                      <div className="flex w-full items-center justify-between p-2">
+                      <div
+                        key={like.likedAt}
+                        className="flex w-full items-center justify-between p-2"
+                      >
                         <div className="flex items-center space-x-3">
                           <Link href={`/${like.author.username}`}>
                             <a>
