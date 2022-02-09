@@ -8,6 +8,7 @@ import {
   usePostsByUserQuery,
   UserDocument,
   UserQuery,
+  useUserQuery,
 } from "../../graphql/generated/graphql";
 import PostPreview from "../../components/post/PostPreview";
 import ErrorPage from "../404";
@@ -20,6 +21,7 @@ import { BookmarkIcon, GridIcon, PlusIcon } from "../../components/Icons";
 import Link from "next/link";
 import { Waypoint } from "react-waypoint";
 import Image from "next/image";
+import ProfilePicForm from "../../components/forms/ProfilePicForm";
 
 interface PageProps {
   variables: PostsByUserQueryVariables;
@@ -76,6 +78,12 @@ function UserProfile({ serverUser, serverPosts }: Props) {
 
   const router = useRouter();
 
+  const [{ data }] = useUserQuery({
+    variables: {
+      username: serverUser.username,
+    },
+  });
+
   const [{ data: currentUserData }] = useCurrentUserQuery();
 
   const isCurrentUser =
@@ -100,18 +108,7 @@ function UserProfile({ serverUser, serverPosts }: Props) {
         <div className="my-6 flex flex-col items-center w-full flex-1">
           <div className="w-full min-h-screen lg:w-[935px] flex flex-col">
             <header className="flex">
-              <div className="mx-20 select-none">
-                <Image
-                  width={150}
-                  height={150}
-                  src={
-                    serverUser.avatarUrl
-                      ? serverUser.avatarUrl
-                      : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
-                  }
-                  className="rounded-full"
-                />
-              </div>
+              <ProfilePicForm user={data?.user} />
               <section aria-label="User information" className="flex-grow">
                 <div className="flex flex-col space-y-5">
                   <h2 className="text-3xl pt-1 font-light">

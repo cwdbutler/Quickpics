@@ -41,7 +41,7 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
       cacheExchange<GraphCacheConfig>({
         keys: {
           PostsResponse: () => null,
-          User: () => null,
+          User: (user) => user.id || null,
           Like: () => null,
         }, // urql needs a key for each response, and returning null forces it to look at posts for one
         updates: {

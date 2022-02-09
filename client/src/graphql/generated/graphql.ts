@@ -79,10 +79,12 @@ export type Mutation = {
   logout: Scalars['Boolean'];
   register: CreateUserResponse;
   removeLike: Scalars['Boolean'];
+  removeProfilePic: User;
   removeSavedPost: Scalars['Boolean'];
   savePost: Scalars['Boolean'];
   updateComment: CreateCommentResponse;
   updatePost: CreatePostResponse;
+  updateProfilePic: User;
 };
 
 
@@ -131,6 +133,11 @@ export type MutationRemoveLikeArgs = {
 };
 
 
+export type MutationRemoveProfilePicArgs = {
+  file: Scalars['Upload'];
+};
+
+
 export type MutationRemoveSavedPostArgs = {
   id: Scalars['String'];
 };
@@ -150,6 +157,11 @@ export type MutationUpdateCommentArgs = {
 export type MutationUpdatePostArgs = {
   caption: Scalars['String'];
   id: Scalars['String'];
+};
+
+
+export type MutationUpdateProfilePicArgs = {
+  file: Scalars['Upload'];
 };
 
 export type Post = {
@@ -306,6 +318,13 @@ export type SavePostMutationVariables = Exact<{
 
 
 export type SavePostMutation = { __typename?: 'Mutation', savePost: boolean };
+
+export type UpdateProfilePicMutationVariables = Exact<{
+  file: Scalars['Upload'];
+}>;
+
+
+export type UpdateProfilePicMutation = { __typename?: 'Mutation', updateProfilePic: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined } };
 
 export type AllPostsQueryVariables = Exact<{
   take: Scalars['Int'];
@@ -550,6 +569,17 @@ export const SavePostDocument = gql`
 export function useSavePostMutation() {
   return Urql.useMutation<SavePostMutation, SavePostMutationVariables>(SavePostDocument);
 };
+export const UpdateProfilePicDocument = gql`
+    mutation updateProfilePic($file: Upload!) {
+  updateProfilePic(file: $file) {
+    ...UserInfo
+  }
+}
+    ${UserInfoFragmentDoc}`;
+
+export function useUpdateProfilePicMutation() {
+  return Urql.useMutation<UpdateProfilePicMutation, UpdateProfilePicMutationVariables>(UpdateProfilePicDocument);
+};
 export const AllPostsDocument = gql`
     query allPosts($take: Int!, $cursor: String) {
   posts(take: $take, cursor: $cursor) {
@@ -763,7 +793,9 @@ export type GraphCacheOptimisticUpdaters = {
   removeSavedPost?: GraphCacheOptimisticMutationResolver<MutationRemoveSavedPostArgs, Scalars['Boolean']>,
   register?: GraphCacheOptimisticMutationResolver<MutationRegisterArgs, WithTypename<CreateUserResponse>>,
   login?: GraphCacheOptimisticMutationResolver<MutationLoginArgs, WithTypename<CreateUserResponse>>,
-  logout?: GraphCacheOptimisticMutationResolver<Record<string, never>, Scalars['Boolean']>
+  logout?: GraphCacheOptimisticMutationResolver<Record<string, never>, Scalars['Boolean']>,
+  updateProfilePic?: GraphCacheOptimisticMutationResolver<MutationUpdateProfilePicArgs, WithTypename<User>>,
+  removeProfilePic?: GraphCacheOptimisticMutationResolver<MutationRemoveProfilePicArgs, WithTypename<User>>
 };
 
 export type GraphCacheUpdaters = {
@@ -780,7 +812,9 @@ export type GraphCacheUpdaters = {
     removeSavedPost?: GraphCacheUpdateResolver<{ removeSavedPost: Scalars['Boolean'] }, MutationRemoveSavedPostArgs>,
     register?: GraphCacheUpdateResolver<{ register: WithTypename<CreateUserResponse> }, MutationRegisterArgs>,
     login?: GraphCacheUpdateResolver<{ login: WithTypename<CreateUserResponse> }, MutationLoginArgs>,
-    logout?: GraphCacheUpdateResolver<{ logout: Scalars['Boolean'] }, Record<string, never>>
+    logout?: GraphCacheUpdateResolver<{ logout: Scalars['Boolean'] }, Record<string, never>>,
+    updateProfilePic?: GraphCacheUpdateResolver<{ updateProfilePic: WithTypename<User> }, MutationUpdateProfilePicArgs>,
+    removeProfilePic?: GraphCacheUpdateResolver<{ removeProfilePic: WithTypename<User> }, MutationRemoveProfilePicArgs>
   },
   Subscription?: {},
 };

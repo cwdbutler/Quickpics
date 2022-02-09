@@ -26,6 +26,11 @@ import {
   FORBIDDEN_USERNAMES,
 } from "../../utils/constants";
 import { checkNotAuthenticated } from "../../middleware/checkNotAuhenticated";
+import { FileUpload, GraphQLUpload } from "graphql-upload";
+import { checkAuthenticated } from "../../middleware/checkAuthenticated";
+import { uploadFile } from "../../utils/uploadFile";
+import { deleteImage } from "../..//utils/deleteImage";
+import { createId } from "../../utils/createId";
 
 @Resolver(User)
 export class UserResolver {
@@ -287,5 +292,49 @@ export class UserResolver {
     });
     res.clearCookie(COOKIE_NAME);
     return true;
+  }
+
+  @Mutation(() => User)
+  @UseMiddleware(checkAuthenticated)
+  async updateProfilePic(
+    @Arg("file", () => GraphQLUpload) file: FileUpload,
+    @Ctx() { req, prisma }: Context
+  ): Promise<User> {
+    const result = await uploadFile(file, createId());
+    // unique key each time for easier updates in front end
+
+    const user = await prisma.user.update({
+      where: {
+        id: req.session.userId,
+      },
+      data: {
+        avatarUrl: result.Location,
+      },
+    });
+
+    return user;
+  }
+
+  @Mutation(() => User)
+  @UseMiddleware(checkAuthenticated)
+  async removeProfilePic(
+    @Arg("file", () => GraphQLUpload) file: FileUpload,
+    @Ctx() { req, prisma }: Context
+  ): Promise<User> {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: req.session.userId,
+      },
+    });
+
+    if (user.avatarUrl) {
+      const [key] = user.avatarUrl.match(/([^\/]+)(?=\.\w+$)/);
+      // gets the key from the S3 url
+
+      await deleteImage(key);
+      // delete from s3
+    }
+
+    return user;
   }
 }
