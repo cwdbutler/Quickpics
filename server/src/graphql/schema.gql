@@ -105,7 +105,7 @@ type Mutation {
   login(password: String!, emailOrUsername: String!): CreateUserResponse!
   logout: Boolean!
   updateProfilePic(file: Upload!): User!
-  removeProfilePic(file: Upload!): User!
+  removeProfilePic: User!
 }
 
 """The `Upload` scalar type represents a file upload."""

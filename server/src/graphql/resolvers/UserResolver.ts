@@ -334,20 +334,29 @@ export class UserResolver {
 
   @Mutation(() => User)
   @UseMiddleware(checkAuthenticated)
-  async removeProfilePic(
-    @Arg("file", () => GraphQLUpload) file: FileUpload,
-    @Ctx() { req, prisma }: Context
-  ): Promise<User> {
-    const user = await prisma.user.findUnique({
+  async removeProfilePic(@Ctx() { req, prisma }: Context): Promise<User> {
+    const { avatarUrl } = await prisma.user.findUnique({
       where: {
         id: req.session.userId,
       },
+      select: {
+        avatarUrl: true,
+      },
     });
 
-    if (user.avatarUrl) {
-      const [key] = user.avatarUrl.match(/([^\/]+)(?=\.\w+$)/);
+    if (avatarUrl) {
+      const [key] = avatarUrl.match(/([^\/]+)(?=\.\w+$)/);
       await deleteImage(key);
     }
+
+    const user = await prisma.user.update({
+      where: {
+        id: req.session.userId,
+      },
+      data: {
+        avatarUrl: null,
+      },
+    });
 
     return user;
   }
