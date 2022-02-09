@@ -344,7 +344,14 @@ export type PostQueryVariables = Exact<{
 }>;
 
 
-export type PostQuery = { __typename?: 'Query', post?: { __typename?: 'Post', id: string, createdAt: any, imageUrl: string, caption?: string | null | undefined, saved: boolean, liked: boolean, likeCount: number, commentCount: number, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined }, likes: Array<{ __typename?: 'Like', likedAt: any, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined } }>, comments: Array<{ __typename?: 'Comment', id: string, text: string, liked: boolean, likeCount: number, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined } }> } | null | undefined };
+export type PostQuery = { __typename?: 'Query', post?: { __typename?: 'Post', id: string, createdAt: any, imageUrl: string, caption?: string | null | undefined, saved: boolean, liked: boolean, likeCount: number, commentCount: number, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined }, comments: Array<{ __typename?: 'Comment', id: string, text: string, liked: boolean, likeCount: number, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined } }> } | null | undefined };
+
+export type PostLikesQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type PostLikesQuery = { __typename?: 'Query', post?: { __typename?: 'Post', id: string, likes: Array<{ __typename?: 'Like', likedAt: any, author: { __typename?: 'User', username: string, avatarUrl?: string | null | undefined } }> } | null | undefined };
 
 export type PostsByUserQueryVariables = Exact<{
   take: Scalars['Int'];
@@ -629,12 +636,6 @@ export const PostDocument = gql`
     saved
     liked
     likeCount
-    likes {
-      likedAt
-      author {
-        ...UserInfo
-      }
-    }
     comments {
       ...CommentInfo
     }
@@ -646,6 +647,24 @@ ${CommentInfoFragmentDoc}`;
 
 export function usePostQuery(options: Omit<Urql.UseQueryArgs<PostQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<PostQuery>({ query: PostDocument, ...options });
+};
+export const PostLikesDocument = gql`
+    query postLikes($id: String!) {
+  post(id: $id) {
+    id
+    likes {
+      likedAt
+      author {
+        username
+        avatarUrl
+      }
+    }
+  }
+}
+    `;
+
+export function usePostLikesQuery(options: Omit<Urql.UseQueryArgs<PostLikesQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<PostLikesQuery>({ query: PostLikesDocument, ...options });
 };
 export const PostsByUserDocument = gql`
     query postsByUser($take: Int!, $cursor: String, $username: String!) {

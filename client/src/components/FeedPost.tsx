@@ -12,6 +12,7 @@ import LocalizedFormat from "dayjs/plugin/localizedFormat";
 import { useState } from "react";
 import PostActions from "./post/PostActions";
 import Image from "next/image";
+import LikesModal from "./post/LikesModal";
 
 type Props = {
   post: FeedPostFragment;
@@ -27,6 +28,7 @@ export default function FeedPost({ post }: Props) {
   const [{ data }] = useCurrentUserQuery();
 
   const [open, setOpen] = useState(false);
+  const [likesOpen, setLikesOpen] = useState(false);
 
   return (
     <>
@@ -79,9 +81,19 @@ export default function FeedPost({ post }: Props) {
         />
         <section className="flex flex-col items-start px-3 pb-3 leading-text space-y-1">
           {post.likeCount > 0 && (
-            <h3 className="font-semibold mb-1">
-              {post.likeCount} {`like${post.likeCount > 1 ? "s" : ""}`}
-            </h3>
+            <>
+              <LikesModal
+                entityId={post.id}
+                likesOpen={likesOpen}
+                setLikesOpen={setLikesOpen}
+                type="post"
+              />
+              <button type="button" onClick={() => setLikesOpen(true)}>
+                <h3 className="font-semibold mb-1">
+                  {post.likeCount} {`like${post.likeCount > 1 ? "s" : ""}`}
+                </h3>
+              </button>
+            </>
           )}
           {post.caption && (
             <span className="w-full text-left">

@@ -10,12 +10,6 @@ query post($id: String!) {
     saved
     liked
     likeCount
-    likes {
-      likedAt
-      author {
-        ...UserInfo
-      }
-    }
     comments {
       ...CommentInfo
     }

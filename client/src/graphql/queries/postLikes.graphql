@@ -1,0 +1,12 @@
+query postLikes($id: String!) {
+  post(id: $id) {
+    id
+    likes {
+      likedAt
+      author {
+        username
+        avatarUrl
+      }
+    }
+  }
+}

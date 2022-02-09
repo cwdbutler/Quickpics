@@ -284,6 +284,14 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
                     }
                   );
                 }
+
+                // also invalide the post for the likes modal
+                cache
+                  .inspectFields("Query")
+                  .filter((field) => field.fieldName === "post")
+                  .forEach((field) => {
+                    cache.invalidate("Query", field.fieldName, field.arguments);
+                  });
               }
             },
             removeLike: (result, args, cache, _info) => {
@@ -346,6 +354,13 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
                     }
                   );
                 }
+
+                cache
+                  .inspectFields("Query")
+                  .filter((field) => field.fieldName === "post")
+                  .forEach((field) => {
+                    cache.invalidate("Query", field.fieldName, field.arguments);
+                  });
               }
             },
             savePost: (result, args, cache, _info) => {
