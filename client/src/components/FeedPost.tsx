@@ -42,6 +42,7 @@ export default function FeedPost({ post }: Props) {
             <Link href={`/${post.author.username}`}>
               <a className="flex">
                 <Image
+                  objectFit="cover"
                   src={
                     post.author.avatarUrl
                       ? post.author.avatarUrl

@@ -30,6 +30,7 @@ export default function Comment({ comment, user }: Props) {
           <Link href={`/${comment.author.username}`}>
             <a>
               <Image
+                objectFit="cover"
                 width={32}
                 height={32}
                 src={

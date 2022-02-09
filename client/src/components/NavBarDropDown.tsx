@@ -21,6 +21,7 @@ export default function NavBarDropDown({ user }: Props) {
     <Popover className="relative">
       <Popover.Button className="flex items-center justify-center w-full p-0.5">
         <Image
+          objectFit="cover"
           width={28}
           height={28}
           src={

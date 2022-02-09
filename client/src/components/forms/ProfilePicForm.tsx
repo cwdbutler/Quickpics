@@ -48,13 +48,11 @@ export default function ProfilePicForm({ user }: Props) {
         }}
       />
       <Image
-        // key makes it update when the src changes
-        key={"img" + user?.avatarUrl}
+        objectFit="cover"
         aria-label="Profile picture upload"
         onClick={() => inputRef.current?.click()}
         width={150}
         height={150}
-        objectFit="cover"
         priority
         src={
           user?.avatarUrl
