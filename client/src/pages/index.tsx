@@ -105,45 +105,39 @@ function Home() {
               </h3>
               <ul className="space-y-4 pl-2">
                 {usersData?.suggestedUsers
-                  ?.map((user) => {
-                    if (currentUserData?.currentUser?.id !== user.id) {
-                      return (
-                        <li
-                          key={user.username}
-                          className="flex items-center w-72"
-                        >
-                          <Link href={`/${user.username}`}>
-                            <a className="mr-3 flex">
-                              <Image
-                                width={32}
-                                height={32}
-                                src={
-                                  user.avatarUrl
-                                    ? user.avatarUrl
-                                    : "/default.jpg"
-                                }
-                                className="rounded-full select-none flex-none"
-                                draggable={false}
-                              />
-                            </a>
-                          </Link>
-                          <Link href={`/${user.username}`}>
-                            <a>
-                              <h3 className="hover:underline w-full font-semibold text-m flex-initial">
-                                {user.username}
-                              </h3>
-                            </a>
-                          </Link>
-                          <Link href={`/${user.username}`}>
-                            <a className="text-blue text-xs font-semibold pr-2 ml-auto">
-                              View
-                            </a>
-                          </Link>
-                        </li>
-                      );
-                    }
-                  })
-                  .slice(0, 6)}
+                  ?.filter(
+                    (user) => currentUserData?.currentUser?.id !== user.id
+                  )
+                  .map((user) => (
+                    <li key={user.username} className="flex items-center w-72">
+                      <Link href={`/${user.username}`}>
+                        <a className="mr-3 flex">
+                          <Image
+                            width={32}
+                            height={32}
+                            src={
+                              user.avatarUrl ? user.avatarUrl : "/default.jpg"
+                            }
+                            className="rounded-full select-none flex-none"
+                            draggable={false}
+                          />
+                        </a>
+                      </Link>
+                      <Link href={`/${user.username}`}>
+                        <a>
+                          <h3 className="hover:underline w-full font-semibold text-m flex-initial">
+                            {user.username}
+                          </h3>
+                        </a>
+                      </Link>
+                      <Link href={`/${user.username}`}>
+                        <a className="text-blue text-xs font-semibold pr-2 ml-auto">
+                          View
+                        </a>
+                      </Link>
+                    </li>
+                  ))
+                  .slice(0, 5)}
               </ul>
             </div>
           </div>

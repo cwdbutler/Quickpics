@@ -197,15 +197,11 @@ function Post({ serverPost }: Props) {
                 </h5>
                 <div className="grid grid-cols-3 gap-1 md:gap-7">
                   {postsData?.posts.posts
-                    .map((userPost) => {
-                      if (userPost.id !== post.id) {
-                        // don't show a duplicate of the current post
-                        return (
-                          <PostPreview key={userPost.id} post={userPost} />
-                        );
-                      }
-                    })
-                    .slice(0, 7)}
+                    .filter((userPost) => userPost.id !== post.id)
+                    .map((userPost) => (
+                      <PostPreview key={userPost.id} post={userPost} />
+                    ))
+                    .slice(0, 6)}
                 </div>
               </>
             )}
