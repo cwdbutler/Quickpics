@@ -54,14 +54,7 @@ function Post({ serverPost }: Props) {
 
   const [open, setOpen] = useState(false);
 
-  const [postTime, setPostTime] = useState("");
-
   const [likesOpen, setLikesOpen] = useState(false);
-
-  useEffect(() => {
-    setPostTime(dayjs(serverPost.createdAt).format("ll"));
-  });
-  // server wasn't matching client
 
   return !post ? null : (
     <>
@@ -185,7 +178,7 @@ function Post({ serverPost }: Props) {
                 </div>
                 <time
                   dateTime={post.createdAt}
-                  title={postTime}
+                  title={dayjs(serverPost.createdAt).format("ll")}
                   className="text-gray-500 text-xxs flex items-center px-4 mb-4"
                 >
                   {timeSince(post.createdAt).toUpperCase()}
