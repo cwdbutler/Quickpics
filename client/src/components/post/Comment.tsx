@@ -11,6 +11,7 @@ import { useEffect, useMemo, useState } from "react";
 import CommentActions from "./CommentActions";
 import Link from "next/link";
 import Image from "next/image";
+import LikesModal from "./LikesModal";
 
 type Props = {
   comment: CommentInfoFragment;
@@ -21,6 +22,8 @@ export default function Comment({ comment, user }: Props) {
   dayjs.extend(LocalizedFormat);
 
   const [open, setOpen] = useState(false);
+
+  const [likesOpen, setLikesOpen] = useState(false);
 
   return (
     <li className="w-full flex">
@@ -65,9 +68,22 @@ export default function Comment({ comment, user }: Props) {
               {shortTimeSince(comment.createdAt)}
             </time>
             {comment.likeCount > 0 && (
-              <p className="font-medium">
-                {comment.likeCount} {`like${comment.likeCount > 1 ? "s" : ""}`}
-              </p>
+              <div>
+                <LikesModal
+                  entityId={comment.id}
+                  type="comment"
+                  likesOpen={likesOpen}
+                  setLikesOpen={setLikesOpen}
+                />
+                <button
+                  onClick={() => setLikesOpen(true)}
+                  type="button"
+                  className="font-medium p-0"
+                >
+                  {comment.likeCount}{" "}
+                  {`like${comment.likeCount > 1 ? "s" : ""}`}
+                </button>
+              </div>
             )}
             {user?.id === comment.author.id && (
               <button

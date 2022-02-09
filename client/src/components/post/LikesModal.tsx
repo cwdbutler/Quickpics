@@ -2,7 +2,10 @@ import { Dialog, Transition } from "@headlessui/react";
 import Image from "next/image";
 import Link from "next/link";
 import { Fragment, useState } from "react";
-import { usePostLikesQuery } from "../../graphql/generated/graphql";
+import {
+  useCommentLikesQuery,
+  usePostLikesQuery,
+} from "../../graphql/generated/graphql";
 import { XIcon } from "../Icons";
 
 type Props = {
@@ -16,14 +19,27 @@ export default function LikesModal({
   entityId,
   likesOpen,
   setLikesOpen,
+  type,
 }: Props) {
-  // doesn't run until the modal is open
-  const [{ data, fetching }] = usePostLikesQuery({
-    pause: !likesOpen,
-    variables: {
-      id: entityId,
-    },
-  });
+  let likes;
+  if (type === "post") {
+    const [{ data }] = usePostLikesQuery({
+      pause: !likesOpen,
+      variables: {
+        id: entityId,
+      },
+    });
+    likes = data?.post?.likes;
+  }
+  if (type === "comment") {
+    const [{ data }] = useCommentLikesQuery({
+      pause: !likesOpen,
+      variables: {
+        id: entityId,
+      },
+    });
+    likes = data?.comment?.likes;
+  }
 
   return (
     <Transition.Root show={likesOpen} as={Fragment}>
@@ -72,12 +88,12 @@ export default function LikesModal({
                   </button>
                 </div>
                 <div className="h-[352px] overflow-auto p-2">
-                  {fetching ? (
+                  {!likes ? (
                     <div className="w-full h-full flex items-center justify-center">
                       Loading...
                     </div>
                   ) : (
-                    data?.post?.likes.map((like) => (
+                    likes.map((like) => (
                       <div
                         key={like.likedAt}
                         className="flex w-full items-center justify-between p-2"
@@ -105,12 +121,14 @@ export default function LikesModal({
                             </a>
                           </Link>
                         </div>
-                        <button
-                          type="button"
-                          className="bg-blue text-m text-white px-2 py-1 rounded-m font-semibold"
-                        >
-                          View
-                        </button>
+                        <Link href={`/${like.author.username}`}>
+                          <button
+                            type="button"
+                            className="bg-blue text-m text-white px-2 py-1 rounded-m font-semibold"
+                          >
+                            View
+                          </button>
+                        </Link>
                       </div>
                     ))
                   )}

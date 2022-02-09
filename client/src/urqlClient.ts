@@ -285,16 +285,32 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
                   );
                 }
                 // invalidate the likes field (for the modal)
-                const key = {
+                const postKey = {
                   __typename: "Post",
                   id: entityId,
                 };
 
                 cache
-                  .inspectFields(key)
+                  .inspectFields(postKey)
                   .filter((field) => field.fieldName === "likes")
                   .forEach((field) => {
-                    cache.invalidate(key, field.fieldName, field.arguments);
+                    cache.invalidate(postKey, field.fieldName, field.arguments);
+                  });
+
+                const commentKey = {
+                  __typename: "Comment",
+                  id: entityId,
+                };
+
+                cache
+                  .inspectFields(commentKey)
+                  .filter((field) => field.fieldName === "likes")
+                  .forEach((field) => {
+                    cache.invalidate(
+                      commentKey,
+                      field.fieldName,
+                      field.arguments
+                    );
                   });
               }
             },
@@ -359,17 +375,32 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
                   );
                 }
 
-                const key = {
+                const postKey = {
                   __typename: "Post",
                   id: entityId,
                 };
 
                 cache
-                  .inspectFields(key)
+                  .inspectFields(postKey)
                   .filter((field) => field.fieldName === "likes")
                   .forEach((field) => {
-                    console.log(field);
-                    cache.invalidate(key, field.fieldName, field.arguments);
+                    cache.invalidate(postKey, field.fieldName, field.arguments);
+                  });
+
+                const commentKey = {
+                  __typename: "Comment",
+                  id: entityId,
+                };
+
+                cache
+                  .inspectFields(commentKey)
+                  .filter((field) => field.fieldName === "likes")
+                  .forEach((field) => {
+                    cache.invalidate(
+                      commentKey,
+                      field.fieldName,
+                      field.arguments
+                    );
                   });
               }
             },

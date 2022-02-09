@@ -1,0 +1,12 @@
+query commentLikes($id: String!) {
+  comment(id: $id) {
+    id
+    likes {
+      likedAt
+      author {
+        username
+        avatarUrl
+      }
+    }
+  }
+}

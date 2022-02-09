@@ -184,6 +184,7 @@ export type PostsResponse = {
 
 export type Query = {
   __typename?: 'Query';
+  comment?: Maybe<Comment>;
   currentUser?: Maybe<User>;
   feed: Array<Activity>;
   post?: Maybe<Post>;
@@ -191,6 +192,11 @@ export type Query = {
   savedPosts: PostsResponse;
   suggestedUsers?: Maybe<Array<User>>;
   user?: Maybe<User>;
+};
+
+
+export type QueryCommentArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -333,6 +339,13 @@ export type AllPostsQueryVariables = Exact<{
 
 
 export type AllPostsQuery = { __typename?: 'Query', posts: { __typename?: 'PostsResponse', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: string, createdAt: any, imageUrl: string, caption?: string | null | undefined, saved: boolean, liked: boolean, likeCount: number, commentCount: number, author: { __typename?: 'User', id: string, username: string, avatarUrl?: string | null | undefined }, commentsPreview: Array<{ __typename?: 'Comment', id: string, text: string, author: { __typename?: 'User', username: string } }> }> } };
+
+export type CommentLikesQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type CommentLikesQuery = { __typename?: 'Query', comment?: { __typename?: 'Comment', id: string, likes: Array<{ __typename?: 'Like', likedAt: any, author: { __typename?: 'User', username: string, avatarUrl?: string | null | undefined } }> } | null | undefined };
 
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -612,6 +625,24 @@ export const AllPostsDocument = gql`
 export function useAllPostsQuery(options: Omit<Urql.UseQueryArgs<AllPostsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<AllPostsQuery>({ query: AllPostsDocument, ...options });
 };
+export const CommentLikesDocument = gql`
+    query commentLikes($id: String!) {
+  comment(id: $id) {
+    id
+    likes {
+      likedAt
+      author {
+        username
+        avatarUrl
+      }
+    }
+  }
+}
+    `;
+
+export function useCommentLikesQuery(options: Omit<Urql.UseQueryArgs<CommentLikesQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<CommentLikesQuery>({ query: CommentLikesDocument, ...options });
+};
 export const CurrentUserDocument = gql`
     query currentUser {
   currentUser {
@@ -740,6 +771,7 @@ export type GraphCacheKeysConfig = {
 export type GraphCacheResolvers = {
   Query?: {
     feed?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<Activity> | string>>,
+    comment?: GraphCacheResolver<WithTypename<Query>, QueryCommentArgs, WithTypename<Comment> | string>,
     post?: GraphCacheResolver<WithTypename<Query>, QueryPostArgs, WithTypename<Post> | string>,
     posts?: GraphCacheResolver<WithTypename<Query>, QueryPostsArgs, WithTypename<PostsResponse> | string>,
     savedPosts?: GraphCacheResolver<WithTypename<Query>, QuerySavedPostsArgs, WithTypename<PostsResponse> | string>,
