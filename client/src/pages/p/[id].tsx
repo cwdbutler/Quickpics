@@ -205,7 +205,7 @@ function Post({ serverPost }: Props) {
                         );
                       }
                     })
-                    .slice(0, 6)}
+                    .slice(0, 7)}
                 </div>
               </>
             )}

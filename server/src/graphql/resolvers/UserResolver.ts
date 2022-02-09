@@ -106,7 +106,7 @@ export class UserResolver {
           _count: "desc",
         },
       },
-      take: 5,
+      take: 6,
     });
 
     return usersWithCount;
