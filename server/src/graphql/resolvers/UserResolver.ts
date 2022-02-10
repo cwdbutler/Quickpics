@@ -25,6 +25,8 @@ import {
   FORBIDDEN_USERNAME,
   FORBIDDEN_USERNAMES,
   MIN_USERNAME_LENGTH,
+  INVALID_EMAIL,
+  BAD_PASSWORD,
 } from "../../utils/constants";
 import { checkNotAuthenticated } from "../../middleware/checkNotAuhenticated";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
@@ -81,7 +83,7 @@ export class UserResolver {
     @Ctx() { prisma }: Context
   ): Promise<User> {
     if (!id && !username) {
-      throw new Error("You must specify an id or username.");
+      throw new Error("You must specify an id or username");
     }
     return prisma.user.findUnique({
       where: {
@@ -175,6 +177,21 @@ export class UserResolver {
       };
     }
 
+    // regex from http://emailregex.com/
+    if (
+      !email.match(
+        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      )
+    ) {
+      return {
+        errors: [
+          {
+            field: "email",
+            message: INVALID_EMAIL,
+          },
+        ],
+      };
+    }
     // i don't just create the user and catch the errors here because it won't be case insensitive
     const existingEmail = await prisma.user.count({
       where: {
@@ -256,8 +273,8 @@ export class UserResolver {
       return {
         errors: [
           {
-            field: "username",
-            message: BAD_CREDENTIALS("username"),
+            field: "emailOrUsername",
+            message: BAD_CREDENTIALS,
           },
         ],
       };
@@ -270,7 +287,7 @@ export class UserResolver {
         errors: [
           {
             field: "password",
-            message: BAD_CREDENTIALS("password"),
+            message: BAD_PASSWORD,
           },
         ],
       };
