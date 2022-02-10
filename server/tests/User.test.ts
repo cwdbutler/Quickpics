@@ -354,7 +354,7 @@ describe("Users", () => {
             login: {
               errors: [
                 {
-                  field: "username",
+                  field: "emailOrUsername",
                   message: "Invalid username or email",
                 },
               ],

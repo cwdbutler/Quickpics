@@ -10,6 +10,7 @@
     "lint": "eslint . --ext .ts",
     "test": "jest --verbose",
     "test:user": "jest User.test.ts",
+    "test:post": "jest Post.test.ts",
     "prisma:deploy": "npx prisma migrate deploy"
   },
   "prisma": {

@@ -76,6 +76,7 @@ describe("Posts", () => {
               posts {
                 id
                 caption
+                imageUrl
               }
             }
           }
@@ -86,10 +87,11 @@ describe("Posts", () => {
       });
 
       expect(res.errors).toBeUndefined();
+      console.log(res.data.posts.posts);
       // testing behaviour not state; the order is not important
-      expect(res.data.posts).toContainEqual(mockPost1);
-      expect(res.data.posts).toContainEqual(mockPost2);
-      expect(res.data.posts).toContainEqual(mockPost3);
+      expect(res.data.posts.posts).toContainEqual(mockPost1);
+      expect(res.data.posts.posts).toContainEqual(mockPost2);
+      expect(res.data.posts.posts).toContainEqual(mockPost3);
     });
 
     test("creating a post", async () => {
