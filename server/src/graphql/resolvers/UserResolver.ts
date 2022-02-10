@@ -24,6 +24,7 @@ import {
   TOO_SHORT,
   FORBIDDEN_USERNAME,
   FORBIDDEN_USERNAMES,
+  MIN_USERNAME_LENGTH,
 } from "../../utils/constants";
 import { checkNotAuthenticated } from "../../middleware/checkNotAuhenticated";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
@@ -119,12 +120,12 @@ export class UserResolver {
     @Arg("password") password: string,
     @Ctx() { prisma, req }
   ): Promise<CreateUserResponse> {
-    if (username.length < 1) {
+    if (username.length < MIN_USERNAME_LENGTH) {
       return {
         errors: [
           {
             field: "username",
-            message: TOO_SHORT("username"),
+            message: TOO_SHORT(MIN_USERNAME_LENGTH.toString()),
           },
         ],
       };
@@ -168,7 +169,7 @@ export class UserResolver {
         errors: [
           {
             field: "password",
-            message: TOO_SHORT("password"),
+            message: TOO_SHORT(MIN_FIELD_LENGTH.toString()),
           },
         ],
       };
@@ -184,6 +185,7 @@ export class UserResolver {
         // Prisma workaround
       },
     });
+
     if (existingEmail > 0) {
       return {
         errors: [

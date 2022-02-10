@@ -4,7 +4,8 @@ import { prisma } from "../src/context";
 import faker from "faker";
 
 const mockUser = {
-  username: "testuser", // not randomised because need to test case insensitive
+  username: "testUser", // not randomised because need to test case insensitive
+  email: "test@example.com",
   password: faker.random.alphaNumeric(5),
 };
 
@@ -39,8 +40,16 @@ describe("Users", () => {
 
         const res = await server.executeOperation({
           query: gql`
-            mutation register($username: String!, $password: String!) {
-              register(username: $username, password: $password) {
+            mutation register(
+              $username: String!
+              $email: String!
+              $password: String!
+            ) {
+              register(
+                username: $username
+                email: $email
+                password: $password
+              ) {
                 user {
                   id
                   username
@@ -54,6 +63,7 @@ describe("Users", () => {
           `,
           variables: {
             username: mockUser.username,
+            email: mockUser.email,
             password: mockUser.password,
           },
         });
@@ -84,8 +94,16 @@ describe("Users", () => {
 
           const res = await server.executeOperation({
             query: gql`
-              mutation register($username: String!, $password: String!) {
-                register(username: $username, password: $password) {
+              mutation register(
+                $username: String!
+                $email: String!
+                $password: String!
+              ) {
+                register(
+                  username: $username
+                  email: $email
+                  password: $password
+                ) {
                   user {
                     id
                     username
@@ -99,6 +117,7 @@ describe("Users", () => {
             `,
             variables: {
               username: "tEsTuSeR",
+              email: "nottaken@example.com",
               password: mockUser.password,
             },
           });
@@ -117,13 +136,21 @@ describe("Users", () => {
           });
         });
 
-        test("username too short", async () => {
+        test("username empty", async () => {
           const { server } = await startTestServer();
 
           const res = await server.executeOperation({
             query: gql`
-              mutation register($username: String!, $password: String!) {
-                register(username: $username, password: $password) {
+              mutation register(
+                $username: String!
+                $email: String!
+                $password: String!
+              ) {
+                register(
+                  username: $username
+                  email: $email
+                  password: $password
+                ) {
                   user {
                     id
                     username
@@ -136,7 +163,8 @@ describe("Users", () => {
               }
             `,
             variables: {
-              username: faker.random.alphaNumeric(2),
+              username: "",
+              email: "nottaken@example.com",
               password: mockUser.password,
             },
           });
@@ -147,7 +175,7 @@ describe("Users", () => {
               errors: [
                 {
                   field: "username",
-                  message: "Your username must be at least 3 characters long",
+                  message: "Must be at least 1 characters long",
                 },
               ],
               user: null,
@@ -160,8 +188,16 @@ describe("Users", () => {
 
           const res = await server.executeOperation({
             query: gql`
-              mutation register($username: String!, $password: String!) {
-                register(username: $username, password: $password) {
+              mutation register(
+                $username: String!
+                $email: String!
+                $password: String!
+              ) {
+                register(
+                  username: $username
+                  email: $email
+                  password: $password
+                ) {
                   user {
                     id
                     username
@@ -175,6 +211,7 @@ describe("Users", () => {
             `,
             variables: {
               username: faker.random.alphaNumeric(31),
+              email: "nottaken@example.com",
               password: "irrelevant",
             },
           });
@@ -199,8 +236,16 @@ describe("Users", () => {
 
           const res = await server.executeOperation({
             query: gql`
-              mutation register($username: String!, $password: String!) {
-                register(username: $username, password: $password) {
+              mutation register(
+                $username: String!
+                $email: String!
+                $password: String!
+              ) {
+                register(
+                  username: $username
+                  email: $email
+                  password: $password
+                ) {
                   user {
                     id
                     username
@@ -214,6 +259,7 @@ describe("Users", () => {
             `,
             variables: {
               username: faker.random.alphaNumeric(5),
+              email: "nottaken@example.com",
               password: faker.internet.password(2),
             },
           });
@@ -224,7 +270,7 @@ describe("Users", () => {
               errors: [
                 {
                   field: "password",
-                  message: "Your password must be at least 3 characters long",
+                  message: "Must be at least 3 characters long",
                 },
               ],
               user: null,
@@ -240,8 +286,8 @@ describe("Users", () => {
 
         const res = await server.executeOperation({
           query: gql`
-            mutation login($username: String!, $password: String!) {
-              login(username: $username, password: $password) {
+            mutation login($emailOrUsername: String!, $password: String!) {
+              login(emailOrUsername: $emailOrUsername, password: $password) {
                 user {
                   username
                 }
@@ -253,7 +299,7 @@ describe("Users", () => {
             }
           `,
           variables: {
-            username: mockUser.username,
+            emailOrUsername: mockUser.username,
             password: mockUser.password,
           },
         });
@@ -275,8 +321,8 @@ describe("Users", () => {
 
           const res = await server.executeOperation({
             query: gql`
-              mutation login($username: String!, $password: String!) {
-                login(username: $username, password: $password) {
+              mutation login($emailOrUsername: String!, $password: String!) {
+                login(emailOrUsername: $emailOrUsername, password: $password) {
                   user {
                     username
                   }
@@ -288,7 +334,7 @@ describe("Users", () => {
               }
             `,
             variables: {
-              username: "nonexistentusername",
+              emailOrUsername: "nonexistentusername",
               password: mockUser.password,
             },
           });
@@ -312,8 +358,8 @@ describe("Users", () => {
 
           const res = await server.executeOperation({
             query: gql`
-              mutation login($username: String!, $password: String!) {
-                login(username: $username, password: $password) {
+              mutation login($emailOrUsername: String!, $password: String!) {
+                login(emailOrUsername: $emailOrUsername, password: $password) {
                   user {
                     username
                   }
@@ -325,7 +371,7 @@ describe("Users", () => {
               }
             `,
             variables: {
-              username: mockUser.username,
+              emailOrUsername: mockUser.username,
               password: "wrongpassword",
             },
           });
@@ -408,8 +454,8 @@ describe("Users", () => {
       // correct details
       const res = await server.executeOperation({
         query: gql`
-          mutation login($username: String!, $password: String!) {
-            login(username: $username, password: $password) {
+          mutation login($emailOrUsername: String!, $password: String!) {
+            login(emailOrUsername: $emailOrUsername, password: $password) {
               user {
                 username
               }
@@ -421,7 +467,7 @@ describe("Users", () => {
           }
         `,
         variables: {
-          username: mockUser.username,
+          emailOrUsername: mockUser.username,
           password: mockUser.password,
         },
       });

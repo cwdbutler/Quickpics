@@ -8,20 +8,24 @@ import faker from "faker";
 const mockPost1 = {
   id: createId(),
   caption: faker.lorem.sentence(5),
+  imageUrl: "post1.jpg",
 };
 const mockPost2 = {
   id: createId(),
   caption: faker.lorem.sentence(5),
+  imageUrl: "post1.jpg",
 };
 const mockPost3 = {
   id: createId(),
   caption: faker.lorem.sentence(5),
+  imageUrl: "post1.jpg",
 };
 
 beforeAll(async () => {
   await prisma.user.create({
     data: {
       username: "testuser",
+      email: "test@example.com",
       passwordHash: "notrelevantforthistest",
       posts: {
         create: [mockPost1, mockPost2, mockPost3],
@@ -67,20 +71,25 @@ describe("Posts", () => {
 
       const res = await server.executeOperation({
         query: gql`
-          query {
-            allPosts {
-              id
-              caption
+          query ($take: Int!) {
+            posts(take: $take) {
+              posts {
+                id
+                caption
+              }
             }
           }
         `,
+        variables: {
+          take: 3,
+        },
       });
 
       expect(res.errors).toBeUndefined();
       // testing behaviour not state; the order is not important
-      expect(res.data.allPosts).toContainEqual(mockPost1);
-      expect(res.data.allPosts).toContainEqual(mockPost2);
-      expect(res.data.allPosts).toContainEqual(mockPost3);
+      expect(res.data.posts).toContainEqual(mockPost1);
+      expect(res.data.posts).toContainEqual(mockPost2);
+      expect(res.data.posts).toContainEqual(mockPost3);
     });
 
     test("creating a post", async () => {
