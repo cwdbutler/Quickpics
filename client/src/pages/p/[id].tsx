@@ -68,9 +68,9 @@ function Post({ serverPost }: Props) {
         user={userData?.currentUser}
       />
       <div className="flex w-full pr-[16px] sm:pr-0  items-center justify-center pt-12">
-        <div className="flex h-full bg-white md:bg-background flex-col items-center w-full md:w-[935px]">
-          <article className="md:h-[600px] w-full border-t-[1px] md:border-[1px] flex flex-col md:flex-row text-m border-gray-300 bg-white">
-            <div className="w-full flex-shrink-0 md:w-[600px]">
+        <div className="flex h-full bg-white md:bg-background flex-col items-center w-full md:w-[735px] lg:w-[935px]">
+          <article className="md:h-[400px] lg:h-[600px] w-full border-t-[1px] md:border-[1px] flex flex-col md:flex-row text-m border-gray-300 bg-white">
+            <div className="w-full md:w-[400px] lg:w-[600px]">
               <Image
                 src={post.imageUrl}
                 layout="responsive"
@@ -187,7 +187,7 @@ function Post({ serverPost }: Props) {
                 >
                   {timeSince(post.createdAt).toUpperCase()}
                 </time>
-                <section className="border-t-[1px] border-gray-300 flex border-b-[1px] md:border-b-0">
+                <section className="border-t-[1px] border-gray-300 flex">
                   <CommentForm
                     currentUser={userData?.currentUser}
                     post={post}
