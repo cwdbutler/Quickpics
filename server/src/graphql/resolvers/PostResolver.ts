@@ -432,10 +432,13 @@ export class PostResolver {
     }
 
     // check if saved by this user already
-    const [alreadySaved] = await prisma.usersOnPosts.findMany({
+    // should really improve this and just wrap the create in a try catch
+    const alreadySaved = await prisma.usersOnPosts.findUnique({
       where: {
-        postId: id,
-        userId: req.session.userId,
+        postId_userId: {
+          postId: id,
+          userId: req.session.userId,
+        },
       },
     });
 
@@ -443,7 +446,6 @@ export class PostResolver {
       return false;
     }
 
-    // create a like in Like table
     const savedPost = await prisma.usersOnPosts.create({
       data: {
         postId: id,
@@ -474,10 +476,12 @@ export class PostResolver {
     }
 
     // check if saved by this user already
-    const [alreadySaved] = await prisma.usersOnPosts.findMany({
+    const alreadySaved = await prisma.usersOnPosts.findUnique({
       where: {
-        postId: id,
-        userId: req.session.userId,
+        postId_userId: {
+          postId: id,
+          userId: req.session.userId,
+        },
       },
     });
 
@@ -485,7 +489,7 @@ export class PostResolver {
       return false;
     }
 
-    // create a like in Like table
+    // again, should try catch this
     const deletedSavedPost = await prisma.usersOnPosts.deleteMany({
       where: {
         postId: id,

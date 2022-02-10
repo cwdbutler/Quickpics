@@ -5,7 +5,7 @@ import faker from "faker";
 import { createId } from "../src/utils/createId";
 import { FORBIDDEN_USERNAMES } from "../src/utils/constants";
 
-const mockUser = {
+const testUser = {
   username: "testUser", // not randomised because need to test case insensitive
   email: "test@example.com",
   password: faker.random.alphaNumeric(5),
@@ -58,15 +58,15 @@ describe("Users", () => {
         const res = await server.executeOperation({
           query: registerMutation,
           variables: {
-            username: mockUser.username,
-            email: mockUser.email,
-            password: mockUser.password,
+            username: testUser.username,
+            email: testUser.email,
+            password: testUser.password,
           },
         });
 
         const dbUser = await prisma.user.findUnique({
           where: {
-            username: mockUser.username,
+            username: testUser.username,
           },
         });
 
@@ -78,7 +78,7 @@ describe("Users", () => {
             errors: null,
             user: {
               id: `${dbUser.id}`,
-              username: mockUser.username,
+              username: testUser.username,
             },
           },
         });
@@ -93,7 +93,7 @@ describe("Users", () => {
             variables: {
               username: faker.random.alphaNumeric(5),
               email: "notanemail", // can't possibly test every invalid email string, just testing an error is returned when the regex matches
-              password: mockUser.password,
+              password: testUser.password,
             },
           });
 
@@ -118,8 +118,8 @@ describe("Users", () => {
             query: registerMutation,
             variables: {
               username: faker.random.alphaNumeric(5),
-              email: mockUser.email,
-              password: mockUser.password,
+              email: testUser.email,
+              password: testUser.password,
             },
           });
 
@@ -145,7 +145,7 @@ describe("Users", () => {
             variables: {
               username: "tEsTuSeR",
               email: "nottaken@example.com",
-              password: mockUser.password,
+              password: testUser.password,
             },
           });
 
@@ -171,7 +171,7 @@ describe("Users", () => {
             variables: {
               username: "",
               email: "nottaken@example.com",
-              password: mockUser.password,
+              password: testUser.password,
             },
           });
 
@@ -197,7 +197,7 @@ describe("Users", () => {
             variables: {
               username: "!£$%^&*()_+}{][-=~@#'?></.,|",
               email: "nottaken@example.com",
-              password: mockUser.password,
+              password: testUser.password,
             },
           });
 
@@ -320,8 +320,8 @@ describe("Users", () => {
         const res = await server.executeOperation({
           query: loginMutation,
           variables: {
-            emailOrUsername: mockUser.username,
-            password: mockUser.password,
+            emailOrUsername: testUser.username,
+            password: testUser.password,
           },
         });
 
@@ -329,7 +329,7 @@ describe("Users", () => {
         expect(res.data).toMatchObject({
           login: {
             user: {
-              username: mockUser.username,
+              username: testUser.username,
             },
             errors: null,
           },
@@ -345,7 +345,7 @@ describe("Users", () => {
             query: loginMutation,
             variables: {
               emailOrUsername: "nonexistentusername",
-              password: mockUser.password,
+              password: testUser.password,
             },
           });
 
@@ -369,7 +369,7 @@ describe("Users", () => {
           const res = await server.executeOperation({
             query: loginMutation,
             variables: {
-              emailOrUsername: mockUser.username,
+              emailOrUsername: testUser.username,
               password: "wrongpassword",
             },
           });
@@ -432,7 +432,7 @@ describe("Users", () => {
       expect(res.data).toMatchObject({
         user: {
           id: "1",
-          email: mockUser.email, // you can see your own email
+          email: testUser.email, // you can see your own email
           postCount: 0,
         },
       });
@@ -486,8 +486,8 @@ describe("Users", () => {
           }
         `,
         variables: {
-          emailOrUsername: mockUser.username,
-          password: mockUser.password,
+          emailOrUsername: testUser.username,
+          password: testUser.password,
         },
       });
 

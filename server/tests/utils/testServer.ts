@@ -2,13 +2,16 @@ import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import "reflect-metadata";
 import path from "path";
-import { Context, prisma } from "../../src/context";
+import { PrismaClient } from "@prisma/client";
 
 interface MockUser {
   user?: {
     id: number;
   };
 }
+
+// no query logging
+const prisma = new PrismaClient();
 
 export const startTestServer = async ({ user }: MockUser = {}) => {
   const server = new ApolloServer({
