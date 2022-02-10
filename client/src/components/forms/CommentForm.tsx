@@ -59,6 +59,7 @@ export default function CommentForm({
 
   useEffect(() => {
     if (focusForm > 0) {
+      // avoid focus on mount
       inputRef.current.focus();
     }
   }, [focusForm]);

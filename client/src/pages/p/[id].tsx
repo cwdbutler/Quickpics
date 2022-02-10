@@ -67,7 +67,7 @@ function Post({ serverPost }: Props) {
         post={post}
         user={userData?.currentUser}
       />
-      <div className="flex w-full items-center justify-center pt-12">
+      <div className="flex w-full pr-[16px] sm:pr-0  items-center justify-center pt-12">
         <div className="flex h-full bg-white md:bg-background flex-col items-center w-full md:w-[935px]">
           <article className="md:h-[600px] w-full border-t-[1px] md:border-[1px] flex flex-col md:flex-row text-m border-gray-300 bg-white">
             <div className="w-full flex-shrink-0 md:w-[600px]">

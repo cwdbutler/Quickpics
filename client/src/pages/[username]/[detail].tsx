@@ -96,7 +96,7 @@ function SavedPosts({ serverUser, serverSavedPosts }: Props) {
   return (
     <>
       <NavBar />
-      <div className="flex flex-col items-center justify-center py-2">
+      <div className="flex flex-col pr-[16px] lg:pr-0 items-center justify-center py-2">
         <Head>
           <title>{serverUser.username}</title>
           <link rel="icon" href="/favicon.ico" />
