@@ -18,6 +18,13 @@ The javascript `Date` as string. Type represents date and time as the ISO Date s
 """
 scalar DateTime
 
+type Like {
+  id: ID!
+  likedAt: DateTime!
+  entityId: String!
+  author: User!
+}
+
 type Comment {
   id: ID!
   createdAt: DateTime!
@@ -28,6 +35,16 @@ type Comment {
   likes: [Like!]!
   likeCount: Int!
   liked: Boolean!
+}
+
+type FieldError {
+  field: String!
+  message: String!
+}
+
+type CreateCommentResponse {
+  errors: [FieldError!]
+  comment: Comment
 }
 
 type Post {
@@ -46,23 +63,6 @@ type Post {
   commentCount: Int!
 }
 
-type Like {
-  id: ID!
-  likedAt: DateTime!
-  entityId: String!
-  author: User!
-}
-
-type FieldError {
-  field: String!
-  message: String!
-}
-
-type CreateCommentResponse {
-  errors: [FieldError!]
-  comment: Comment
-}
-
 type CreatePostResponse {
   errors: [FieldError!]
   post: Post
@@ -79,7 +79,6 @@ type CreateUserResponse {
 }
 
 type Query {
-  feed: [Activity!]!
   comment(id: String!): Comment
   post(id: String!): Post
   posts(username: String, cursor: String, take: Int!): PostsResponse!
@@ -88,8 +87,6 @@ type Query {
   user(username: String, id: Int): User
   suggestedUsers: [User!]
 }
-
-union Activity = Post
 
 type Mutation {
   createComment(text: String!, postId: String!): CreateCommentResponse!
