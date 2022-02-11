@@ -1,7 +1,3 @@
-## Current state of tests:
-
-![Tests](https://i.gyazo.com/70dec3e89133fcc605cf44625871f904.png)
-
 The technologies I'm using are:
 
 - Prisma (ORM)
