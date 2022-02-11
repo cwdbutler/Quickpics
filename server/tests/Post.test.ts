@@ -174,7 +174,7 @@ afterAll(async () => {
   await prisma.$disconnect();
 });
 
-describe("Posts", () => {
+describe("Post", () => {
   // everything in this block is not dependent on the users authenticaiton state
 
   test("finding a post by id", async () => {

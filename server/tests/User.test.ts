@@ -30,7 +30,7 @@ afterAll(async () => {
   await prisma.$disconnect();
 });
 
-describe("Users", () => {
+describe("User", () => {
   const updateProfilePic = gql`
     mutation ($file: Upload!) {
       updateProfilePic(file: $file) {
