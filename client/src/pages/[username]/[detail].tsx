@@ -18,11 +18,12 @@ import { useRouter } from "next/router";
 import NavBar from "../../components/NavBar";
 import Head from "next/head";
 import { Tab } from "@headlessui/react";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { BookmarkIcon, GridIcon } from "../../components/Icons";
 import { Waypoint } from "react-waypoint";
 import Image from "next/image";
 import ProfilePicForm from "../../components/forms/ProfilePicForm";
+import Spinner from "../../components/Spinner";
 
 interface PageProps {
   variables: SavedPostsQueryVariables;
@@ -38,9 +39,7 @@ function Page({ variables, isLastPage, loadMore }: PageProps) {
   const posts = data?.savedPosts.posts;
   const hasMore = data?.savedPosts.hasMore;
 
-  return fetching ? (
-    <div>loading</div>
-  ) : (
+  return (
     <div className="grid grid-cols-3 gap-1 md:gap-6 mt-1 md:mt-6">
       {posts?.map((post) => (
         <PostPreview key={post.id} post={post} />
@@ -56,6 +55,11 @@ function Page({ variables, isLastPage, loadMore }: PageProps) {
             }
           }}
         />
+      )}
+      {fetching && (
+        <div className="col-span-3 flex items-center justify-center my-4">
+          <Spinner />
+        </div>
       )}
     </div>
   );

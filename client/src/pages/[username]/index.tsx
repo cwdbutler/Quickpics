@@ -22,6 +22,7 @@ import Link from "next/link";
 import { Waypoint } from "react-waypoint";
 import Image from "next/image";
 import ProfilePicForm from "../../components/forms/ProfilePicForm";
+import Spinner from "../../components/Spinner";
 
 interface PageProps {
   variables: PostsByUserQueryVariables;
@@ -37,9 +38,7 @@ function Page({ variables, isLastPage, loadMore }: PageProps) {
   const posts = data?.posts.posts;
   const hasMore = data?.posts.hasMore;
 
-  return fetching ? (
-    <div>loading</div>
-  ) : (
+  return (
     <div className="grid grid-cols-3 gap-1 md:gap-6 mt-1 md:mt-6">
       {posts?.map((post) => (
         <PostPreview key={post.id} post={post} />
@@ -53,6 +52,11 @@ function Page({ variables, isLastPage, loadMore }: PageProps) {
             }
           }}
         />
+      )}
+      {fetching && (
+        <div className="w-full flex items-center justify-center my-4">
+          <Spinner />
+        </div>
       )}
     </div>
   );

@@ -13,6 +13,7 @@ import { useState } from "react";
 import { Waypoint } from "react-waypoint";
 import Link from "next/link";
 import Image from "next/image";
+import Spinner from "../components/Spinner";
 
 interface Props {
   variables: AllPostsQueryVariables;
@@ -44,9 +45,9 @@ function Page({ variables, isLastPage, loadMore }: Props) {
           )}
         </>
       ) : fetching ? (
-        <div>Loading...</div>
+        <Spinner />
       ) : (
-        <div>no posts</div>
+        <div>No posts yet</div>
       )}
     </main>
   );

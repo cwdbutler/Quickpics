@@ -12,6 +12,7 @@ import { Picker } from "emoji-mart";
 import { useDetectClickOutside } from "react-detect-click-outside";
 import ImageEditor from "./ImageEditor";
 import { Filter, filterConfig } from "../../utis/filterConfig";
+import Spinner from "../Spinner";
 
 export interface ImageFile extends File {
   preview?: string;
@@ -57,7 +58,7 @@ function CreatePostForm() {
             <div />
           </section>
           <div className="flex w-full h-full items-center justify-center">
-            Loading...
+            <Spinner />
           </div>
         </>
       ) : files.length === 0 ? (

@@ -10,6 +10,7 @@ import {
   SliderFilledTrack,
   SliderThumb,
 } from "@chakra-ui/react";
+import Spinner from "../Spinner";
 
 type Props = {
   files: ImageFile[];
@@ -110,7 +111,7 @@ export default function ImageCropper({
         <div />
       </section>
       <div className="flex w-full h-full items-center justify-center">
-        Loading...
+        <Spinner />
       </div>
     </>
   ) : (

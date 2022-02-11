@@ -13,6 +13,7 @@ import "emoji-mart/css/emoji-mart.css";
 import { Picker } from "emoji-mart";
 import { useDetectClickOutside } from "react-detect-click-outside";
 import Link from "next/link";
+import Spinner from "../Spinner";
 
 type Props = {
   currentUser: UserInfoFragment | null | undefined;
@@ -87,9 +88,8 @@ export default function CommentForm({
         <Form className="w-full flex items-center justify-center">
           {loading ? (
             <div className="flex">
-              <HappyIcon className={iconStyles} />
               <div className="h-12 flex items-center justify-center">
-                Loading...
+                <Spinner />
               </div>
             </div>
           ) : (

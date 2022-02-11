@@ -7,6 +7,7 @@ import {
   usePostLikesQuery,
 } from "../../graphql/generated/graphql";
 import { XIcon } from "../Icons";
+import Spinner from "../Spinner";
 
 type Props = {
   likesOpen: boolean;
@@ -90,7 +91,7 @@ export default function LikesModal({
                 <div className="h-[352px] overflow-auto p-2">
                   {!likes ? (
                     <div className="w-full h-full flex items-center justify-center">
-                      Loading...
+                      <Spinner />
                     </div>
                   ) : (
                     likes.map((like) => (
