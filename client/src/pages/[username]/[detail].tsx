@@ -196,7 +196,7 @@ function SavedPosts({ serverUser, serverSavedPosts }: Props) {
                       <div className="w-full mt-24 flex items-center justify-center">
                         <div className="h-20 w-96 text-center flex flex-col items-center justify-center space-y-3">
                           <div className="border-2 border-gray-600 rounded-full p-3">
-                            <BookmarkIcon className="h-8" />
+                            <BookmarkIcon className="h-8 " />
                           </div>
                           <h2 className="text-3xl font-light">Save</h2>
                           <p className="text-m">

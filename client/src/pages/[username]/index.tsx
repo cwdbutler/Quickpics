@@ -17,7 +17,7 @@ import NavBar from "../../components/NavBar";
 import Head from "next/head";
 import { Tab } from "@headlessui/react";
 import { Fragment, useState } from "react";
-import { BookmarkIcon, GridIcon, PlusIcon } from "../../components/Icons";
+import { BookmarkIcon, GridIcon, SimplePlusIcon } from "../../components/Icons";
 import Link from "next/link";
 import { Waypoint } from "react-waypoint";
 import Image from "next/image";
@@ -208,8 +208,8 @@ function UserProfile({ serverUser, serverPosts }: Props) {
                       <div className="w-full mt-24 flex items-center justify-center">
                         <div className="h-20 w-96 text-center flex flex-col items-center justify-center space-y-3">
                           <Link href="/create">
-                            <a>
-                              <PlusIcon className="h-16 stroke-gray-600" />
+                            <a className="border-2 border-gray-600 rounded-full p-3">
+                              <SimplePlusIcon className="h-8 stroke-gray-600 stroke-1.5" />
                             </a>
                           </Link>
                           <h2 className="text-3xl font-light">Create a post</h2>
