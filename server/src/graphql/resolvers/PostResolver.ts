@@ -299,14 +299,7 @@ export class PostResolver {
     }
 
     if (foundPost.authorId !== req.session.userId) {
-      return {
-        errors: [
-          {
-            field: "user",
-            message: NO_PERMISSION,
-          },
-        ],
-      };
+      throw new Error(NO_PERMISSION);
     }
 
     // don't need a try catch here as we have already checked for the only possible prisma error (not found)
@@ -361,14 +354,7 @@ export class PostResolver {
     }
 
     if (foundPost.authorId !== req.session.userId) {
-      return {
-        errors: [
-          {
-            field: "user",
-            message: NO_PERMISSION,
-          },
-        ],
-      };
+      throw new Error(NO_PERMISSION);
     }
 
     const post = await prisma.post.delete({

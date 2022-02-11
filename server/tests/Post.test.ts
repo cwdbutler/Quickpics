@@ -2,13 +2,16 @@ import { startTestServer } from "./utils/testServer";
 import gql from "graphql-tag";
 import { createId } from "../src/utils/createId";
 import faker from "faker";
-import { sleep } from "./utils/sleep";
 import { PrismaClient } from "@prisma/client";
-import { uploadFile } from "../src/utils/uploadFile";
-import AWS from 'aws-sdk';
-jest.mock('aws-sdk', () => {
+import { Upload } from "graphql-upload";
+import fs from "fs";
+import path from "path";
+import AWS from "aws-sdk";
+
+jest.mock("aws-sdk", () => {
   const mockedS3 = {
     upload: jest.fn().mockReturnThis(),
+    deleteObject: jest.fn().mockReturnThis(),
     promise: jest.fn(),
   };
   return { S3: jest.fn(() => mockedS3) };
@@ -58,6 +61,12 @@ const testPostWithComments = {
 };
 
 beforeAll(async () => {
+  let now = new Date();
+  let oneDayAgo = new Date(now.getTime() - 86400000);
+  let twoDaysAgo = new Date(now.getTime() - 172800000);
+  let threeDaysAgo = new Date(now.getTime() - 259200000);
+  let oneWeekAgo = new Date(now.getTime() - 604800000);
+
   await prisma.user.create({
     data: {
       username: "testuser",
@@ -69,6 +78,7 @@ beforeAll(async () => {
             id: testPostWithComments.id,
             caption: testPostWithComments.caption,
             imageUrl: testPostWithComments.imageUrl,
+            createdAt: oneWeekAgo,
             comments: {
               create: [
                 {
@@ -79,6 +89,7 @@ beforeAll(async () => {
                       id: 1,
                     },
                   },
+                  createdAt: oneDayAgo,
                 },
                 {
                   id: testComment2.id,
@@ -88,6 +99,7 @@ beforeAll(async () => {
                       id: 1,
                     },
                   },
+                  createdAt: twoDaysAgo,
                 },
                 {
                   id: testComment3.id,
@@ -97,6 +109,7 @@ beforeAll(async () => {
                       id: 1,
                     },
                   },
+                  createdAt: threeDaysAgo,
                 },
               ],
             },
@@ -104,6 +117,33 @@ beforeAll(async () => {
         ],
       },
     },
+  });
+
+  // these are the posts pagination will be tested on
+  await prisma.post.createMany({
+    data: [
+      {
+        id: testPost1.id,
+        caption: testPost1.caption,
+        imageUrl: testPost1.imageUrl,
+        authorId: 1,
+        createdAt: oneDayAgo,
+      },
+      {
+        id: testPost2.id,
+        caption: testPost2.caption,
+        imageUrl: testPost2.imageUrl,
+        authorId: 1,
+        createdAt: twoDaysAgo,
+      },
+      {
+        id: testPost3.id,
+        caption: testPost3.caption,
+        imageUrl: testPost3.imageUrl,
+        authorId: 1,
+        createdAt: threeDaysAgo,
+      },
+    ],
   });
 
   await prisma.user.create({
@@ -114,45 +154,21 @@ beforeAll(async () => {
       posts: {
         create: [
           {
-            id: testPost1.id,
-            caption: testPost1.caption,
-            imageUrl: testPost1.imageUrl,
+            id: testPostToDelete.id,
+            caption: testPostToDelete.caption,
+            imageUrl: testPostToDelete.imageUrl,
+            createdAt: oneWeekAgo,
           },
         ],
       },
     },
   });
 
-  // for testing it sorts by date in pagination (without this createdAt is identical)
-  await sleep(1);
-  // could set createdAt manually but this is a temporary, quicker solution
-
-  await Promise.all(
-    [testPost2, testPost3, testPostToDelete].map(async (post) => {
-      await sleep(1);
-      await prisma.post.create({
-        data: {
-          id: post.id,
-          caption: post.caption,
-          imageUrl: post.imageUrl,
-          author: {
-            connect: {
-              id: 1,
-            },
-          },
-        },
-      });
-    })
-  );
-
   // required as when deleting a post, it also deletes the activity
   await prisma.activity.create({
     data: { id: testPostToDelete.id, model: "post", userId: 1 },
   });
 });
-
-// summary: "testuser" (id 1) has 3 posts; testPostWithComments, testPost2, and testPost3
-// "otheruser" (id 2) has 1 post; testPost1 that was created 2nd
 
 afterAll(async () => {
   await prisma.$disconnect();
@@ -346,6 +362,7 @@ describe("Posts", () => {
       },
     });
 
+    // comments are newest first
     expect(res.errors).toBeUndefined();
     expect(res.data).toMatchObject({
       post: {
@@ -353,8 +370,8 @@ describe("Posts", () => {
         caption: testPostWithComments.caption,
         comments: [
           {
-            id: testComment3.id,
-            text: testComment3.text,
+            id: testComment1.id,
+            text: testComment1.text,
             author: {
               id: "1",
             },
@@ -367,8 +384,8 @@ describe("Posts", () => {
             },
           },
           {
-            id: testComment1.id,
-            text: testComment1.text,
+            id: testComment3.id,
+            text: testComment3.text,
             author: {
               id: "1",
             },
@@ -403,7 +420,6 @@ describe("Posts", () => {
     });
 
     expect(res.errors).toBeUndefined();
-    // don't test order here because the test suite already takes long enough to run without another set of sleeps
     // this should return the newest 2 comments
     expect(res.data).toMatchObject({
       post: {
@@ -411,8 +427,8 @@ describe("Posts", () => {
         caption: testPostWithComments.caption,
         commentsPreview: [
           {
-            id: testComment3.id,
-            text: testComment3.text,
+            id: testComment1.id,
+            text: testComment1.text,
             author: {
               id: "1",
             },
@@ -498,12 +514,14 @@ describe("Posts", () => {
         },
       });
 
+      console.log(res.data.posts.posts);
+
       expect(res.errors).toBeUndefined();
       expect(res.data.posts.posts.length).toEqual(3);
       // testing they are returned newest first
-      expect(res.data.posts.posts[0].id).toEqual(testPostToDelete.id);
-      expect(res.data.posts.posts[1].id).toEqual(testPost3.id);
-      expect(res.data.posts.posts[2].id).toEqual(testPost2.id);
+      expect(res.data.posts.posts[0].id).toEqual(testPost1.id);
+      expect(res.data.posts.posts[1].id).toEqual(testPost2.id);
+      expect(res.data.posts.posts[2].id).toEqual(testPost3.id);
     });
 
     test("specifying a user", async () => {
@@ -520,7 +538,7 @@ describe("Posts", () => {
       expect(res.errors).toBeUndefined();
       expect(res.data.posts.posts.length).toEqual(1);
       // this user only has 1 post
-      expect(res.data.posts.posts[0].id).toEqual(testPost1.id);
+      expect(res.data.posts.posts[0].id).toEqual(testPostToDelete.id);
     });
 
     test("specifying the cursor", async () => {
@@ -534,19 +552,21 @@ describe("Posts", () => {
         },
       });
 
-      // post 3
-      // post 2 <- cursor (start here, but don't return this post)
-      // post 1 - take 1
+      console.log(res.data.posts.posts);
+
+      // testPost1
+      // testPost2 <- cursor (start here, but don't return this post)
+      // testPost3  - take 1
 
       expect(res.errors).toBeUndefined();
       expect(res.data.posts.posts.length).toEqual(1);
-      expect(res.data.posts.posts[0].id).toEqual(testPost1.id);
+      expect(res.data.posts.posts[0].id).toEqual(testPost3.id);
     });
   });
 
   const createPost = gql`
-    mutation ($caption: String!) {
-      createPost(caption: $caption) {
+    mutation ($caption: String!, $file: Upload!) {
+      createPost(caption: $caption, file: $file) {
         post {
           id
           caption
@@ -595,6 +615,19 @@ describe("Posts", () => {
 
   describe("Not logged in", () => {
     test("creating a post", async () => {
+      const fileName = "test.jpg";
+      const file = fs.createReadStream(
+        path.resolve(__dirname, `./utils/${fileName}`)
+      );
+      const upload = new Upload() as any; // file has to be of Upload type for graphql-upload
+      upload.resolve({
+        createReadStream: () => file,
+        stream: file,
+        filename: fileName,
+        encoding: "7bit",
+        mimetype: "application/png",
+      });
+
       const { server } = await startTestServer();
 
       const mockCaption = faker.lorem.sentence(5);
@@ -603,6 +636,7 @@ describe("Posts", () => {
         query: createPost,
         variables: {
           caption: mockCaption,
+          file: upload,
         },
       });
 
@@ -687,10 +721,44 @@ describe("Posts", () => {
 
   describe("Logged in (good credentials)", () => {
     test("creating a post", async () => {
+      const fileName = "test.jpg";
+      const file = fs.createReadStream(
+        path.resolve(__dirname, `./utils/${fileName}`)
+      );
+      const upload = new Upload() as any;
+      upload.resolve({
+        createReadStream: () => file,
+        stream: file,
+        filename: fileName,
+        encoding: "7bit",
+        mimetype: "application/png",
+      });
+
+      function mockUploadFile(file: any, key: string) {
+        const mockedS3 = new AWS.S3({
+          accessKeyId: "mock-accessKeyId",
+          secretAccessKey: "mock-secretAccessKey",
+          region: "mock-region",
+        }) as any; // ts wasn't recognising the mock types and was using the real AWS types
+
+        mockedS3.promise.mockResolvedValueOnce({ Location: "asdf" });
+
+        const fileStream = file.createReadStream();
+        const params = {
+          ContentType: "image/jpeg",
+          Bucket: "mock-bucket",
+          Body: fileStream,
+          Key: `${key}.jpg`,
+        };
+
+        return mockedS3.upload(params).promise();
+      }
+
       const { server } = await startTestServer({
         user: {
           id: 1,
         },
+        uploadFile: mockUploadFile,
       });
 
       const mockCaption = faker.lorem.sentence(5);
@@ -699,6 +767,7 @@ describe("Posts", () => {
         query: createPost,
         variables: {
           caption: mockCaption,
+          file: upload,
         },
       });
 
@@ -707,7 +776,7 @@ describe("Posts", () => {
           caption: mockCaption,
         },
       });
-      // checking no post was created with this caption
+      // // checking no post was created with this caption
       expect(dbPost).toBeTruthy();
 
       expect(res.errors).toBeUndefined();
@@ -788,10 +857,26 @@ describe("Posts", () => {
     });
 
     test("deleting a post", async () => {
+      function mockDeleteFile(id: string) {
+        const mockedS3 = new AWS.S3({
+          accessKeyId: "mock-accessKeyId",
+          secretAccessKey: "mock-secretAccessKey",
+          region: "mock-region",
+        }) as any;
+
+        const params = {
+          Bucket: "mock-bucket",
+          Key: `${id}.jpg`,
+        };
+
+        return mockedS3.deleteObject(params).promise();
+      }
+
       const { server } = await startTestServer({
         user: {
-          id: 1,
+          id: 2, // the owner
         },
+        deleteFile: mockDeleteFile,
       });
 
       const res = await server.executeOperation({
@@ -1083,19 +1168,26 @@ describe("Posts", () => {
 
       test("saved posts (without cursor)", async () => {
         // creating some saved posts for user with id of 1
+        let now = new Date();
+        let oneDayAgo = new Date(now.getTime() - 86400000);
+        let twoDaysAgo = new Date(now.getTime() - 172800000);
+        let threeDaysAgo = new Date(now.getTime() - 259200000);
         await prisma.usersOnPosts.createMany({
           data: [
             {
               postId: testPost1.id,
               userId: 1,
+              createdAt: oneDayAgo,
             },
             {
               postId: testPost2.id,
               userId: 1,
+              createdAt: twoDaysAgo,
             },
             {
               postId: testPost3.id,
               userId: 1,
+              createdAt: threeDaysAgo,
             },
           ],
         });
@@ -1167,18 +1259,11 @@ describe("Posts", () => {
 
       expect(dbPost.caption).toEqual(testPost3.caption);
 
-      expect(res.errors).toBeUndefined();
-      expect(res.data).toMatchObject({
-        updatePost: {
-          post: null,
-          errors: [
-            {
-              field: "user",
-              message: "You don't have permission to do that",
-            },
-          ],
-        },
-      });
+      expect(res.errors.length).toBe(1);
+      expect(res.errors[0].message).toEqual(
+        "You don't have permission to do that"
+      );
+      expect(res.data).toBeNull();
     });
 
     test("deleting a post", async () => {
@@ -1204,18 +1289,11 @@ describe("Posts", () => {
       expect(dbPost).toBeTruthy();
       // checking it hasn't been deleted
 
-      expect(res.errors).toBeUndefined();
-      expect(res.data).toMatchObject({
-        deletePost: {
-          post: null,
-          errors: [
-            {
-              field: "user",
-              message: "You don't have permission to do that",
-            },
-          ],
-        },
-      });
+      expect(res.errors.length).toBe(1);
+      expect(res.errors[0].message).toEqual(
+        "You don't have permission to do that"
+      );
+      expect(res.data).toBeNull();
     });
   });
 });

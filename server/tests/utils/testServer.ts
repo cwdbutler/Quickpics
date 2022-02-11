@@ -4,16 +4,22 @@ import "reflect-metadata";
 import path from "path";
 import { PrismaClient } from "@prisma/client";
 
-interface MockUser {
+interface TestContext {
   user?: {
     id: number;
   };
+  uploadFile?: any;
+  deleteFile?: any;
 }
 
 // no query logging
 const prisma = new PrismaClient();
 
-export const startTestServer = async ({ user }: MockUser = {}) => {
+export const startTestServer = async ({
+  user,
+  uploadFile,
+  deleteFile,
+}: TestContext = {}) => {
   const server = new ApolloServer({
     schema: await buildSchema({
       resolvers: [
@@ -22,6 +28,8 @@ export const startTestServer = async ({ user }: MockUser = {}) => {
     }),
     context: {
       prisma,
+      uploadFile,
+      deleteFile,
       req: {
         session: {
           userId: user?.id,

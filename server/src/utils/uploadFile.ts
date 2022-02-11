@@ -1,6 +1,5 @@
 import { S3 } from "aws-sdk";
 import { FileUpload } from "graphql-upload";
-import { nanoid } from "nanoid";
 
 export function uploadFile(file: FileUpload, key: string) {
   const s3 = new S3({
