@@ -77,12 +77,9 @@ function Home() {
   return (
     <div className="w-full">
       <NavBar />
-      <div className="flex flex-col items-center justify-center py-2">
-        <Head>
-          <title>QuickPics</title>
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
-      </div>
+      <Head>
+        <title>Quickpics</title>
+      </Head>
       <div className="flex pr-[16px] sm:pr-0 justify-center">
         <div className="w-full md:w-[990px] lg:grid lg:grid-cols-3 my-12">
           <div className="lg:col-span-2 flex flex-col items-center w-full flex-1">

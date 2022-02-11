@@ -23,6 +23,7 @@ import PostPreview from "../../components/post/PostPreview";
 import Link from "next/link";
 import Image from "next/image";
 import LikesModal from "../../components/post/LikesModal";
+import Head from "next/head";
 
 type Props = {
   serverPost: PostQuery["post"];
@@ -61,6 +62,11 @@ function Post({ serverPost }: Props) {
   return !post ? null : (
     <>
       <NavBar />
+      <Head>
+        <title>
+          {post.author.username} on Quickpics: "{post.caption}"
+        </title>
+      </Head>
       <PostActions
         open={open}
         setOpen={setOpen}

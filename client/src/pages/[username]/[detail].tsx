@@ -96,12 +96,10 @@ function SavedPosts({ serverUser, serverSavedPosts }: Props) {
   return (
     <>
       <NavBar />
+      <Head>
+        <title>{serverUser.username} • Quickpics</title>
+      </Head>
       <div className="flex flex-col pr-[16px] lg:pr-0 items-center justify-center py-2">
-        <Head>
-          <title>{serverUser.username}</title>
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
-
         <div className="my-6 flex flex-col items-center w-full flex-1">
           <div className="w-full min-h-screen lg:w-[935px] flex flex-col">
             <header className="flex">

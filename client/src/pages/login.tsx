@@ -20,8 +20,7 @@ function login() {
   return (
     <div className="min-h-screen flex justify-center items-center">
       <Head>
-        <title>Register</title>
-        <link rel="icon" href="/favicon.ico" />
+        <title>Login • Quickpics</title>
       </Head>
 
       <LoginForm />

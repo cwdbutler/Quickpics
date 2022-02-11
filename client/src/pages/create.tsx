@@ -20,8 +20,7 @@ function create() {
   return (
     <>
       <Head>
-        <title>Create</title>
-        <link rel="icon" href="/favicon.ico" />
+        <title>Create new post • Quickpics</title>
       </Head>
       <div className="min-h-screen flex flex-col">
         <NavBar />

@@ -1,9 +1,13 @@
 import NavBar from "../components/NavBar";
 import Link from "next/link";
+import Head from "next/head";
 
 export default function ErrorPage() {
   return (
     <>
+      <Head>
+        <title>Page Not Found • Quickpics</title>
+      </Head>
       <NavBar />
       <div className="flex flex-col h-40 items-center justify-center text-center p-12 space-y-6">
         <h1 className="text-2xl font-semibold">

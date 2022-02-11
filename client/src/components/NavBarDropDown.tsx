@@ -17,17 +17,14 @@ export default function NavBarDropDown({ user }: Props) {
   const [, logout] = useLogoutMutation();
   const router = useRouter();
 
-  console.log(router.asPath);
-  console.log(router.asPath.startsWith(`/${user.username}`));
-
   return (
     <Popover className="relative">
       <Popover.Button className="flex items-center justify-center w-full p-0.5">
         <div
           className={`${
             router.asPath.startsWith(`/${user.username}`) &&
-            "overflow-hidden aspect-square border-[1px] border-black"
-          } rounded-full select-none flex`}
+            "aspect-square border-[1px]  border-black"
+          } overflow-hidden  rounded-full select-none flex`}
         >
           <Image
             objectFit="cover"
