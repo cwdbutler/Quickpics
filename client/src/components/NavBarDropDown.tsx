@@ -17,19 +17,25 @@ export default function NavBarDropDown({ user }: Props) {
   const [, logout] = useLogoutMutation();
   const router = useRouter();
 
+  console.log(router.asPath);
+  console.log(router.asPath.startsWith(`/${user.username}`));
+
   return (
     <Popover className="relative">
       <Popover.Button className="flex items-center justify-center w-full p-0.5">
-        <Image
-          objectFit="cover"
-          width={28}
-          height={28}
-          src={user.avatarUrl ? user.avatarUrl : "/default.jpg"}
+        <div
           className={`${
             router.asPath.startsWith(`/${user.username}`) &&
-            "border-solid border-[1px] border-black"
-          } rounded-full select-none`}
-        />
+            "overflow-hidden aspect-square border-[1px] border-black"
+          } rounded-full select-none flex`}
+        >
+          <Image
+            objectFit="cover"
+            width={28}
+            height={28}
+            src={user.avatarUrl ? user.avatarUrl : "/default.jpg"}
+          />
+        </div>
       </Popover.Button>
       <Transition
         as={Fragment}

@@ -45,7 +45,7 @@ export default function NavBar() {
                       {router.pathname === "/create" ? (
                         <PlusIconFilled className="h-8" />
                       ) : (
-                        <PlusIcon className="h-8" />
+                        <PlusIcon className="h-8 stroke-1.5" />
                       )}
                     </a>
                   </Link>
