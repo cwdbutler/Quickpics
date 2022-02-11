@@ -1,9 +1,24 @@
 import { startTestServer } from "./utils/testServer";
+import { PrismaClient } from "@prisma/client";
 import gql from "graphql-tag";
-import { prisma } from "../src/context";
 import faker from "faker";
 import { createId } from "../src/utils/createId";
 import { FORBIDDEN_USERNAMES } from "../src/utils/constants";
+import fs from "fs";
+import path from "path";
+import { Upload } from "graphql-upload";
+import AWS from "aws-sdk";
+
+jest.mock("aws-sdk", () => {
+  const mockedS3 = {
+    upload: jest.fn().mockReturnThis(),
+    deleteObject: jest.fn().mockReturnThis(),
+    promise: jest.fn(),
+  };
+  return { S3: jest.fn(() => mockedS3) };
+});
+
+const prisma = new PrismaClient();
 
 const testUser = {
   username: "testUser", // not randomised because need to test case insensitive
@@ -16,6 +31,22 @@ afterAll(async () => {
 });
 
 describe("Users", () => {
+  const updateProfilePic = gql`
+    mutation ($file: Upload!) {
+      updateProfilePic(file: $file) {
+        avatarUrl
+      }
+    }
+  `;
+
+  const removeProfilePic = gql`
+    mutation removeProfilePic {
+      removeProfilePic {
+        avatarUrl
+      }
+    }
+  `;
+
   describe("User is not logged in", () => {
     test("Identifying current user", async () => {
       const { server } = await startTestServer();
@@ -34,6 +65,46 @@ describe("Users", () => {
       expect(res.data).toMatchObject({
         currentUser: null,
       });
+    });
+
+    test("updating profile picture", async () => {
+      const fileName = "test.jpg";
+      const file = fs.createReadStream(
+        path.resolve(__dirname, `./utils/${fileName}`)
+      );
+      const upload = new Upload() as any; // file has to be of Upload type for graphql-upload
+      upload.resolve({
+        createReadStream: () => file,
+        stream: file,
+        filename: fileName,
+        encoding: "7bit",
+        mimetype: "application/jpg",
+      });
+
+      const { server } = await startTestServer();
+
+      const res = await server.executeOperation({
+        query: updateProfilePic,
+        variables: {
+          file: upload,
+        },
+      });
+
+      expect(res.errors.length).toBe(1);
+      expect(res.errors[0].message).toEqual("Not authenticated");
+      expect(res.data).toBeNull();
+    });
+
+    test("removing profile picture", async () => {
+      const { server } = await startTestServer();
+
+      const res = await server.executeOperation({
+        query: removeProfilePic,
+      });
+
+      expect(res.errors.length).toBe(1);
+      expect(res.errors[0].message).toEqual("Not authenticated");
+      expect(res.data).toBeNull();
     });
 
     describe("Registering (creating a user)", () => {
@@ -494,6 +565,230 @@ describe("Users", () => {
       expect(res.errors.length).toBe(1);
       expect(res.errors[0].message).toEqual("Already authenticated");
       expect(res.data).toBeNull();
+    });
+
+    test("logging in when already logged in", async () => {
+      const { server } = await startTestServer({
+        user: {
+          id: 1,
+        },
+      });
+
+      // correct details
+      const res = await server.executeOperation({
+        query: gql`
+          mutation ($emailOrUsername: String!, $password: String!) {
+            login(emailOrUsername: $emailOrUsername, password: $password) {
+              user {
+                username
+              }
+              errors {
+                field
+                message
+              }
+            }
+          }
+        `,
+        variables: {
+          emailOrUsername: testUser.username,
+          password: testUser.password,
+        },
+      });
+
+      expect(res.errors.length).toBe(1);
+      expect(res.errors[0].message).toEqual("Already authenticated");
+      expect(res.data).toBeNull();
+    });
+
+    const fileName = "test.jpg";
+    const mockImageUrl = `www.example.com/${fileName}`;
+
+    test("updating profile picture (for the first time)", async () => {
+      const file = fs.createReadStream(
+        path.resolve(__dirname, `./utils/${fileName}`)
+      );
+      const upload = new Upload() as any; // file has to be of Upload type for graphql-upload
+      upload.resolve({
+        createReadStream: () => file,
+        stream: file,
+        filename: fileName,
+        encoding: "7bit",
+        mimetype: "application/jpg",
+      });
+
+      function mockUploadFile(file: any, key: string) {
+        const mockedS3 = new AWS.S3({
+          accessKeyId: "mock-accessKeyId",
+          secretAccessKey: "mock-secretAccessKey",
+          region: "mock-region",
+        }) as any; // ts wasn't recognising the mock types and was using the real AWS types
+
+        mockedS3.promise.mockResolvedValueOnce({ Location: mockImageUrl });
+
+        const fileStream = file.createReadStream();
+        const params = {
+          ContentType: "image/jpeg",
+          Bucket: "mock-bucket",
+          Body: fileStream,
+          Key: `${key}.jpg`,
+        };
+
+        return mockedS3.upload(params).promise();
+      }
+
+      const { server } = await startTestServer({
+        user: {
+          id: 1,
+        },
+        uploadFile: mockUploadFile,
+      });
+
+      const res = await server.executeOperation({
+        query: updateProfilePic,
+        variables: {
+          file: upload,
+        },
+      });
+
+      const dbUser = await prisma.user.findUnique({
+        where: {
+          username: testUser.username,
+        },
+      });
+
+      expect(dbUser.avatarUrl).toEqual(mockImageUrl);
+
+      expect(res.errors).toBeUndefined;
+      expect(res.data).toMatchObject({
+        updateProfilePic: {
+          avatarUrl: mockImageUrl,
+        },
+      });
+    });
+
+    const newFileName = "test2.jpg";
+    const newMockImageUrl = `www.example.com/${newFileName}`;
+
+    test("updating profile picture (replacing existing one)", async () => {
+      const file = fs.createReadStream(
+        path.resolve(__dirname, `./utils/${newFileName}`)
+      );
+      const upload = new Upload() as any; // file has to be of Upload type for graphql-upload
+      upload.resolve({
+        createReadStream: () => file,
+        stream: file,
+        filename: newFileName,
+        encoding: "7bit",
+        mimetype: "application/jpg",
+      });
+
+      function mockUploadFile(file: any, key: string) {
+        const mockedS3 = new AWS.S3({
+          accessKeyId: "mock-accessKeyId",
+          secretAccessKey: "mock-secretAccessKey",
+          region: "mock-region",
+        }) as any; // ts wasn't recognising the mock types and was using the real AWS types
+
+        mockedS3.promise.mockResolvedValueOnce({ Location: newMockImageUrl });
+
+        const fileStream = file.createReadStream();
+        const params = {
+          ContentType: "image/jpeg",
+          Bucket: "mock-bucket",
+          Body: fileStream,
+          Key: `${key}.jpg`,
+        };
+
+        return mockedS3.upload(params).promise();
+      }
+
+      function mockDeleteFile(id: string) {
+        const mockedS3 = new AWS.S3({
+          accessKeyId: "mock-accessKeyId",
+          secretAccessKey: "mock-secretAccessKey",
+          region: "mock-region",
+        }) as any;
+
+        const params = {
+          Bucket: "mock-bucket",
+          Key: `${id}.jpg`,
+        };
+
+        return mockedS3.deleteObject(params).promise();
+      }
+
+      const { server } = await startTestServer({
+        user: {
+          id: 1,
+        },
+        uploadFile: mockUploadFile,
+        deleteFile: mockDeleteFile, // necessary as it tries to delete the old file from S3
+      });
+
+      const res = await server.executeOperation({
+        query: updateProfilePic,
+        variables: {
+          file: upload,
+        },
+      });
+
+      const dbUser = await prisma.user.findUnique({
+        where: {
+          username: testUser.username,
+        },
+      });
+
+      expect(dbUser.avatarUrl).toEqual(newMockImageUrl);
+
+      expect(res.errors).toBeUndefined;
+      expect(res.data).toMatchObject({
+        updateProfilePic: {
+          avatarUrl: newMockImageUrl,
+        },
+      });
+    });
+
+    test("removing profile picture", async () => {
+      function mockDeleteFile(id: string) {
+        const mockedS3 = new AWS.S3({
+          accessKeyId: "mock-accessKeyId",
+          secretAccessKey: "mock-secretAccessKey",
+          region: "mock-region",
+        }) as any;
+
+        const params = {
+          Bucket: "mock-bucket",
+          Key: `${id}.jpg`,
+        };
+
+        return mockedS3.deleteObject(params).promise();
+      }
+
+      const { server } = await startTestServer({
+        user: {
+          id: 1,
+        },
+        deleteFile: mockDeleteFile,
+      });
+
+      const res = await server.executeOperation({
+        query: removeProfilePic,
+      });
+
+      const dbUser = await prisma.user.findUnique({
+        where: {
+          username: testUser.username,
+        },
+      });
+
+      expect(dbUser.avatarUrl).toEqual(null);
+
+      expect(res.errors).toBeUndefined;
+      expect(res.data).toMatchObject({
+        removeProfilePic: {
+          avatarUrl: null,
+        },
+      });
     });
   });
 

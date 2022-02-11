@@ -514,8 +514,6 @@ describe("Posts", () => {
         },
       });
 
-      console.log(res.data.posts.posts);
-
       expect(res.errors).toBeUndefined();
       expect(res.data.posts.posts.length).toEqual(3);
       // testing they are returned newest first
@@ -551,8 +549,6 @@ describe("Posts", () => {
           cursor: testPost2.id,
         },
       });
-
-      console.log(res.data.posts.posts);
 
       // testPost1
       // testPost2 <- cursor (start here, but don't return this post)
@@ -625,7 +621,7 @@ describe("Posts", () => {
         stream: file,
         filename: fileName,
         encoding: "7bit",
-        mimetype: "application/png",
+        mimetype: "application/jpg",
       });
 
       const { server } = await startTestServer();
@@ -734,6 +730,8 @@ describe("Posts", () => {
         mimetype: "application/png",
       });
 
+      const mockImageUrl = `www.example.com/${fileName}`;
+
       function mockUploadFile(file: any, key: string) {
         const mockedS3 = new AWS.S3({
           accessKeyId: "mock-accessKeyId",
@@ -741,7 +739,9 @@ describe("Posts", () => {
           region: "mock-region",
         }) as any; // ts wasn't recognising the mock types and was using the real AWS types
 
-        mockedS3.promise.mockResolvedValueOnce({ Location: "asdf" });
+        mockedS3.promise.mockResolvedValueOnce({
+          Location: mockImageUrl,
+        });
 
         const fileStream = file.createReadStream();
         const params = {
@@ -776,8 +776,9 @@ describe("Posts", () => {
           caption: mockCaption,
         },
       });
-      // // checking no post was created with this caption
-      expect(dbPost).toBeTruthy();
+
+      expect(dbPost.caption).toEqual(mockCaption);
+      expect(dbPost.imageUrl).toEqual(mockImageUrl);
 
       expect(res.errors).toBeUndefined();
       expect(res.data).toMatchObject({
@@ -797,13 +798,13 @@ describe("Posts", () => {
         },
       });
 
-      const mockCaption = faker.lorem.sentence(5);
+      const newMockCaption = faker.lorem.sentence(5);
 
       const res = await server.executeOperation({
         query: updatePost,
         variables: {
           id: testPost2.id,
-          caption: mockCaption,
+          caption: newMockCaption,
         },
       });
 
@@ -813,14 +814,14 @@ describe("Posts", () => {
         },
       });
 
-      expect(dbPost).toBeTruthy();
+      expect(dbPost.caption).toEqual(newMockCaption);
 
       expect(res.errors).toBeUndefined();
       expect(res.data).toMatchObject({
         updatePost: {
           errors: null,
           post: {
-            caption: mockCaption,
+            caption: newMockCaption,
             id: `${dbPost.id}`,
           },
         },
