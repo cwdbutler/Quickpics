@@ -4,6 +4,15 @@ import { createId } from "../src/utils/createId";
 import faker from "faker";
 import { sleep } from "./utils/sleep";
 import { PrismaClient } from "@prisma/client";
+import { uploadFile } from "../src/utils/uploadFile";
+import AWS from 'aws-sdk';
+jest.mock('aws-sdk', () => {
+  const mockedS3 = {
+    upload: jest.fn().mockReturnThis(),
+    promise: jest.fn(),
+  };
+  return { S3: jest.fn(() => mockedS3) };
+});
 
 const prisma = new PrismaClient();
 

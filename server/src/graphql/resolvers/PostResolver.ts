@@ -22,8 +22,6 @@ import {
 import { createId } from "../../utils/createId";
 import { checkAuthenticated } from "../../middleware/checkAuthenticated";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
-import { uploadFile } from "../../utils/uploadFile";
-import { deleteImage } from "../../utils/deleteImage";
 import { PostsResponse } from "../types/PostsResponse";
 import { Like } from "../types/Like";
 import { Comment } from "../types/Comment";
@@ -211,7 +209,7 @@ export class PostResolver {
   async createPost(
     @Arg("file", () => GraphQLUpload) file: FileUpload,
     @Arg("caption") caption: string,
-    @Ctx() { prisma, req }: Context
+    @Ctx() { prisma, req, uploadFile }: Context
   ): Promise<CreatePostResponse> {
     if (caption.length > MAX_TEXT_FIELD_LENGTH) {
       return {
@@ -340,7 +338,7 @@ export class PostResolver {
   @UseMiddleware(checkAuthenticated)
   async deletePost(
     @Arg("id", () => String) id: string,
-    @Ctx() { prisma, req }: Context
+    @Ctx() { prisma, req, deleteFile }: Context
   ): Promise<CreatePostResponse> | null {
     const foundPost = await prisma.post.findUnique({
       where: {
@@ -403,7 +401,7 @@ export class PostResolver {
     });
 
     if (post.id) {
-      await deleteImage(post.id);
+      await deleteFile(post.id);
       // delete from s3
     }
 

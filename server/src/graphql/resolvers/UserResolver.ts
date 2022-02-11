@@ -31,8 +31,6 @@ import {
 import { checkNotAuthenticated } from "../../middleware/checkNotAuhenticated";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
 import { checkAuthenticated } from "../../middleware/checkAuthenticated";
-import { uploadFile } from "../../utils/uploadFile";
-import { deleteImage } from "../..//utils/deleteImage";
 import { createId } from "../../utils/createId";
 
 @Resolver(User)
@@ -317,7 +315,7 @@ export class UserResolver {
   @UseMiddleware(checkAuthenticated)
   async updateProfilePic(
     @Arg("file", () => GraphQLUpload) file: FileUpload,
-    @Ctx() { req, prisma }: Context
+    @Ctx() { req, prisma, uploadFile, deleteFile }: Context
   ): Promise<User> {
     const { avatarUrl } = await prisma.user.findUnique({
       where: {
@@ -332,7 +330,7 @@ export class UserResolver {
     if (avatarUrl) {
       const [key] = avatarUrl.match(/([^\/]+)(?=\.\w+$)/);
       // gets the key from the S3 url
-      await deleteImage(key);
+      await deleteFile(key);
       // delete from s3
     }
 
@@ -353,7 +351,9 @@ export class UserResolver {
 
   @Mutation(() => User)
   @UseMiddleware(checkAuthenticated)
-  async removeProfilePic(@Ctx() { req, prisma }: Context): Promise<User> {
+  async removeProfilePic(
+    @Ctx() { req, prisma, deleteFile }: Context
+  ): Promise<User> {
     const { avatarUrl } = await prisma.user.findUnique({
       where: {
         id: req.session.userId,
@@ -365,7 +365,7 @@ export class UserResolver {
 
     if (avatarUrl) {
       const [key] = avatarUrl.match(/([^\/]+)(?=\.\w+$)/);
-      await deleteImage(key);
+      await deleteFile(key);
     }
 
     const user = await prisma.user.update({
