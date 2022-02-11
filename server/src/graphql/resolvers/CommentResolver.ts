@@ -180,14 +180,7 @@ export class CommentResolver {
     }
 
     if (foundcomment.authorId !== req.session.userId) {
-      return {
-        errors: [
-          {
-            field: "user",
-            message: NO_PERMISSION,
-          },
-        ],
-      };
+      throw new Error(NO_PERMISSION);
     }
 
     const comment = await prisma.comment.update({
@@ -233,14 +226,7 @@ export class CommentResolver {
     }
 
     if (foundcomment.authorId !== req.session.userId) {
-      return {
-        errors: [
-          {
-            field: "user",
-            message: NO_PERMISSION,
-          },
-        ],
-      };
+      throw new Error(NO_PERMISSION);
     }
 
     const comment = await prisma.comment.delete({

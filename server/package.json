@@ -12,6 +12,7 @@
     "test:user": "jest User.test.ts",
     "test:post": "jest Post.test.ts",
     "test:like": "jest Like.test.ts",
+    "test:comment": "jest Comment.test.ts",
     "prisma:deploy": "npx prisma migrate deploy"
   },
   "prisma": {

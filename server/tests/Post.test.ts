@@ -590,7 +590,7 @@ describe("Post", () => {
   `;
 
   const deletePost = gql`
-    mutation deletePost($id: String!) {
+    mutation ($id: String!) {
       deletePost(id: $id) {
         post {
           id
