@@ -1,12 +1,8 @@
-import { startTestServer } from "./utils/testServer";
+import { PrismaClient } from "@prisma/client";
+import faker from "faker";
 import gql from "graphql-tag";
 import { createId } from "../src/utils/createId";
-import faker from "faker";
-import { PrismaClient } from "@prisma/client";
-import { Upload } from "graphql-upload";
-import fs from "fs";
-import path from "path";
-import AWS from "aws-sdk";
+import { startTestServer } from "./utils/testServer";
 
 const prisma = new PrismaClient();
 
