@@ -64,7 +64,8 @@ function Post({ serverPost }: Props) {
       <NavBar />
       <Head>
         <title>
-          {post.author.username} on Quickpics: "{post.caption}"
+          {post.author.username} on Quickpics
+          {post.caption && `: "${post.caption}"`}
         </title>
       </Head>
       <PostActions
@@ -87,9 +88,9 @@ function Post({ serverPost }: Props) {
             </div>
             <div className="w-full md:w-[335px] flex flex-col justify-between">
               <header className="h-[60px] w-full hidden md:flex items-center justify-between p-4 border-b-[1px] border-gray-300">
-                <div className="flex items-center">
+                <div className="flex items-center space-x-3">
                   <Link href={`/${post.author.username}`}>
-                    <a>
+                    <a className="flex">
                       <Image
                         width={32}
                         height={32}
@@ -104,9 +105,7 @@ function Post({ serverPost }: Props) {
                   </Link>
                   <Link href={`/${post.author.username}`}>
                     <a>
-                      <h3 className="ml-3 font-semibold">
-                        {post.author.username}
-                      </h3>
+                      <h3 className="font-semibold">{post.author.username}</h3>
                     </a>
                   </Link>
                 </div>
@@ -119,7 +118,7 @@ function Post({ serverPost }: Props) {
                   <div className="w-full flex mb-2">
                     <span className="flex flex-shrink-0">
                       <Link href={`/${post.author.username}`}>
-                        <a className="flex-shrink-0 mr-3">
+                        <a className="flex mr-3">
                           <Image
                             width={32}
                             height={32}

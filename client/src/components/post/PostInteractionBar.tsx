@@ -11,8 +11,8 @@ type Props = {
     saved: boolean;
   };
   className?: string;
-  focusForm: number;
-  setFocusForm: (focusForm: number) => void;
+  focusForm?: number;
+  setFocusForm?: (focusForm: number) => void;
 };
 
 export default function PostInteractionBar({
@@ -35,7 +35,10 @@ export default function PostInteractionBar({
           <LikeButton entity={post} iconStyle={styles.dynamicIcon} />
         </div>
         {router.pathname === "/p/[id]" ? (
-          <button className="flex" onClick={() => setFocusForm(focusForm + 1)}>
+          <button
+            className="flex"
+            onClick={() => setFocusForm!(focusForm! + 1)}
+          >
             <CommentIcon className={styles.icon} />
           </button>
         ) : (

@@ -19,7 +19,7 @@ type Props = {
   currentUser: UserInfoFragment | null | undefined;
   post: FeedPostFragment | PostQuery["post"];
   iconStyles: string;
-  focusForm: number;
+  focusForm?: number;
 };
 
 export default function CommentForm({
@@ -59,7 +59,7 @@ export default function CommentForm({
   const inputRef = useRef<any>();
 
   useEffect(() => {
-    if (focusForm > 0) {
+    if (focusForm && focusForm > 0) {
       // avoid focus on mount
       inputRef.current.focus();
     }

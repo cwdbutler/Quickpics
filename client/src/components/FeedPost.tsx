@@ -40,7 +40,7 @@ export default function FeedPost({ post }: Props) {
       />
       <article className="w-full sm:w-[600px] text-m sm:border-[1px] bg-white border-gray-300 mb-3 sm:mb-6">
         <header className="h-14 flex items-center justify-between p-3">
-          <div className="flex items-center">
+          <div className="flex items-center space-x-3">
             <Link href={`/${post.author.username}`}>
               <a className="flex">
                 <Image
@@ -60,7 +60,7 @@ export default function FeedPost({ post }: Props) {
 
             <Link href={`/${post.author.username}`}>
               <a>
-                <h3 className="ml-3 font-semibold">{post.author.username}</h3>
+                <h3 className="font-semibold">{post.author.username}</h3>
               </a>
             </Link>
           </div>

@@ -31,7 +31,7 @@ export default function Comment({ comment, user }: Props) {
       <div className="group flex items-center justify-start my-3 w-full">
         <div className="flex flex-shrink-0  h-full mr-3 items-start justify-start">
           <Link href={`/${comment.author.username}`}>
-            <a>
+            <a className="flex">
               <Image
                 objectFit="cover"
                 width={32}
