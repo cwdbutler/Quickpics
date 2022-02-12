@@ -5,7 +5,7 @@ import { buildSchema } from "type-graphql";
 import { Context } from "./context";
 import { PrismaClient } from "@prisma/client";
 import path from "path";
-import { COOKIE_NAME, COOKIE_SECRET, IS_PROD } from "./utils/constants";
+import { COOKIE_NAME, COOKIE_SECRET, IS_PROD, PORT } from "./utils/constants";
 const redis = require("redis");
 const session = require("express-session");
 // won't work with es6 imports
@@ -18,8 +18,6 @@ import { uploadFile } from "./utils/uploadFile";
 export const prisma = new PrismaClient({
   log: ["query"],
 });
-
-const port = 4000;
 
 const startServer = async () => {
   const app = express();
@@ -74,9 +72,9 @@ const startServer = async () => {
 
   apolloServer.applyMiddleware({ app, cors: false });
 
-  app.listen(port, () => {
+  app.listen(PORT, () => {
     // eslint-disable-next-line
-    console.log(`Server running on port ${port}...`);
+    console.log(`Server running on port ${PORT}...`);
   });
 };
 
