@@ -1,6 +1,6 @@
 export const IS_PROD = process.env.NODE_ENV === "production";
 
-export const PORT = process.env.PORT;
+export const PORT = process.env.PORT || 4000;
 
 // cookies
 export const COOKIE_NAME = "quickpics-session";

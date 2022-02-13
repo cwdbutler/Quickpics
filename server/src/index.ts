@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import "reflect-metadata";
@@ -24,13 +25,15 @@ const startServer = async () => {
 
   app.use(
     cors({
-      origin: "http://localhost:3000",
+      origin: process.env.CORS_ORIGIN,
       credentials: true,
     })
   );
 
   const RedisStore = require("connect-redis")(session);
-  const redisClient = redis.createClient();
+  const redisClient = redis.createClient({ url: process.env.REDIS_URL });
+
+  app.set("trust proxy", 1);
 
   app.use(
     session({
@@ -43,6 +46,7 @@ const startServer = async () => {
         maxAge: 31536000000, // 1 year
         httpOnly: IS_PROD,
         secure: IS_PROD,
+        domain: IS_PROD ? process.env.DOMAIN : undefined,
       },
     })
   );
@@ -52,12 +56,15 @@ const startServer = async () => {
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
       resolvers: [__dirname + "/graphql/resolvers/**/*.{ts,js}"],
-      emitSchemaFile: {
-        path: path.join(__dirname, "../src/graphql/schema.gql"),
-        sortedSchema: false,
-      },
+      emitSchemaFile: !IS_PROD
+        ? {
+            path: path.join(__dirname, "../src/graphql/schema.gql"),
+            sortedSchema: false,
+          }
+        : undefined,
     }),
     plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
+    introspection: true,
     // reverting to GraphQL Playground because couldn't get cookies to work in Apollo Studio
     context: ({ req, res }): Context => ({
       prisma,
@@ -73,8 +80,11 @@ const startServer = async () => {
   apolloServer.applyMiddleware({ app, cors: false });
 
   app.listen(PORT, () => {
-    // eslint-disable-next-line
     console.log(`Server running on port ${PORT}...`);
+  });
+
+  app.get("/", (_req, res) => {
+    res.redirect("/graphql");
   });
 };
 
