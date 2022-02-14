@@ -22,7 +22,7 @@
     "graphql": "^16.2.0",
     "isomorphic-unfetch": "^3.1.0",
     "javascript-time-ago": "^2.3.11",
-    "next": "11.1.2",
+    "next": "^11.1.4",
     "next-urql": "^3.3.2",
     "react": "^17.0.2",
     "react-copy-to-clipboard": "^5.0.4",
