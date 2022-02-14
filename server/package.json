@@ -14,7 +14,8 @@
     "test:post": "jest Post.test.ts",
     "test:like": "jest Like.test.ts",
     "test:comment": "jest Comment.test.ts",
-    "prisma:deploy": "npx prisma migrate deploy"
+    "prisma:deploy": "npx prisma migrate deploy",
+    "prod": "yarn prisma:deploy && node dist/index.js"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"

@@ -11,15 +11,12 @@ COPY . .
 COPY .env.production .env
 # overwrite environment variables with the production ones
 
-ENV NODE_ENV=production
+ENV NODE_ENV production
 
-RUN yarn prisma:deploy
-# push migrations from schema
 RUN yarn build
 
+EXPOSE 8080
 
-EXPOSE 80
-
-CMD ["node", "dist/index.js"]
+CMD ["yarn", "prod"]
 
 USER node
