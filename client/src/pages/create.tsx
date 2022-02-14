@@ -24,7 +24,7 @@ function create() {
       </Head>
       <div className="min-h-screen flex flex-col">
         <NavBar />
-        <div className="flex-grow flex items-center justify-center">
+        <div className="flex-grow bg-background flex items-center justify-center">
           <CreatePostForm />
         </div>
       </div>

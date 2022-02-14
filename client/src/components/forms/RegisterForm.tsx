@@ -65,6 +65,8 @@ export default function RegisterForm() {
               setRegisterErrors(response.data.register.errors);
             } else if (response.data?.register.user) {
               if (router.query.from) {
+                console.log(router);
+                console.log(router.query.from);
                 router.push(router.query.from as string);
               } else {
                 router.push("/");

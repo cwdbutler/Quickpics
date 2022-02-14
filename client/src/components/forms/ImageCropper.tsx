@@ -149,7 +149,7 @@ export default function ImageCropper({
             onZoomChange={setZoom}
             objectFit={cropFit}
             classes={{
-              containerClassName: "rounded-b-md",
+              containerClassName: "rounded-b-xl",
               cropAreaClassName: "cursor-grab active:cursor-grabbing",
             }}
             initialCroppedAreaPixels={croppedAreaPixels}

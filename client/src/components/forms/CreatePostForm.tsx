@@ -35,7 +35,7 @@ function CreatePostForm() {
   const [filters, setFilters] = useState<Filter[]>(filterConfig);
 
   const styles = {
-    form: "aspect-square bg-white transition-all duration-500 ease-in-out w-[350px] sm:w-3/5 xl:w-[900px] rounded-xl mx-auto border-[1px] p-0 border-gray-300",
+    form: "aspect-square bg-white transition-all duration-500 ease-in-out w-[350px] sm:w-3/5 md:w-[550px] 3xl:w-[900px] rounded-xl mx-auto border-[1px] p-0 border-gray-300",
     header:
       "flex justify-between items-center text-md py-2 px-4 font-semibold text-gray-900 border-b-[1px] border-gray-300",
   };

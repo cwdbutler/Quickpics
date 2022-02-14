@@ -129,9 +129,17 @@ export default function LoginForm() {
 
       <div className="border-[1px] h-[70px] border-gray-300 bg-white flex justify-center items-center">
         <p className="text-sm">Don't have an account?</p>
-        <Link href="/register">
-          <a className="ml-2 rounded-sm bg-white text-sm text-blue"> Sign up</a>
-        </Link>
+        <button
+          onClick={() => {
+            router.push({
+              pathname: "/register",
+              query: { from: router.query.from as string },
+            });
+          }}
+          className="ml-2 rounded-sm bg-white text-sm text-blue"
+        >
+          Sign up
+        </button>
       </div>
     </div>
   );

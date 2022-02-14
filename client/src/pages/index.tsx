@@ -81,7 +81,7 @@ function Home() {
       <Head>
         <title>Quickpics</title>
       </Head>
-      <div className="flex pr-[16px] sm:pr-0 justify-center">
+      <div className="flex justify-center">
         <div className="w-full md:w-[990px] lg:grid lg:grid-cols-3 my-12">
           <div className="lg:col-span-2 flex flex-col items-center w-full flex-1">
             {pageVariables.map((variables, index) => {
@@ -112,6 +112,7 @@ function Home() {
                       <Link href={`/${user.username}`}>
                         <a className="mr-3 flex">
                           <Image
+                            objectFit="cover"
                             width={32}
                             height={32}
                             src={

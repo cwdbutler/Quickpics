@@ -19,9 +19,8 @@
   }
 }
 
-/* stopping the scrollbar from shifting the navbar buttons */
-body {
-  overflow: overlay;
+html {
+  overflow-y: scroll !important;
 }
 
 /* from https://loading.io/css/ */

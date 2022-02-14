@@ -104,7 +104,7 @@ function SavedPosts({ serverUser, serverSavedPosts }: Props) {
       <Head>
         <title>{serverUser.username} • Quickpics</title>
       </Head>
-      <div className="flex flex-col pr-[16px] lg:pr-0 items-center justify-center py-2">
+      <div className="flex flex-col items-center justify-center py-2">
         <div className="my-6 flex flex-col items-center w-full flex-1">
           <div className="w-full min-h-screen lg:w-[935px] flex flex-col">
             <header className="flex">
