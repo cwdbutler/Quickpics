@@ -14,6 +14,7 @@ import { Waypoint } from "react-waypoint";
 import Link from "next/link";
 import Image from "next/image";
 import Spinner from "../components/Spinner";
+import { FEED_TAKE } from "../utis/constants";
 
 interface Props {
   variables: AllPostsQueryVariables;
@@ -28,32 +29,30 @@ function Page({ variables, isLastPage, loadMore }: Props) {
 
   return (
     <main>
-      {data ? (
+      {!fetching ? (
         <>
-          {data.posts.posts.map((post) => (
+          {data?.posts.posts.map((post) => (
             <FeedPost key={post.id} post={post} />
           ))}
-          {isLastPage && data.posts.hasMore && (
+          {isLastPage && data?.posts.hasMore && (
             // when this becomes visible on the screen, it loads more posts
             <Waypoint
               onEnter={() => {
-                if (data.posts) {
+                if (data?.posts) {
                   loadMore(data.posts.posts[data.posts.posts.length - 1].id);
                 }
               }}
             />
           )}
         </>
-      ) : fetching ? (
-        <Spinner />
       ) : (
-        <div>No posts yet</div>
+        <Spinner />
       )}
     </main>
   );
 }
 
-const take = 10;
+const take = FEED_TAKE;
 
 function Home() {
   interface PageVariables {

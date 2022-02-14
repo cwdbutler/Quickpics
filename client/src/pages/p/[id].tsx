@@ -24,7 +24,7 @@ import Link from "next/link";
 import Image from "next/image";
 import LikesModal from "../../components/post/LikesModal";
 import Head from "next/head";
-import { API_URL } from "../../utis/constants";
+import { API_URL, BLUR_PIXEL } from "../../utis/constants";
 
 type Props = {
   serverPost: PostQuery["post"];
@@ -85,6 +85,8 @@ function Post({ serverPost }: Props) {
                 width={600}
                 height={600}
                 priority
+                placeholder="blur"
+                blurDataURL={BLUR_PIXEL}
               />
             </div>
             <div className="w-full md:w-[335px] flex flex-col justify-between">

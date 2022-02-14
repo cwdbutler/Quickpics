@@ -8,7 +8,7 @@ import {
 } from "./graphql/generated/graphql";
 import { isServer } from "./utis/isServer";
 import Router from "next/router";
-import { API_URL } from "./utis/constants";
+import { API_URL, FEED_TAKE } from "./utis/constants";
 
 // creating the urql client and configuring the caching settings
 // in "updates" it describes what to do when each query happens
@@ -64,7 +64,7 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
               });
               // refetches posts
               cache.invalidate("Query", "posts", {
-                take: 10,
+                take: FEED_TAKE,
               });
 
               // invalidate all the post queries (to update the like icons)
@@ -98,7 +98,7 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
                 return data;
               });
               cache.invalidate("Query", "posts", {
-                take: 10,
+                take: FEED_TAKE,
               });
 
               cache
@@ -110,7 +110,7 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
             },
             createPost: (result, args, cache, _info) => {
               cache.invalidate("Query", "posts", {
-                take: 10,
+                take: FEED_TAKE,
               });
             },
             createComment: (result, args, cache, _info) => {
@@ -449,7 +449,7 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
             deletePost: (result, args, cache, _info) => {
               if (result.deletePost.post) {
                 cache.invalidate("Query", "posts", {
-                  take: 10,
+                  take: FEED_TAKE,
                 });
               }
             },
@@ -462,7 +462,7 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
 
               if (result.deleteComment.comment) {
                 cache.invalidate("Query", "posts", {
-                  take: 10,
+                  take: FEED_TAKE,
                 });
               }
             },

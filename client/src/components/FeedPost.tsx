@@ -13,6 +13,7 @@ import { useState } from "react";
 import PostActions from "./post/PostActions";
 import Image from "next/image";
 import LikesModal from "./post/LikesModal";
+import { BLUR_PIXEL } from "../utis/constants";
 
 type Props = {
   post: FeedPostFragment;
@@ -74,6 +75,8 @@ export default function FeedPost({ post }: Props) {
           width={600}
           height={600}
           className="select-none"
+          placeholder="blur"
+          blurDataURL={BLUR_PIXEL}
         />
         <PostInteractionBar
           className="h-12 flex items-center justify-between"
