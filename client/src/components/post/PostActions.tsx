@@ -9,6 +9,7 @@ import {
   CurrentUserQuery,
 } from "../../graphql/generated/graphql";
 import Link from "next/link";
+import { isServer } from "../../utis/isServer";
 
 type Props = {
   open: boolean;
@@ -25,6 +26,13 @@ export default function PostActions({ open, setOpen, post, user }: Props) {
   };
 
   const router = useRouter();
+
+  let url = "";
+  if (!isServer()) {
+    url = window.location.origin;
+  }
+
+  url += `/p/${post?.id}`;
 
   const [copied, setCopied] = useState(false);
   const [done, setDone] = useState(false);
@@ -202,8 +210,7 @@ export default function PostActions({ open, setOpen, post, user }: Props) {
                 )}
                 <Dialog.Title as="h3" className={styles.option}>
                   <CopyToClipboard
-                    // fix this
-                    text={`http://localhost:3000/p/${post!.id}`}
+                    text={url}
                     onCopy={() => {
                       setOpen(false);
                       setCopied(true);

@@ -24,6 +24,7 @@ import Link from "next/link";
 import Image from "next/image";
 import LikesModal from "../../components/post/LikesModal";
 import Head from "next/head";
+import { API_URL } from "../../utis/constants";
 
 type Props = {
   serverPost: PostQuery["post"];
@@ -247,7 +248,7 @@ export async function getServerSideProps({ req, params }: any) {
   const ssrCache = ssrExchange({ isClient: false });
   const client = initUrqlClient(
     {
-      url: "http://localhost:4000/graphql",
+      url: API_URL,
       fetchOptions: {
         credentials: "include",
         headers: {

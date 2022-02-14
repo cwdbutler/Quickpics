@@ -24,6 +24,7 @@ import { Waypoint } from "react-waypoint";
 import Image from "next/image";
 import ProfilePicForm from "../../components/forms/ProfilePicForm";
 import Spinner from "../../components/Spinner";
+import { API_URL } from "../../utis/constants";
 
 interface PageProps {
   variables: SavedPostsQueryVariables;
@@ -229,7 +230,7 @@ export async function getServerSideProps({ req, params }: any) {
   const ssrCache = ssrExchange({ isClient: false });
   const client = initUrqlClient(
     {
-      url: "http://localhost:4000/graphql",
+      url: API_URL,
       fetchOptions: {
         credentials: "include",
         headers: {

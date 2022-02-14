@@ -8,6 +8,7 @@ import {
 } from "./graphql/generated/graphql";
 import { isServer } from "./utis/isServer";
 import Router from "next/router";
+import { API_URL } from "./utis/constants";
 
 // creating the urql client and configuring the caching settings
 // in "updates" it describes what to do when each query happens
@@ -19,7 +20,7 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
   }
   // without this, the cookie won't get sent for pages with SSR
   return {
-    url: "http://localhost:4000/graphql",
+    url: API_URL,
     fetchOptions: {
       credentials: "include",
       headers: cookie ? { cookie } : undefined,
