@@ -57,14 +57,14 @@ model Like {
   likedAt         DateTime    @default(now()) @map("createdAt")
   model           String
   entityId        String      
-  author          User        @relation(fields: [authorId], references: [id])
+  author          User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId        Int
 }
 
 model UsersOnPosts {
-  post            Post        @relation(fields: [postId], references: [id])
+  post            Post        @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId          String
-  user            User        @relation(fields: [userId], references: [id])
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId          Int
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt

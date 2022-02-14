@@ -26,6 +26,11 @@ const testPostToDelete = {
   caption: "delete me",
   imageUrl: "delete.jpg",
 };
+const testPostToDelete2 = {
+  id: createId(),
+  caption: "delete me",
+  imageUrl: "delete.jpg",
+};
 const testPost1 = {
   id: createId(),
   caption: "test post 1",
@@ -143,20 +148,28 @@ beforeAll(async () => {
         authorId: 1,
         createdAt: threeDaysAgo,
       },
+      {
+        id: testPostToDelete.id,
+        caption: testPostToDelete.caption,
+        imageUrl: testPostToDelete.imageUrl,
+        authorId: 1,
+        createdAt: oneWeekAgo,
+      },
     ],
   });
 
   await prisma.user.create({
     data: {
+      // this user has id of 2
       username: "otheruser",
       email: "other@example.com",
       passwordHash: "notrelevant",
       posts: {
         create: [
           {
-            id: testPostToDelete.id,
-            caption: testPostToDelete.caption,
-            imageUrl: testPostToDelete.imageUrl,
+            id: testPostToDelete2.id,
+            caption: testPostToDelete2.caption,
+            imageUrl: testPostToDelete2.imageUrl,
             createdAt: oneWeekAgo,
           },
         ],
@@ -165,8 +178,11 @@ beforeAll(async () => {
   });
 
   // required as when deleting a post, it also deletes the activity
-  await prisma.activity.create({
-    data: { id: testPostToDelete.id, model: "post", userId: 1 },
+  await prisma.activity.createMany({
+    data: [
+      { id: testPostToDelete.id, model: "post", userId: 1 },
+      { id: testPostToDelete2.id, model: "post", userId: 2 },
+    ],
   });
 });
 
@@ -536,7 +552,7 @@ describe("Post", () => {
       expect(res.errors).toBeUndefined();
       expect(res.data.posts.posts.length).toEqual(1);
       // this user only has 1 post
-      expect(res.data.posts.posts[0].id).toEqual(testPostToDelete.id);
+      expect(res.data.posts.posts[0].id).toEqual(testPostToDelete2.id);
     });
 
     test("specifying the cursor", async () => {
@@ -857,25 +873,25 @@ describe("Post", () => {
       });
     });
 
+    function mockDeleteFile(id: string) {
+      const mockedS3 = new AWS.S3({
+        accessKeyId: "mock-accessKeyId",
+        secretAccessKey: "mock-secretAccessKey",
+        region: "mock-region",
+      }) as any;
+
+      const params = {
+        Bucket: "mock-bucket",
+        Key: `${id}.jpg`,
+      };
+
+      return mockedS3.deleteObject(params).promise();
+    }
+
     test("deleting a post", async () => {
-      function mockDeleteFile(id: string) {
-        const mockedS3 = new AWS.S3({
-          accessKeyId: "mock-accessKeyId",
-          secretAccessKey: "mock-secretAccessKey",
-          region: "mock-region",
-        }) as any;
-
-        const params = {
-          Bucket: "mock-bucket",
-          Key: `${id}.jpg`,
-        };
-
-        return mockedS3.deleteObject(params).promise();
-      }
-
       const { server } = await startTestServer({
         user: {
-          id: 2, // the owner
+          id: 1, // the owner
         },
         deleteFile: mockDeleteFile,
       });
@@ -901,6 +917,47 @@ describe("Post", () => {
           errors: null,
           post: {
             id: testPostToDelete.id,
+          },
+        },
+      });
+    });
+
+    test("deleting a post that someone else has saved", async () => {
+      await prisma.usersOnPosts.create({
+        data: {
+          userId: 1,
+          postId: testPostToDelete2.id,
+        },
+      });
+
+      const { server } = await startTestServer({
+        user: {
+          id: 2, // not the person who saved, but the owner
+        },
+        deleteFile: mockDeleteFile,
+      });
+
+      const res = await server.executeOperation({
+        query: deletePost,
+        variables: {
+          id: testPostToDelete2.id,
+        },
+      });
+
+      const dbPost = await prisma.post.findUnique({
+        where: {
+          id: testPostToDelete2.id,
+        },
+      });
+
+      expect(dbPost).toBeNull();
+
+      expect(res.errors).toBeUndefined();
+      expect(res.data).toMatchObject({
+        deletePost: {
+          errors: null,
+          post: {
+            id: testPostToDelete2.id,
           },
         },
       });
