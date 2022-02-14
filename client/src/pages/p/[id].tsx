@@ -92,6 +92,7 @@ function Post({ serverPost }: Props) {
                   <Link href={`/${post.author.username}`}>
                     <a className="flex">
                       <Image
+                        objectFit="cover"
                         width={32}
                         height={32}
                         src={
@@ -118,8 +119,9 @@ function Post({ serverPost }: Props) {
                   <div className="w-full flex mb-2">
                     <span className="flex flex-shrink-0">
                       <Link href={`/${post.author.username}`}>
-                        <a className="flex mr-3">
+                        <a className="mr-3">
                           <Image
+                            objectFit="cover"
                             width={32}
                             height={32}
                             src={
