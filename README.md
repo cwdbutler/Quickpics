@@ -55,7 +55,7 @@
       <img src="https://i.gyazo.com/f7934a3f53200ba72162da470db61a16.gif">
     </div>
     <div>
-    <img src="https://i.gyazo.com/6826bd5e1d77c11e835afe707d6b2db5.gif">
+    <img src="https://i.gyazo.com/7c1883d52fc207257c19ea1792b70fa7.gif">
     </div>
     <div>
     <img src="https://i.gyazo.com/21ad84f3cad8516c61c1343a99d95ab6.gif">
