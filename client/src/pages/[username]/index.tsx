@@ -55,7 +55,7 @@ function Page({ variables, isLastPage, loadMore }: PageProps) {
         />
       )}
       {fetching && (
-        <div className="w-full flex items-center justify-center my-4">
+        <div className="col-span-3 flex items-center justify-center my-4">
           <Spinner />
         </div>
       )}

@@ -4,6 +4,9 @@ mutation createPost($caption: String!, $file: Upload!) {
       id
       caption
       imageUrl
+      author {
+        username
+      }
     }
   }
 }

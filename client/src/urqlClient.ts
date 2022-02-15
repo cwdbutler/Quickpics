@@ -112,6 +112,20 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
               cache.invalidate("Query", "posts", {
                 take: FEED_TAKE,
               });
+              // user's profile updates
+              cache.invalidate("Query", "postsByUser", {
+                username: result.createPost.post?.author.username!,
+              });
+            },
+            deletePost: (result, args, cache, _info) => {
+              if (result.deletePost.post) {
+                cache.invalidate("Query", "posts", {
+                  take: FEED_TAKE,
+                });
+              }
+              cache.invalidate("Query", "postsByUser", {
+                username: result.deletePost.post?.author.username!,
+              });
             },
             createComment: (result, args, cache, _info) => {
               if (result.createComment.comment) {
@@ -443,13 +457,6 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
 
                 cache.invalidate("Query", "savedPosts", {
                   take: 12,
-                });
-              }
-            },
-            deletePost: (result, args, cache, _info) => {
-              if (result.deletePost.post) {
-                cache.invalidate("Query", "posts", {
-                  take: FEED_TAKE,
                 });
               }
             },

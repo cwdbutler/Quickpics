@@ -21,8 +21,6 @@ export type Scalars = {
   Upload: any;
 };
 
-export type Activity = Post;
-
 export type Comment = {
   __typename?: 'Comment';
   author: User;
@@ -186,7 +184,6 @@ export type Query = {
   __typename?: 'Query';
   comment?: Maybe<Comment>;
   currentUser?: Maybe<User>;
-  feed: Array<Activity>;
   post?: Maybe<Post>;
   posts: PostsResponse;
   savedPosts: PostsResponse;
@@ -254,7 +251,7 @@ export type CreatePostMutationVariables = Exact<{
 }>;
 
 
-export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'CreatePostResponse', post?: { __typename?: 'Post', id: string, caption?: string | null | undefined, imageUrl: string } | null | undefined } };
+export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'CreatePostResponse', post?: { __typename?: 'Post', id: string, caption?: string | null | undefined, imageUrl: string, author: { __typename?: 'User', username: string } } | null | undefined } };
 
 export type DeleteCommentMutationVariables = Exact<{
   id: Scalars['String'];
@@ -268,7 +265,7 @@ export type DeletePostMutationVariables = Exact<{
 }>;
 
 
-export type DeletePostMutation = { __typename?: 'Mutation', deletePost: { __typename?: 'CreatePostResponse', post?: { __typename?: 'Post', id: string } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
+export type DeletePostMutation = { __typename?: 'Mutation', deletePost: { __typename?: 'CreatePostResponse', post?: { __typename?: 'Post', id: string, author: { __typename?: 'User', username: string } } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
 
 export type LikeMutationVariables = Exact<{
   entityId: Scalars['String'];
@@ -467,6 +464,9 @@ export const CreatePostDocument = gql`
       id
       caption
       imageUrl
+      author {
+        username
+      }
     }
   }
 }
@@ -498,6 +498,9 @@ export const DeletePostDocument = gql`
   deletePost(id: $id) {
     post {
       id
+      author {
+        username
+      }
     }
     errors {
       field
@@ -770,7 +773,6 @@ export type GraphCacheKeysConfig = {
 
 export type GraphCacheResolvers = {
   Query?: {
-    feed?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<Activity> | string>>,
     comment?: GraphCacheResolver<WithTypename<Query>, QueryCommentArgs, WithTypename<Comment> | string>,
     post?: GraphCacheResolver<WithTypename<Query>, QueryPostArgs, WithTypename<Post> | string>,
     posts?: GraphCacheResolver<WithTypename<Query>, QueryPostsArgs, WithTypename<PostsResponse> | string>,
