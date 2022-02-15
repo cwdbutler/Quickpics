@@ -171,6 +171,7 @@ export default function ImageCropper({
             >
               <Slider
                 onChange={(value) => setZoom(value)}
+                defaultValue={0}
                 min={1}
                 max={3}
                 step={0.1}
