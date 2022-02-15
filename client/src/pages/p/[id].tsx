@@ -84,7 +84,7 @@ function Post({ serverPost }: Props) {
                 layout="responsive"
                 width={600}
                 height={600}
-                priority
+                priority={true}
                 placeholder="blur"
                 blurDataURL={BLUR_PIXEL}
               />
