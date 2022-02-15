@@ -108,12 +108,12 @@ function SavedPosts({ serverUser, serverSavedPosts }: Props) {
         <div className="my-6 flex flex-col items-center w-full flex-1">
           <div className="w-full min-h-screen lg:w-[935px] flex flex-col">
             <header className="flex">
-              <div className="mx-20 select-none flex flex-col items-center relative">
+              <div className="mx-5 w-20 sm:w-40 sm:mx-20 select-none flex flex-col items-center relative flex-shrink-0">
                 <ProfilePicForm user={data?.user} />
               </div>
               <section aria-label="User information" className="flex-grow">
                 <div className="flex flex-col space-y-5">
-                  <h2 className="text-3xl pt-1 font-light">
+                  <h2 className="text-3xl pt-1 font-light break-all sm:break-normal">
                     {serverUser.username}
                   </h2>
                   <span>

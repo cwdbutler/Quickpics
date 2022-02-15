@@ -24,7 +24,7 @@ export default function NavBar() {
           <div className="relative flex items-center justify-between h-14">
             <Link href="/">
               <a className="p-2 flex-shrink-0">
-                <h1 className="font-logo text-3xl">Quickpics</h1>
+                <h1 className="font-logo text-2xl sm:text-3xl">Quickpics</h1>
               </a>
             </Link>
             <div className="flex-1 flex items-stretch justify-end mr-2">
@@ -60,7 +60,7 @@ export default function NavBar() {
                         query: { from: router.asPath },
                       });
                     }}
-                    className="px-3 py-2 rounded-md text-sm font-medium"
+                    className="px-3 py-2 rounded-md text-sm font-medium flex-shrink-0"
                   >
                     Log in
                   </button>
@@ -72,7 +72,7 @@ export default function NavBar() {
                         query: { from: router.asPath },
                       });
                     }}
-                    className="px-3 py-2 rounded-md text-sm font-medium"
+                    className="px-3 py-2 rounded-md text-sm font-medium flex-shrink-0"
                   >
                     Sign up
                   </button>

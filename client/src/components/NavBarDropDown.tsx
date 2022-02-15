@@ -24,7 +24,7 @@ export default function NavBarDropDown({ user }: Props) {
           className={`${
             router.asPath.startsWith(`/${user.username}`) &&
             "aspect-square border-[1px]  border-black"
-          } overflow-hidden  rounded-full select-none flex`}
+          } overflow-hidden  rounded-full select-none flex flex-shrink-0`}
         >
           <Image
             objectFit="cover"
