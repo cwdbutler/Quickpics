@@ -108,7 +108,7 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
                   cache.invalidate("Query", field.fieldName, field.arguments);
                 });
             },
-            createPost: (result, args, cache, _info) => {
+            createPost: (result, _args, cache, _info) => {
               cache.invalidate("Query", "posts", {
                 take: FEED_TAKE,
               });
@@ -117,7 +117,7 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
                 username: result.createPost.post?.author.username!,
               });
             },
-            deletePost: (result, args, cache, _info) => {
+            deletePost: (result, _args, cache, _info) => {
               if (result.deletePost.post) {
                 cache.invalidate("Query", "posts", {
                   take: FEED_TAKE,
@@ -460,7 +460,7 @@ export const urqlClient = (ssrExchange: any, ctx: any) => {
                 });
               }
             },
-            deleteComment: (result, args, cache, _info) => {
+            deleteComment: (result, _args, cache, _info) => {
               if (result.deleteComment.comment) {
                 cache.invalidate("Query", "post", {
                   id: result.deleteComment.comment.postId,

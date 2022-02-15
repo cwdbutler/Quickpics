@@ -25,6 +25,12 @@ export default function Comment({ comment, user }: Props) {
 
   const [likesOpen, setLikesOpen] = useState(false);
 
+  const [time, setTime] = useState<any>();
+
+  useEffect(() => {
+    setTime(shortTimeSince(comment.createdAt));
+  }, []);
+
   return (
     <li className="w-full flex">
       <CommentActions open={open} setOpen={setOpen} commentId={comment.id} />
@@ -65,7 +71,7 @@ export default function Comment({ comment, user }: Props) {
               dateTime={comment.createdAt}
               title={dayjs(comment.createdAt).format("ll")}
             >
-              {shortTimeSince(comment.createdAt)}
+              {time}
             </time>
             {comment.likeCount > 0 && (
               <div>
