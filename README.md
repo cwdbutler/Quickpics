@@ -28,7 +28,7 @@
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 ![Jest](https://img.shields.io/badge/-jest-%23C21325?style=for-the-badge&logo=jest&logoColor=white)
 
-## [Docker image](https://hub.docker.com/layers/cwdb/quickpics-api/1.0/images/sha256-1691eb52eb98e2a92ce329a2ac74022517f98181b650c4ba9c0be3d084a89ef9) • [Integration tests](https://github.com/ConorButler/Quickpics/tree/main/server#tests)
+## [Docker Hub Repository](https://hub.docker.com/repository/docker/cwdb/quickpics-api) • [Integration tests](https://github.com/ConorButler/Quickpics/tree/main/server#tests)
 
 #
 
@@ -53,9 +53,6 @@
   <div style="display: flex; align-items: center; justify-content: center;">
     <div>
       <img src="https://i.gyazo.com/f7934a3f53200ba72162da470db61a16.gif">
-    </div>
-    <div>
-    <img src="https://i.gyazo.com/7c1883d52fc207257c19ea1792b70fa7.gif">
     </div>
     <div>
     <img src="https://i.gyazo.com/21ad84f3cad8516c61c1343a99d95ab6.gif">

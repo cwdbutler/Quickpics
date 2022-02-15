@@ -4,6 +4,7 @@ WORKDIR /src/app
 
 COPY package.json yarn.lock ./
 COPY prisma ./prisma/
+# makes sure the schema is up to date
 
 RUN yarn
 
