@@ -52,13 +52,13 @@
   <h3>Like, comment on, and save posts with instant updates (no refresh required)</h3>
   <div style="display: flex; align-items: center; justify-content: center;">
     <div>
-      <img src="https://i.gyazo.com/d8b4405eaa8ab4dde28aa6922cdacf8d.gif">
+      <img src="https://i.gyazo.com/f7934a3f53200ba72162da470db61a16.gif">
     </div>
     <div>
     <img src="https://i.gyazo.com/6826bd5e1d77c11e835afe707d6b2db5.gif">
     </div>
     <div>
-    <img src="https://i.gyazo.com/b3ef9323ebe2c52b28a59ed3fa1cccb0.gif">
+    <img src="https://i.gyazo.com/21ad84f3cad8516c61c1343a99d95ab6.gif">
     </div>
   </div>
   <h3>Infinite scroll pagination</h3>
