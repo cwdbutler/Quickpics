@@ -18,11 +18,12 @@ import { FEED_TAKE } from "../utis/constants";
 
 interface Props {
   variables: AllPostsQueryVariables;
+  isFirstPage: boolean;
   isLastPage: boolean;
   loadMore: (cursor: string) => void;
 }
 
-function Page({ variables, isLastPage, loadMore }: Props) {
+function Page({ variables, isFirstPage, isLastPage, loadMore }: Props) {
   const [{ data, fetching }] = useAllPostsQuery({
     variables,
   });
@@ -31,8 +32,13 @@ function Page({ variables, isLastPage, loadMore }: Props) {
     <main>
       {!fetching ? (
         <>
-          {data?.posts.posts.map((post) => (
-            <FeedPost key={post.id} post={post} />
+          {data?.posts.posts.map((post, index) => (
+            <FeedPost
+              key={post.id}
+              post={post}
+              prioritise={isFirstPage && index < 3}
+            />
+            // preload the first 3 images
           ))}
           {isLastPage && data?.posts.hasMore && (
             // when this becomes visible on the screen, it loads more posts
@@ -88,6 +94,7 @@ function Home() {
                 <Page
                   key={"key" + variables.cursor} // cursor is null for first page
                   variables={variables}
+                  isFirstPage={index === 0}
                   isLastPage={index === pageVariables.length - 1}
                   loadMore={(cursor) =>
                     setPageVariables([...pageVariables, { take, cursor }])

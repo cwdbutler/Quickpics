@@ -17,9 +17,10 @@ import { BLUR_PIXEL } from "../utis/constants";
 
 type Props = {
   post: FeedPostFragment;
+  prioritise: boolean;
 };
 
-export default function FeedPost({ post }: Props) {
+export default function FeedPost({ post, prioritise }: Props) {
   dayjs.extend(LocalizedFormat);
 
   const styles = {
@@ -70,6 +71,7 @@ export default function FeedPost({ post }: Props) {
           </button>
         </header>
         <Image
+          priority={prioritise}
           src={post.imageUrl}
           draggable={false}
           width={600}
