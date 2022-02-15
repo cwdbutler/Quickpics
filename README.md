@@ -27,7 +27,7 @@
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 ![Jest](https://img.shields.io/badge/-jest-%23C21325?style=for-the-badge&logo=jest&logoColor=white)
 
-## [Docker image (API)](https://hub.docker.com/layers/cwdb/quickpics-api/1.0/images/sha256-1691eb52eb98e2a92ce329a2ac74022517f98181b650c4ba9c0be3d084a89ef9)
+## [Docker image](https://hub.docker.com/layers/cwdb/quickpics-api/1.0/images/sha256-1691eb52eb98e2a92ce329a2ac74022517f98181b650c4ba9c0be3d084a89ef9) • [Integration tests](https://github.com/ConorButler/Quickpics/tree/main/server#tests)
 
 #
 
@@ -53,12 +53,6 @@
     <div>
       <img src="https://i.gyazo.com/1b3eef3b93f4fb2ab5ceacb6d8025390.gif">
     </div>
-    <div>
-    <img src="https://i.gyazo.com/b8cce90cb621c480ff9bd82d8ad76e43.gif">
-    </div>
-    <div>
-    <img src="https://i.gyazo.com/a2ca970c8739d86b619aa37437179c52.gif">
-    </div>
   </div>
   <h2>Register validations</h2>
   <div style="display: flex; align-items: center; justify-content: center;">
@@ -77,31 +71,11 @@
     <div>
       <img src="https://i.gyazo.com/caafe3f7c24d8dc9b391015b54989206.gif">
     </div>
-    <div>
+    <!-- <div>
     <img src="https://i.gyazo.com/a11b0edbb3b0237d55ddd42209134150.gif">
     </div>
     <div>
     <img src="https://i.gyazo.com/2d0a80a44d2f3d4d18a93e0b8226412c.gif">
-    </div>
+    </div> -->
   </div>
 </div>
-
-infinite scroll/ pagination
-liking/viewing likes
-comments
-
-fix "in a few seconds" dayjs
-time mismatch <1m - just say now
-new post needs to invalidate posts by user
-
-Tests:
-
-![All tests](https://i.gyazo.com/6865b9c0015c98633c8313a5d330b7d3.png)
-
-![User](https://i.gyazo.com/5e98b451ae7a385f4c0566e60d265da3.png)
-
-![Post](https://i.gyazo.com/ec98fe081a19114cb2a28ad01326e829.png)
-
-![Comment](https://i.gyazo.com/9c64047fd03e428ec77b803402f45f97.png)
-
-![Like](https://i.gyazo.com/3ea2bbfd174e265e6d924625437949a8.png)
