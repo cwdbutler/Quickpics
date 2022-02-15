@@ -120,7 +120,7 @@ function SavedPosts({ serverUser, serverSavedPosts }: Props) {
                     <span className="font-semibold mr-1">
                       {serverUser.postCount}
                     </span>
-                    {`post${serverUser.postCount > 1 ? "s" : ""}`}
+                    {`post${serverUser.postCount === 1 ? "" : "s"}`}
                   </span>
                 </div>
               </section>
