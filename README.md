@@ -1,6 +1,6 @@
 <div align="center" >
 
-# A full stack, single page, server side rendered Instagram clone
+# A full stack, single page, responsive Instagram clone
 
 ## Users can sign up and edit image posts, and then like, comment, and save them
 
@@ -17,6 +17,7 @@
 
 # Server/API • https://api.quickpics.app/graphql • [README](https://github.com/ConorButler/Quickpics/blob/main/server/README.md)
 
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
 ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
 ![Apollo-GraphQL](https://img.shields.io/badge/-ApolloGraphQL-311C87?style=for-the-badge&logo=apollo-graphql)
 ![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB)
@@ -36,7 +37,7 @@
 </div>
 
 <div align="center">
-  <h2>Editing images (with upload validation)</h2>
+  <h3>Editing images (with upload validation)</h3>
   <div style="display: flex; align-items: center; justify-content: center;">
     <div>
     <img src="https://i.gyazo.com/4401607c94bab1ed41db91cc82487de0.gif">
@@ -48,34 +49,43 @@
     <img src="https://i.gyazo.com/4c14cbb1ecddfd4651227cfe496d1829.gif">
     </div>
   </div>
-  <h2>Infinite scroll pagination</h2>
+  <h3>Like, comment on, and save posts with instant updates (no refresh required)</h3>
   <div style="display: flex; align-items: center; justify-content: center;">
     <div>
-      <img src="https://i.gyazo.com/1b3eef3b93f4fb2ab5ceacb6d8025390.gif">
+      <img src="https://i.gyazo.com/d8b4405eaa8ab4dde28aa6922cdacf8d.gif">
+    </div>
+    <div>
+    <img src="https://i.gyazo.com/6826bd5e1d77c11e835afe707d6b2db5.gif">
+    </div>
+    <div>
+    <img src="https://i.gyazo.com/b3ef9323ebe2c52b28a59ed3fa1cccb0.gif">
     </div>
   </div>
-  <h2>Register validations</h2>
+  <h3>Infinite scroll pagination</h3>
+  <div style="display: flex; align-items: center; justify-content: center;">
+    <div>
+  <img src="https://i.gyazo.com/a584ce887374c003017a021cc67faf3e.gif">
+    </div>
+    <div>
+    <img src="https://i.gyazo.com/13da74cca33ae88f871b050ca2f283d3.gif">
+    </div>
+  </div>
+    <h3>Register validations</h3>
   <div style="display: flex; align-items: center; justify-content: center;">
   <div>
-    <img src="https://i.gyazo.com/9f7676c5bf6167d3ac219be3fc1a4c07.gif">
+    <img src="https://i.gyazo.com/9f7676c5bf6167d3ac219be3fc1a4c07.gif" width="200px">
   </div>
     <div>
-    <img src="https://i.gyazo.com/b8cce90cb621c480ff9bd82d8ad76e43.gif">
+    <img src="https://i.gyazo.com/b8cce90cb621c480ff9bd82d8ad76e43.gif" width="200px">
     </div>
     <div>
-    <img src="https://i.gyazo.com/a2ca970c8739d86b619aa37437179c52.gif">
+    <img src="https://i.gyazo.com/a2ca970c8739d86b619aa37437179c52.gif" width="200px">
     </div>
   </div>
-    <h2>Responsive design</h2>
-    <div style="display: flex; align-items: center; justify-content: center;">
-    <div>
-      <img src="https://i.gyazo.com/caafe3f7c24d8dc9b391015b54989206.gif">
-    </div>
-    <!-- <div>
-    <img src="https://i.gyazo.com/a11b0edbb3b0237d55ddd42209134150.gif">
-    </div>
-    <div>
-    <img src="https://i.gyazo.com/2d0a80a44d2f3d4d18a93e0b8226412c.gif">
-    </div> -->
+  <h3>Interaction menu</h3>
+  <div style="display: flex; align-items: center; justify-content: center;">
+  <div>
+    <img src="https://i.gyazo.com/888f457523e434d85cbb37be89fba850.gif">
+  </div>
   </div>
 </div>
