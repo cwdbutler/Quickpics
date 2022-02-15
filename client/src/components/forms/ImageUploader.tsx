@@ -36,7 +36,7 @@ export default function ImageUploader({ setFiles, styles }: Props) {
 
   const dropzoneStyle = `${
     isDragActive && "bg-background"
-  } h-full w-full flex flex-col items-center justify-center pb-12`;
+  } h-full w-full flex flex-col items-center justify-center pb-12 rounded-b-xl`;
 
   return fileRejections.length === 0 ? (
     // no image is selected (stage 1)
