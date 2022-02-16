@@ -137,7 +137,7 @@ function Home() {
                         </a>
                       </Link>
                       <Link href={`/${user.username}`}>
-                        <a className="text-blue text-xs font-semibold pr-2 ml-auto">
+                        <a className="text-blue text-xs font-semibold pr-1 ml-auto">
                           View
                         </a>
                       </Link>

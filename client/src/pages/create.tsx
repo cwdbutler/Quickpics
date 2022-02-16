@@ -13,7 +13,7 @@ function create() {
   const [{ data, fetching }] = useCurrentUserQuery();
   useEffect(() => {
     if (!fetching && !data?.currentUser) {
-      router.push({ pathname: "/login", query: { from: router.pathname } });
+      router.replace({ pathname: "/login", query: { from: router.pathname } });
     }
   }, [data, router, fetching]);
 
