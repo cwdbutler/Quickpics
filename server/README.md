@@ -6,13 +6,13 @@
 
 # Contents:
 
-## [Overview](#overview) | [Tests](#tests) | [Deployment Process](#deployment-process) | [Database](#database) | [Using the API](#using-the-api)
+## [Overview](#overview) | [Tests](#tests) | [Deployment Process](#deployment-process) | [Database](#database) | [Using the API](#using-the-api) | [Improvements](#improvements)
 
 </div>
 
 #
 
-![Infrastructure diagram](https://i.gyazo.com/a6c0879273ec98dda18d0d8e00b9fb7d.png)
+![Infrastructure diagram](https://i.gyazo.com/7ec3042997519c1b3d706d6036685985.png)
 
 # Overview
 
@@ -29,8 +29,6 @@
 - Optional user argument on posts
 
 One of my main goals for this project was to learn TypeScript and try out using a GraphQL API. I used [TypeGraphQL](https://github.com/MichalLytek/type-graphql) to build the schema using a code-first approach. The learning curve was steep initially as the decorator-heavy syntax was quite overwhelming, but after getting used to it I found it very intuitive (or at least the simpler features I was using were). [Apollo server](https://github.com/apollographql/apollo-server) was a no brainer here as it seemed to be the most popular choice, and can use apollo-express to use Express middleware I am used to such as [express-session](https://github.com/expressjs/session), with which I used [connect-redis](https://github.com/tj/connect-redis) to use a Redis database for super fast user session storage. I then used PostgresQL because it is good for modelling relational data (I initially wanted to implement every part of Instagram including followers) and [Prisma ORM](https://github.com/prisma/prisma) as it was a pleasure to work with in my last project and the documentation is great, however this time I did run into a few of it's limitations as described in the [Database Schema](#database-schema) section below. Another goal was to learn about handling images and sending them across the web. That was definitely more difficult client side as here on the server [graphql-upload](https://github.com/jaydenseric/graphql-upload) and AWS SDK abstracted things quite a bit - except for when it came to testing. The images are stored in an AWS S3 Bucket which I made publically accessible for GET requests, but only my IAM verified user (this application) can do PUT POST and DELETE. I also use a separate bucket for testing as to avoid confusion, but most of the data in the development environment is seeded using the [seed file](https://github.com/ConorButler/Quickpics/blob/main/server/prisma/seed.ts) using stock images.
-
-As mentioned above, there were many more features I still want to implement, but I'm slowing down production for now. Some of which the API actually supports and I haven't set up in the front end to stay accurate to the real Instagram; editing posts, editing comments, and others I have decent of idea how to implement but would take more time; better user profiles (bios, updating/deleting accounts), comment replies. Followers would be fun to set up but it would take a lot more data to work effectively and S3 isn't free :). I would also like to try using GraphQL subscriptions for features like showing an indicator on the navbar when someone likes your post, or one on the feed when a new post has been made. I'm happy with what I have done so far though and am confident my ability to expand on this project because it is well tested and moderately clean code although there could be some improvements on the latter.
 
 # Tests
 
@@ -53,7 +51,7 @@ For instance I mocked the call to AWS when uploading a file, and wipe the test d
 
 [Docker Hub Repository](https://hub.docker.com/repository/docker/cwdb/quickpics-api) to view the build history (there were a lot more builds before this; this is the first stable one)
 
-I learned a lot deploying through this approach. Running my own VPS and using Dokku, which was really easy to work with, gave me a lot of insight into other methods of deployment and the web in general, especially compared to previous deploys I had been doing on platforms such as Heroku, and others which were pretty much 1 click deploys like Netlify.
+I learned a lot deploying through this approach, including some things about DNS as I used a custom domain. Running my own VPS and using [Dokku](https://dokku.com/), which was really easy to work with, gave me a lot of insight into other methods of deployment and the web in general, especially compared to previous deploys I had been doing on platforms such as Heroku, and others which were pretty much 1 click deploys like Netlify.
 
 I ran into a few small problems, the first being that the hosting provider I was using, Vultr, seemed to block port 80 with Uncomplicated Firewall (UFW) by default. This was extremely frustrating because it wasn't specified anywhere, and it seemed I had done everything right according to the Dokku documentation but the IP address just wasn't responding to anything. Another problem was that nginx, which Dokku configures automatically, had been set to max request body size of 2MB, which conflicted with my max 5mb file upload set both client side and in the API code via GraphQL Upload. Again this took some debugging but the Dokku documentation and GitHub issues were of great help here.
 
@@ -87,3 +85,7 @@ If you wish to make authentication related queries make sure to go to the settin
 ![Credentials include](https://i.gyazo.com/9349a38d6789dc3f58f763b0d4c3fbe1.png)
 
 Of course you can use the documentation here to query the API using your method/application of choice
+
+# Improvements
+
+As mentioned above, there were many more features I still want to implement, but I'm slowing down production for now. Some of which the API actually supports and I haven't set up in the front end to stay accurate to the real Instagram; editing posts, editing comments, and others I have decent of idea how to implement but would take more time; better user profiles (bios, updating/deleting accounts), comment replies. Followers would be fun to set up but it would take a lot more data to work effectively and S3 isn't free :). I would also like to try using GraphQL subscriptions for features like showing an indicator on the navbar when someone likes your post, or one on the feed when a new post has been made. I'm happy with what I have done so far though and am confident my ability to expand on this project because it is well tested and moderately clean code although there could be some improvements on the latter.

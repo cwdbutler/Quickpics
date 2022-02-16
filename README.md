@@ -6,8 +6,6 @@
 
 ## Check each directory's README for more detail
 
-#
-
 # Live App • https://www.quickpics.app • [README](https://github.com/ConorButler/Quickpics/tree/main/client)
 
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)

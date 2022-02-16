@@ -81,7 +81,6 @@ function Post({ serverPost }: Props) {
             <div className="w-full md:w-[400px] lg:w-[600px]">
               <Image
                 src={post.imageUrl}
-                layout="responsive"
                 width={600}
                 height={600}
                 priority={true}
