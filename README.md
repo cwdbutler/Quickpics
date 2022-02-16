@@ -30,7 +30,9 @@
 
 #
 
-# Aims to replicate the key features of Instagram, down to the finer UX details, here are some examples:
+## Aims to replicate the key features of Instagram, down to the finer UX details, here are some examples:
+
+### Of course, try out the app to see all of the features I couldn't fit here 🙂
 
 </div>
 
@@ -51,9 +53,6 @@
   <div style="display: flex; align-items: center; justify-content: center;">
     <div>
       <img src="https://i.gyazo.com/f7934a3f53200ba72162da470db61a16.gif">
-    </div>
-    <div>
-    <img src="https://i.gyazo.com/21ad84f3cad8516c61c1343a99d95ab6.gif">
     </div>
   </div>
   <h3>Infinite scroll pagination</h3>

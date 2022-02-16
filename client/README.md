@@ -12,7 +12,7 @@
 
 #
 
-![Infrastructure diagram](https://i.gyazo.com/01eb0848fdce053210557a970ef85c48.png)
+![Infrastructure diagram](https://i.gyazo.com/b961784de73be6cb76a30f8727b589c3.png)
 
 # Overview
 
