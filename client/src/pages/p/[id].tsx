@@ -81,6 +81,7 @@ function Post({ serverPost }: Props) {
             <div className="w-full md:w-[400px] lg:w-[600px]">
               <Image
                 src={post.imageUrl}
+                layout="responsive"
                 width={600}
                 height={600}
                 priority={true}
@@ -159,7 +160,7 @@ function Post({ serverPost }: Props) {
                   ))}
                 </ul>
               </section>
-              <footer className="border-t-[1px] border-gray-300 flex flex-col">
+              <footer className="md:border-t-[1px] border-gray-300 flex flex-col">
                 <PostInteractionBar
                   post={post}
                   className="w-full flex px-1 pt-1 justify-between"
