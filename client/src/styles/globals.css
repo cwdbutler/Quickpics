@@ -19,13 +19,6 @@
   }
 }
 
-html {
-  /* show scrollbar on all pages for consistency (stop navbar shift) */
-  overflow-y: scroll !important;
-  /* headlessui adds padding to the right to account for scroll bar */
-  padding-right: 0px !important;
-}
-
 /* from https://loading.io/css/ */
 .lds-spinner {
   display: inline-block;

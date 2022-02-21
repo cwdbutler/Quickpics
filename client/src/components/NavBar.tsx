@@ -17,9 +17,14 @@ export default function NavBar() {
 
   const router = useRouter();
 
+  let scrollbarWidth;
+  if (!isServer()) {
+    scrollbarWidth = window.innerWidth - document.body.clientWidth;
+  }
+
   return !mounted ? null : (
     <div className="pt-[56px]">
-      <nav className="bg-white w-full top-0 fixed z-10 border-b-[1px] border-gray-300">
+      <nav className="w-screen bg-white top-0 fixed z-10 border-b-[1px] border-gray-300">
         <div className="max-w-[990px] mx-auto px-6">
           <div className="relative flex items-center justify-between h-14">
             <Link href="/">

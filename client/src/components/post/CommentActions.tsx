@@ -35,7 +35,7 @@ export default function CommentActions({ open, setOpen, commentId }: Props) {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Dialog.Overlay className="fixed inset-0 bg-modal bg-opacity-50 transition-opacity" />
+            <Dialog.Overlay className="fixed inset-0 bg-modal bg-opacity-80 transition-opacity" />
           </Transition.Child>
 
           {/* This element is to trick the browser into centering the modal contents. */}
