@@ -28,7 +28,7 @@ export default function NavBar() {
               </a>
             </Link>
             <div className="flex-1 flex items-stretch justify-end mr-2">
-              {fetching || isServer() ? null : (
+              {fetching || isServer() ? null : data?.currentUser ? (
                 // user is logged in
                 <div className="flex items-center justify-center space-x-4">
                   <Link href="/">
@@ -49,9 +49,33 @@ export default function NavBar() {
                       )}
                     </a>
                   </Link>
-                  {data?.currentUser && (
-                    <NavBarDropDown user={data.currentUser} />
-                  )}
+                  <NavBarDropDown user={data.currentUser} />
+                </div>
+              ) : (
+                <div className="flex items-center space-x-4">
+                  <button
+                    onClick={() => {
+                      router.push({
+                        pathname: "/login",
+                        query: { from: router.asPath },
+                      });
+                    }}
+                    className="px-3 h-8 rounded-m text-sm font-medium flex-shrink-0 bg-blue text-white"
+                  >
+                    Log in
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      router.push({
+                        pathname: "/register",
+                        query: { from: router.asPath },
+                      });
+                    }}
+                    className="px-3 h-8 rounded-m text-sm font-medium flex-shrink-0 text-blue"
+                  >
+                    Sign up
+                  </button>
                 </div>
               )}
             </div>
