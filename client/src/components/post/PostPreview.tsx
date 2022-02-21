@@ -12,7 +12,7 @@ export default function PostPreview({ post }: Props) {
   return (
     <Link key={post.id} href={`/p/${post.id}`}>
       <a className="max-w-sm flex">
-        <div className="relative z-0 text-white object-cover">
+        <div className="flex relative z-0 text-white object-cover">
           <Image
             width={300}
             height={300}
