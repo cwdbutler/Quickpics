@@ -14,6 +14,7 @@ import { Picker } from "emoji-mart";
 import { useDetectClickOutside } from "react-detect-click-outside";
 import Link from "next/link";
 import Spinner from "../Spinner";
+import { useRouter } from "next/router";
 
 type Props = {
   currentUser: UserInfoFragment | null | undefined;
@@ -28,18 +29,24 @@ export default function CommentForm({
   currentUser,
   focusForm,
 }: Props) {
+  const router = useRouter();
+
   if (!currentUser) {
     return (
       <div className="flex">
         <HappyIcon className={iconStyles} />
         <div className="h-12 flex items-center justify-center">
-          <p>
-            <Link href={"/login"}>
-              <a className="mr-1 text-blue hover:underline font-semibold">
-                Log in
-              </a>
-            </Link>
-          </p>
+          <button
+            className="mr-1 text-blue hover:underline font-semibold"
+            onClick={() => {
+              router.push({
+                pathname: "/login",
+                query: { from: router.asPath },
+              });
+            }}
+          >
+            Log in
+          </button>
           to comment
         </div>
       </div>
