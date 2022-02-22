@@ -104,17 +104,20 @@ function Home() {
             })}
           </div>
           <div className="w-full invisible lg:visible relative">
-            <div className="fixed">
+            <div className="fixed w-[310px]">
               <h3 className="mb-4 text-m font-semibold text-gray-400">
                 Suggested profiles
               </h3>
-              <ul className="space-y-4 pl-2">
+              <ul className="space-y-4 pl-1 w-full">
                 {usersData?.suggestedUsers
                   ?.filter(
                     (user) => currentUserData?.currentUser?.id !== user.id
                   )
                   .map((user) => (
-                    <li key={user.username} className="flex items-center w-72">
+                    <li
+                      key={user.username}
+                      className="flex items-center w-full"
+                    >
                       <Link href={`/${user.username}`}>
                         <a className="mr-3 flex">
                           <Image
