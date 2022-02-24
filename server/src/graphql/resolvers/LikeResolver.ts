@@ -3,7 +3,7 @@ import { Arg, Ctx, Mutation, Resolver, UseMiddleware } from "type-graphql";
 import { Context } from "../../context";
 
 @Resolver()
-export class PostResolver {
+export class LikeResolver {
   @Mutation(() => Boolean)
   @UseMiddleware(checkAuthenticated)
   async like(
