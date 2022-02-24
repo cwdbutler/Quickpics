@@ -49,7 +49,6 @@ export class UserResolver {
     @Root() user: User,
     @Ctx() { prisma }: Context
   ): Promise<number> {
-    // could have combined this with the like resolver but it was too cluttered (would have to do likes.likes)
     const postAggregation = await prisma.post.aggregate({
       where: {
         authorId: user.id,
@@ -93,7 +92,7 @@ export class UserResolver {
 
   @Query(() => [User], { nullable: true })
   async suggestedUsers(@Ctx() { prisma }: Context): Promise<User[]> {
-    // returns the 5 users with the most posts
+    // returns the 6 users with the most posts
     const usersWithCount = await prisma.user.findMany({
       include: {
         _count: {
@@ -109,6 +108,8 @@ export class UserResolver {
       },
       take: 6,
     });
+
+    // only 5 are displayed in the front end, but take 6 here incase the user is recommended to themself
 
     return usersWithCount;
   }

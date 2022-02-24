@@ -28,12 +28,15 @@
 - Pagination on posts and saved posts
 - Optional user argument on posts
 
-One of my main goals for this project was to learn TypeScript and try out using a GraphQL API. I used [TypeGraphQL](https://github.com/MichalLytek/type-graphql) to build the schema using a code-first approach. The learning curve was steep initially as the decorator-heavy syntax was quite overwhelming, but after getting used to it I found it very intuitive (or at least the simpler features I was using were). [Apollo server](https://github.com/apollographql/apollo-server) was a no brainer here as it seemed to be the most popular choice, and can use apollo-express which enables Express middleware I am used to such as [express-session](https://github.com/expressjs/session), with which I used [connect-redis](https://github.com/tj/connect-redis) to use a Redis database for super fast user session storage. I then used PostgresQL because it is good for modelling relational data (I initially wanted to implement every part of Instagram including followers) and [Prisma ORM](https://github.com/prisma/prisma) as it was a pleasure to work with in my last project and the documentation is great, however this time I did run into a few of it's limitations as described in the [Database Schema](#database-schema) section below. Another goal was to learn about handling images and sending them across the web. That was definitely more difficult client side as here on the server [graphql-upload](https://github.com/jaydenseric/graphql-upload) and the AWS SDK abstracted things quite a bit - except for when it came to testing. The images are stored in an AWS S3 Bucket which I made publically accessible for GET requests, but only my IAM verified user (this application) can do PUT POST and DELETE. I also use a separate bucket for testing as to avoid confusion, but most of the data in the development environment is seeded using the [seed file](https://github.com/ConorButler/Quickpics/blob/main/server/prisma/seed.ts) using stock images.
+One of my main goals for this project was to learn TypeScript and try out using a GraphQL API. I used [TypeGraphQL](https://github.com/MichalLytek/type-graphql) to build the schema using a code-first approach. The learning curve was steep initially as the decorator-heavy syntax was quite overwhelming, but after getting used to it I found it very intuitive. [Apollo server](https://github.com/apollographql/apollo-server) was a no brainer here as it seemed to be the most popular choice, and can use apollo-express which enables Express middleware I am used to such as [express-session](https://github.com/expressjs/session), with which I used [connect-redis](https://github.com/tj/connect-redis) to use a Redis database for super fast user session storage. I then used PostgresQL because it is good for modelling relational data (I initially wanted to implement every part of Instagram including followers) and [Prisma ORM](https://github.com/prisma/prisma) as it was a pleasure to work with in my last project and the documentation is great, however this time I did run into a few of it's limitations as described in the [Database Schema](#database-schema) section below.
+
+Another goal was to learn about handling images and sending them across the web. That was definitely more difficult client side as here on the server [graphql-upload](https://github.com/jaydenseric/graphql-upload) and the AWS SDK abstracted things quite a bit - except for when it came to testing. The images are stored in an AWS S3 Bucket which I made publically accessible for GET requests, but only my IAM verified user (this application) can do PUT POST and DELETE. I also use a separate bucket for testing as to avoid confusion, but most of the data in the development environment is seeded using the [seed file](https://github.com/ConorButler/Quickpics/blob/main/server/prisma/seed.ts) using stock images.
 
 # Tests
 
-I've written tests which run GraphQL requests against the API. I do not mock prisma or test any code logic invidiually for complexity's sake, but I've made my best attempts to make the tests high quality.
-For instance I mocked the call to AWS when uploading a file, and wipe the test database after each testing suite. For testing sessions I just pass in a mock session object with a user id. I tried to be as thorough as possible with regards to edge cases; some examples include forbidden usernames that match routes in the Nextjs app and testing all paths for requests that involve authenticatin or authorisation, as shown below:
+I've written tests which run GraphQL requests against the API. I do not mock prisma or test any code logic invidiually for complexity's sake, but I've made my best attempts to make the tests high quality. For instance I mocked the call to AWS when uploading a file, and wipe the test database after each testing suite. For testing sessions I just pass in a mock session object with a user id.
+
+I tried to be as thorough as possible with regards to edge cases; some examples include forbidden usernames that match routes in the Nextjs app and testing all paths for requests that involve authentication or authorisation, as shown below:
 
 ![All tests](https://i.gyazo.com/6865b9c0015c98633c8313a5d330b7d3.png)
 
@@ -45,7 +48,13 @@ For instance I mocked the call to AWS when uploading a file, and wipe the test d
 
 ![Like](https://i.gyazo.com/3ea2bbfd174e265e6d924625437949a8.png)
 
-If you wish to clone this repo and run the tests yourself, simply install all the dependencies and then run:
+If you wish to clone this repo and run the tests yourself, simply install all the dependencies:
+
+```
+yarn install
+```
+
+Then run:
 
 ```
 yarn test
@@ -73,9 +82,9 @@ I ran into a few small problems, the first being that the hosting provider I was
 
 One thing I tried to be conscious of is which columns in the database are exposed as fields in the GraphQL schema. I handle this through TypeGraphQl in [src/graphql/types](https://github.com/ConorButler/Quickpics/tree/main/server/src/graphql/types). Essentially, everything marked with @Field() is exposed by the API. It doesn't have to line up exactly with the database schema - for example there is no Posts or UsersOnPosts in User.ts. There is no situation where you can see a user and all of their comments, so that isn't exposed on User. A user's posts are handled in the Post resolver which saves another SQL query as each time you return an object, as the object you return must include _all_ of the fields described in the @ObjectType.
 
-This was quite a hindrance sometimes and there are some unnecessary queries being done to the database - luckily this light years away from needing to worry about optimisation, but it was something I noticed. Of course, you don't ever want to expose any password information so passwordHash is omitted, but for email the situation is different; only you should be able to see your own email (if I added a profile settings page let's say), so that is handled via a Field Resolver. Field Resolvers come in very useful for likes, because as I'll explain in the next paragraph neither Postgres or Prisma know that a like is related to anything.
+This was quite a hindrance sometimes and there are some unnecessary queries being done to the database - luckily this app is light years away from needing to worry about SQL optimisation, but it was something I noticed. Of course, you don't ever want to expose any password information so passwordHash is omitted, but for email the situation is different; only you should be able to see your own email (if I added a profile settings page let's say), so that is handled via a Field Resolver. Field Resolvers come in very useful for likes, because as I'll explain below neither Postgres or Prisma know that a like is related to anything.
 
-Originally I wasn't set on cloning Instagram and was going to have a Facebook like feed of user "Activity", i.e. likes, posts, and comments all in a list, and realised I needed to implement some sort of [polymorphic relationship](https://guides.rubyonrails.org/association_basics.html#polymorphic-associations) - and Prisma doesn't support this. I had got the idea for Activity from the suggestions in [this GitHub issue](https://github.com/prisma/prisma/issues/2505). Esentially the official Prisma recommended solution involves neither the database or the ORM having knowledge of the polymorphic relationship, which makes for some very complicated queries and having to .map over the results in some cases, and what I ended up doing was creating an Activity each time a Post, Like, or Comment was made, as suggested in that thread. Specifically this was achieved by creating a string id - I chose [nanoid](https://github.com/ai/nanoid) for nice and short urls - and then giving the same id to the Activity. Fortunately I kept this Activity system in place as later on when it came to implementing likes this came in useful again, as both posts and comments are likeable, and both are in the Activity table; Like has a polymorphic relationship with Post and Comment - what I had already done with Activity made liking an "entity" really easy:
+Originally I wasn't set on cloning Instagram and was going to have a Facebook like feed of user "Activity", i.e. likes, posts, and comments all in a list, and realised I needed to implement some sort of [polymorphic relationship](https://guides.rubyonrails.org/association_basics.html#polymorphic-associations) - and Prisma doesn't support this. I had got the idea for Activity from the suggestions in [this GitHub issue](https://github.com/prisma/prisma/issues/2505). Esentially the official Prisma recommended solution involves neither the database or the ORM having knowledge of the polymorphic relationship, which makes for some very complex queries and having to .map over the results in some cases, and what I ended up doing was creating an Activity each time a Post, Like, or Comment was made, as suggested in that thread. Specifically this was achieved by creating a string id - I chose [nanoid](https://github.com/ai/nanoid) for nice and short urls - and then giving the same id to the Activity. Fortunately I kept this Activity system in place as later on when it came to implementing likes this came in useful again, as both posts and comments are likeable, and both are in the Activity table; Like has a polymorphic relationship with Post and Comment. What I had already done with Activity made liking an "entity" really easy:
 
 ```
 mutation {
@@ -84,11 +93,11 @@ mutation {
 // returns true or false depending on if the like was successful
 ```
 
-I chose to omit error information here as the front end does a lot of things to represent and control the liked state. Furthermore a Field Resolver that I had to implement for the Like model was the "liked" field which returns a boolean showing if the current user has liked this post. The same goes for saved posts. These fields are probably doing some overkill SQL queries under the hood, but this information was incredibly useful in front end and prevented having to do something like request all of the likes every time and see if the current user is in that array client side.
+I chose to omit error information here as the front end does a lot of things to represent and control the liked state. Furthermore a Field Resolver that I had to implement for the Like model was the "liked" field which returns a boolean showing if the current user has liked this post. The same goes for saved posts. This information was incredibly useful in front end and prevented having to do something like request all of the likes every time and see if the current user is in that array client side.
 
 # Using The API
 
-I've left the GraphQL playground up in production so it is easy to query, and it is mostly self documenting. If you are unfamiliar with GraphQL playground, click on "Docs" on the right. This will give you a list of all the queries and mutations you can make, their arguments (if any), and the types they return and thus the fields you can query. You can use ctrl/cmd + space for some useful autocompletion.
+I've left the GraphQL playground up in production so it is easy to query, and it is mostly self-documenting. If you are unfamiliar with GraphQL playground, click on "Docs" on the right. This will give you a list of all the queries and mutations you can make, their arguments (if any), and the types they return and thus the fields you can query. You can use ctrl/cmd + space for some useful autocompletion.
 
 A quick demo:
 
@@ -98,7 +107,7 @@ If you wish to make authentication related queries make sure to go to the settin
 
 ![Credentials include](https://i.gyazo.com/9349a38d6789dc3f58f763b0d4c3fbe1.png)
 
-Of course you can use the documentation here to query the API using your method/application of choice. You will encounter a CORS error when trying to POST from outside of that url however.
+Of course you can use the documentation here to query the API using your method/application of choice. You will encounter a CORS error when trying to execute mutations from outside of that url however.
 
 # Improvements
 
