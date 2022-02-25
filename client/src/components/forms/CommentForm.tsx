@@ -145,12 +145,7 @@ export default function CommentForm({
                 name="text"
                 placeholder="Add a comment..."
                 className="outline-none w-full p-2 h-12 resize-none pt-3.5 leading-5"
-                value={
-                  values.text.length >= MAX_TEXT_LENGTH
-                    ? values.text.substring(0, MAX_TEXT_LENGTH - 1)
-                    : values.text
-                }
-                // prevent typing if max lengh reached
+                maxLength={MAX_TEXT_LENGTH}
               />
               <button
                 type="submit"

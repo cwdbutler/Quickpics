@@ -34,7 +34,7 @@ export default function Comment({ comment, user }: Props) {
   return (
     <li className="w-full flex">
       <CommentActions open={open} setOpen={setOpen} commentId={comment.id} />
-      <div className="group flex items-center justify-start my-3 w-full">
+      <div className="group flex items-start justify-start my-3 w-full">
         <div className="flex flex-shrink-0  h-full mr-3 items-start justify-start">
           <Link href={`/${comment.author.username}`}>
             <a className="flex">

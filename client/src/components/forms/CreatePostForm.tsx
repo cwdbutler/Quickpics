@@ -147,12 +147,7 @@ function CreatePostForm() {
                   id="caption"
                   name="caption"
                   placeholder="Add a caption..."
-                  value={
-                    values.caption.length >= MAX_TEXT_LENGTH
-                      ? values.caption.substring(0, MAX_TEXT_LENGTH - 1)
-                      : values.caption
-                  }
-                  // prevent typing if max lengh reached
+                  maxLength={MAX_TEXT_LENGTH}
                 />
                 <footer
                   aria-label="character count"
