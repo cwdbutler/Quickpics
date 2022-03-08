@@ -14,7 +14,7 @@ import { Waypoint } from "react-waypoint";
 import Link from "next/link";
 import Image from "next/image";
 import Spinner from "../components/Spinner";
-import { FEED_TAKE } from "../utis/constants";
+import { FEED_TAKE } from "../utils/constants";
 
 interface Props {
   variables: AllPostsQueryVariables;

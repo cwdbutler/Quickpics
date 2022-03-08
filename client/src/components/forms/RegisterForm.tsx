@@ -6,14 +6,14 @@ import {
   FieldError,
   useRegisterMutation,
 } from "../../graphql/generated/graphql";
-import { mapToFormErrors } from "../../utis/mapToFormErrors";
+import { mapToFormErrors } from "../../utils/mapToFormErrors";
 import * as Yup from "yup";
 import { TickCircleIcon, XCircleIcon } from "../Icons";
 import {
   MAX_PASSWORD_LENGTH,
   MAX_USERNAME_LENGTH,
   MIN_PASSWORD_LENGTH,
-} from "../../utis/constants";
+} from "../../utils/constants";
 
 export default function RegisterForm() {
   const [, register] = useRegisterMutation();

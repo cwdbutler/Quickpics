@@ -6,11 +6,11 @@ import {
   SliderFilledTrack,
   SliderThumb,
 } from "@chakra-ui/react";
-import { getFilteredImg } from "../../utis/cropImage";
+import { getFilteredImg } from "../../utils/cropImage";
 import { LeftArrowIcon } from "../Icons";
-import { Filter, filterConfig } from "../../utis/filterConfig";
+import { Filter, filterConfig } from "../../utils/filterConfig";
 import { Fragment } from "react";
-import { presetFilters } from "../../utis/presetFilters";
+import { presetFilters } from "../../utils/presetFilters";
 
 type Props = {
   styles: {

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Cropper from "react-easy-crop";
 import { Point, Area } from "react-easy-crop/types";
-import { getCroppedImg } from "../../utis/cropImage";
+import { getCroppedImg } from "../../utils/cropImage";
 import { LeftArrowIcon, XIcon, ZoomIcon } from "../Icons";
 import { ImageFile } from "./CreatePostForm";
 import {

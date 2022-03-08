@@ -9,7 +9,7 @@ import {
   CurrentUserQuery,
 } from "../../graphql/generated/graphql";
 import Link from "next/link";
-import { isServer } from "../../utis/isServer";
+import { isServer } from "../../utils/isServer";
 
 type Props = {
   open: boolean;

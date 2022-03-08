@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useCurrentUserQuery } from "../graphql/generated/graphql";
-import { isServer } from "../utis/isServer";
+import { isServer } from "../utils/isServer";
 import { HomeIcon, HomeIconFilled, PlusIcon, PlusIconFilled } from "./Icons";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";

@@ -2,7 +2,7 @@ import { Formik, Field, Form } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FieldError, useLoginMutation } from "../../graphql/generated/graphql";
-import { mapToFormErrors } from "../../utis/mapToFormErrors";
+import { mapToFormErrors } from "../../utils/mapToFormErrors";
 import { useState } from "react";
 
 export default function LoginForm() {

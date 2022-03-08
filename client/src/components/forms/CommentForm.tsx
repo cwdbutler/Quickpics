@@ -6,7 +6,7 @@ import {
   useCreateCommentMutation,
   UserInfoFragment,
 } from "../../graphql/generated/graphql";
-import { MAX_TEXT_LENGTH } from "../../utis/constants";
+import { MAX_TEXT_LENGTH } from "../../utils/constants";
 import { HappyIcon } from "../Icons";
 import { Waypoint } from "react-waypoint";
 import "emoji-mart/css/emoji-mart.css";

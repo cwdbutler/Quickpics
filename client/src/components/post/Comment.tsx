@@ -2,7 +2,7 @@ import {
   CommentInfoFragment,
   CurrentUserQuery,
 } from "../../graphql/generated/graphql";
-import { shortTimeSince } from "../../utis/shortTimeSince";
+import { shortTimeSince } from "../../utils/shortTimeSince";
 import LikeButton from "../LikeButton";
 import dayjs from "dayjs";
 import LocalizedFormat from "dayjs/plugin/localizedFormat";

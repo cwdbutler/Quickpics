@@ -14,7 +14,7 @@ import {
   usePostsByUserQuery,
 } from "../../graphql/generated/graphql";
 import { urqlClient } from "../../urqlClient";
-import { timeSince } from "../../utis/timeSince";
+import { timeSince } from "../../utils/timeSince";
 import ErrorPage from "../404";
 import dayjs from "dayjs";
 import PostActions from "../../components/post/PostActions";
@@ -24,7 +24,7 @@ import Link from "next/link";
 import Image from "next/image";
 import LikesModal from "../../components/post/LikesModal";
 import Head from "next/head";
-import { API_URL, BLUR_PIXEL } from "../../utis/constants";
+import { API_URL, BLUR_PIXEL } from "../../utils/constants";
 
 type Props = {
   serverPost: PostQuery["post"];

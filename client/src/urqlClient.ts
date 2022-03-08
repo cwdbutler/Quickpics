@@ -6,9 +6,9 @@ import {
   CurrentUserDocument,
   Comment,
 } from "./graphql/generated/graphql";
-import { isServer } from "./utis/isServer";
+import { isServer } from "./utils/isServer";
 import Router from "next/router";
-import { API_URL, FEED_TAKE } from "./utis/constants";
+import { API_URL, FEED_TAKE } from "./utils/constants";
 
 // creating the urql client and configuring the caching settings
 // in "updates" it describes what to do when each query happens

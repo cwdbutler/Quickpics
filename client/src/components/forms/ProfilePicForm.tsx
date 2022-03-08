@@ -6,7 +6,7 @@ import {
   UserInfoFragment,
   useUpdateProfilePicMutation,
 } from "../../graphql/generated/graphql";
-import { fileValidator } from "../../utis/fileValidator";
+import { fileValidator } from "../../utils/fileValidator";
 
 type Props = {
   user: UserInfoFragment | undefined | null;

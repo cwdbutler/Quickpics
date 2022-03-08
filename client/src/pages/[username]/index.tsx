@@ -23,7 +23,7 @@ import { Waypoint } from "react-waypoint";
 import Image from "next/image";
 import ProfilePicForm from "../../components/forms/ProfilePicForm";
 import Spinner from "../../components/Spinner";
-import { API_URL } from "../../utis/constants";
+import { API_URL } from "../../utils/constants";
 
 interface PageProps {
   variables: PostsByUserQueryVariables;

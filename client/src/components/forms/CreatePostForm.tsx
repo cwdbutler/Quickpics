@@ -2,7 +2,7 @@ import { Formik, Form, Field } from "formik";
 import { useRef, useState } from "react";
 import { HappyIcon, LeftArrowIcon } from "../Icons";
 import { Area } from "react-easy-crop/types";
-import { MAX_TEXT_LENGTH } from "../../utis/constants";
+import { MAX_TEXT_LENGTH } from "../../utils/constants";
 import { useCreatePostMutation } from "../../graphql/generated/graphql";
 import { useRouter } from "next/router";
 import ImageUploader from "./ImageUploader";
@@ -11,7 +11,7 @@ import "emoji-mart/css/emoji-mart.css";
 import { Picker } from "emoji-mart";
 import { useDetectClickOutside } from "react-detect-click-outside";
 import ImageEditor from "./ImageEditor";
-import { Filter, filterConfig } from "../../utis/filterConfig";
+import { Filter, filterConfig } from "../../utils/filterConfig";
 import Spinner from "../Spinner";
 
 export interface ImageFile extends File {

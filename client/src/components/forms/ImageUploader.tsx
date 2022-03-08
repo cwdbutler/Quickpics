@@ -1,5 +1,5 @@
 import { useDropzone } from "react-dropzone";
-import { fileValidator } from "../../utis/fileValidator";
+import { fileValidator } from "../../utils/fileValidator";
 import { ImageIcon, ExclamationIcon } from "../Icons";
 import { ImageFile } from "./CreatePostForm";
 import FileErrors from "./FileErrors";

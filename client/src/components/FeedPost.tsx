@@ -2,7 +2,7 @@ import {
   FeedPostFragment,
   useCurrentUserQuery,
 } from "../graphql/generated/graphql";
-import { timeSince } from "../utis/timeSince";
+import { timeSince } from "../utils/timeSince";
 import CommentForm from "./forms/CommentForm";
 import { DotsIcon } from "./Icons";
 import PostInteractionBar from "./post/PostInteractionBar";
@@ -13,7 +13,7 @@ import { useState } from "react";
 import PostActions from "./post/PostActions";
 import Image from "next/image";
 import LikesModal from "./post/LikesModal";
-import { BLUR_PIXEL } from "../utis/constants";
+import { BLUR_PIXEL } from "../utils/constants";
 
 type Props = {
   post: FeedPostFragment;
