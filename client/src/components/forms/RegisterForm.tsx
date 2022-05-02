@@ -196,7 +196,7 @@ export default function RegisterForm() {
             This is a project made for learning purposes only. You can view the
             source code{" "}
             <a
-              href="https://github.com/ConorButler/QuickPics"
+              href="https://github.com/cwdbutler/Quickpics"
               className="text-gray-900"
             >
               here.
